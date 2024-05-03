@@ -1,3 +1,24 @@
+components
+재사용 가능한 컴포넌트들이 위치하는 폴더입니다.
+컴포넌트는 매우 많아질 수 있기 때문에 이 폴더 내부에서 하위폴더로 추가로 분류하는 경우가 많습니다.
+assets
+이미지 혹은 폰트와 같은 파일들이 저장되는 폴더입니다.
+이미지와 같은 파일들을 public에 직접 넣는 경우도 있는데 둘의 차이는 컴파일시에 필요한지 여부입니다.
+파비콘과 같이 index.html내부에서 직접 사용하여 컴파일 단계에서 필요하지 않은 파일들은 public에
+반면, 컴포넌트 내부에서 사용하는 이미지 파일인 경우 이 assets 폴더에 위치시켜야 합니다.
+
+hooks
+커스텀 훅이 위치하는 폴더입니다.
+
+pages
+react router등을 이용하여 라우팅을 적용할 때 페이지 컴포넌트를 이 폴더에 위치시킵니다.
+
+styles
+css 파일들이 포함되는 폴더입니다.
+
+services
+보통 api관련 로직의 모듈 파일이 위치하며 auth와 같이 인증과 관련된 파일이 포함되기도 합니다.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
