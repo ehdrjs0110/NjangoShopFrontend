@@ -2,6 +2,7 @@ import React, { useState , useRef , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import '../../styles/Sign/Sign.scss';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -87,18 +88,45 @@ const Signup = () => {
 
   return (
     <div className="container">
+      <div className='login'>
+        <form onSubmit={LoginhandleSubmit} >
+          <div className='inputbox'>
+            <input type="text" id='id' placeholder='아이디'/>
+          </div>
+          <div className='inputbox'>
+            <input type="password" id='password' placeholder='비밀번호'/>
+          </div>
+          <div className='btnbox'>
+            <input type="submit" value={"로그인"} />
+          </div>
+            
+        </form>
+      </div>
 
-      <form onSubmit={LoginhandleSubmit} >
-        <input type="text" id='id' />
-        <input type="password" id='password' />
-        <input type="submit" value={"로그인"} />
-      </form>
+      <div className='signup'>
+        <form onSubmit={SignUphandleSubmit} >
+          <div className='inputbox'>
+            <input type="text" id='id' placeholder='아이디'/>
+          </div>
+          <div className='inputbox'>  
+            <input type="password" id='password' placeholder='비밀번호'/>
+          </div>
+          <div className='inputbox'>  
+            <input type="text" id='name' placeholder='이름'/>
+          </div>
+          <div className='inputbox'>  
+            <input type="email" id='email' placeholder='이메일'/>
+          </div>
+          <div className='inputbox'>  
+            <input type="text" id='phone' placeholder='전화번호'/>
+          </div>
+          <div className='btnbox'>
+            <input type="submit" value={"회원가입"} />
+          </div>
+        </form>
+      </div>
 
-      <form onSubmit={SignUphandleSubmit} >
-        <input type="text" id='id' />
-        <input type="password" id='password' />
-        <input type="submit" value={"회원가입"} />
-      </form>
+      
 
     </div>
   );
