@@ -1,9 +1,10 @@
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import '../styles/App.css';
-import jjangu from '../assets/jjangu.jpg';
+import './styles/App.css';
 
-import Sign from './Sign/Sign';
+import Sign from './pages/Sign/Sign';
+import SignIn from './pages/Sign/SignIn';
+import SignUp from './pages/Sign/SignUp';
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/Sign" element={<Sign />} />
+          <Route path="/SignIn" element={<SignIn />} />
+          <Route path="/SignUp" element={<SignUp />} />
         </Routes>
       </Router>
       
