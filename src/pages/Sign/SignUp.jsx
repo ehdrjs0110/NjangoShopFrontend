@@ -2,51 +2,12 @@ import React, { useState , useRef , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import '../../styles/Sign/SignUp.scss';
+import styles from '../../styles/Sign/SignUp.module.scss';
 
 const Signup = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const form = e.target;
-    const id = form.elements.id.value;
-    const password = form.elements.password.value;
-
-    const formData = new FormData();
-    formData.append("id", id);
-    formData.append("password", password);
-
-    formData.forEach((value, key) => {
-      console.log("key : " + key + " value : " + value);
-    });
-
-  
-    //axios 파일 전송
-    // axios
-    //   .post("localhost:8080/Login", formData, {
-    //     headers: {
-    //       "Content-type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     if(res.data==true){
-    //       alert("로그인 성공 하셨습니다!");
-    //       //페이지 이동
-    //       navigate('/Main');
-    //     }else{
-    //       alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log("err message : " + err);
-    //     alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //   });
-  };
-
-  const SignUphandleSubmit = async (e) => {
     e.preventDefault();
 
     const form = e.target;
@@ -87,8 +48,8 @@ const Signup = () => {
 
 
   return (
-    <div className="container">
-      <div className='signup'>
+    <div className={styles.container}>
+      <div className={styles.signup}>
         <form onSubmit={handleSubmit} >
           <div className='inputbox'>
             <input type="text" id='id' placeholder='아이디'/>

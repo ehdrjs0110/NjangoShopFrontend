@@ -2,7 +2,7 @@ import React, { useState , useRef , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import '../../styles/Sign/SignIn.scss';
+import styles from '../../styles/Sign/SignIn.module.scss';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -48,8 +48,8 @@ const Signup = () => {
 
 
   return (
-    <div className="container">
-      <div className='login'>
+    <div className={styles.container}>
+      <div className={styles.login}>
         <form onSubmit={handleSubmit} >
           <div className='inputbox'>
             <input type="text" id='id' placeholder='아이디'/>
