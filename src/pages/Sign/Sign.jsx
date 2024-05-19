@@ -2,64 +2,40 @@ import React, { useState , useRef , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Signup = () => {
+import styles from '../../styles/Sign/Sign.module.scss';
+
+import logoImg from '../../assets/Logo/logo.png';
+
+const Sign = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const form = e.target;
-    const id = form.elements.id.value;
-    const password = form.elements.password.value;
-
-    const formData = new FormData();
-    formData.append("id", id);
-    formData.append("password", password);
-
-    formData.forEach((value, key) => {
-      console.log("key : " + key + " value : " + value);
-    });
-
-  
-    //axios 파일 전송
-    // axios
-    //   .post("localhost:8080/Login", formData, {
-    //     headers: {
-    //       "Content-type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     if(res.data==true){
-    //       alert("로그인 성공 하셨습니다!");
-    //       //페이지 이동
-    //       navigate('/Main');
-    //     }else{
-    //       alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log("err message : " + err);
-    //     alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //   });
+  const emailsign = () => {
+    navigate('/SignUp');
   };
 
+  const signin = () => {
+    navigate('/SignIn');
+  };
 
   return (
-    <div className="container">
-      <div className='login'>
-        <form onSubmit={handleSubmit} >
-          <div className='inputbox'>
-            <input type="text" id='id' placeholder='아이디'/>
+    <div className={styles.container}>
+      <div className={styles.account}>
+        <img src={logoImg} alt='' className={styles.logoimg} />
+        <form>
+          <div className={styles.btnbox}>
+            <input type="button" className={styles.kakaobtn} value={"카카오 계정으로 가입하기"} />
           </div>
-          <div className='inputbox'>
-            <input type="password" id='password' placeholder='비밀번호'/>
+          <div className={styles.btnbox}>
+            <input type="button" className={styles.emailbtn} onClick={emailsign} value={"이메일 계정으로 가입하기"} />
           </div>
-          <div className='btnbox'>
-            <input type="submit" value={"로그인"} />
-          </div>
-            
         </form>
+        <div className={styles.account}>
+          <a>아이디 찾기</a>
+          <span> | </span>
+          <a>비밀번호 찾기</a>
+          <span> | </span>
+          <a onClick={signin}>로그인</a>
+        </div>
       </div>
     
 
@@ -67,4 +43,4 @@ const Signup = () => {
   );
 }
 
-export default  Signup;
+export default  Sign;

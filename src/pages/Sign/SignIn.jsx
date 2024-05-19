@@ -4,7 +4,9 @@ import axios from "axios";
 
 import styles from '../../styles/Sign/SignIn.module.scss';
 
-const Signup = () => {
+import logoImg from '../../assets/Logo/logo.png';
+
+const SignIn = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -46,22 +48,35 @@ const Signup = () => {
     //   });
   };
 
+  const signup = () => {
+    navigate('/Sign');
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.login}>
+        <img src={logoImg} alt='' className={styles.logoimg} />
         <form onSubmit={handleSubmit} >
-          <div className='inputbox'>
-            <input type="text" id='id' placeholder='아이디'/>
+          <div className='inputdiv'>
+            <input type="text" className={styles.inputbox} id='id' placeholder='아이디'/>
           </div>
-          <div className='inputbox'>
-            <input type="password" id='password' placeholder='비밀번호'/>
+          <div className='inputdiv'>
+            <input type="password" className={styles.inputbox} id='password' placeholder='비밀번호'/>
           </div>
           <div className='btnbox'>
-            <input type="submit" value={"로그인"} />
+            <input type="submit" className={styles.submitbtn} value={"로그인"} />
           </div>
-            
         </form>
+        <div className={styles.account}>
+          <a>아이디 찾기</a>
+          <span> | </span>
+          <a>비밀번호 찾기</a>
+          <span> | </span>
+          <a onClick={signup}>회원가입</a>
+        </div>
+        <div className={styles.snslogin}>
+          <input type="button" className={styles.kakaobtn} onclick="" />
+        </div>
       </div>
     
 
@@ -69,4 +84,4 @@ const Signup = () => {
   );
 }
 
-export default  Signup;
+export default  SignIn;

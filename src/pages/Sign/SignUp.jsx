@@ -4,7 +4,9 @@ import axios from "axios";
 
 import styles from '../../styles/Sign/SignUp.module.scss';
 
-const Signup = () => {
+import logoImg from '../../assets/Logo/logo.png';
+
+const SignUp = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -50,32 +52,30 @@ const Signup = () => {
   return (
     <div className={styles.container}>
       <div className={styles.signup}>
+        <img src={logoImg} alt='' className={styles.logoimg} />
         <form onSubmit={handleSubmit} >
           <div className='inputbox'>
-            <input type="text" id='id' placeholder='아이디'/>
+            <input type="text" id='id' className={styles.inputbox} placeholder='아이디'/>
           </div>
           <div className='inputbox'>  
-            <input type="password" id='password' placeholder='비밀번호'/>
+            <input type="password" id='password' className={styles.inputbox} placeholder='비밀번호'/>
           </div>
           <div className='inputbox'>  
-            <input type="text" id='name' placeholder='이름'/>
+            <input type="text" id='name' className={styles.inputbox} placeholder='이름'/>
           </div>
           <div className='inputbox'>  
-            <input type="email" id='email' placeholder='이메일'/>
+            <input type="email" id='email' className={styles.inputbox} placeholder='이메일'/>
           </div>
           <div className='inputbox'>  
-            <input type="text" id='phone' placeholder='전화번호'/>
+            <input type="text" id='phone' className={styles.inputbox} placeholder='전화번호'/>
           </div>
           <div className='btnbox'>
-            <input type="submit" value={"회원가입"} />
+            <input type="submit" className={styles.submitbtn} value={"회원가입"} />
           </div>
         </form>
-      </div>
-
-      
-
+      </div>    
     </div>
   );
 }
 
-export default  Signup;
+export default  SignUp;
