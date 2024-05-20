@@ -1,18 +1,68 @@
 .container{
+    height: 100vh;
 
-    .maincontent{
-        border: 1px solid black;
+    .flexcontainer{
+        display: flex;
+        height: 100%;
+
+        .maincol{
+            flex: 3;
+            padding: 0;
+            height: 100%;
+        }
+    
+        .sidecol{                                
+            flex: 1;
+            padding: 0;
+            height: 100%;
+        }
+    
+        .maincontent{
+            height: 100%;
+            border: 1px solid black;
+        }
+    
+        .sidecontent{
+            height: 100%;
+            border: 1px solid black;
+            display: flex;
+            flex-direction: column; /* 컬럼 방향으로 배치 */
+            justify-content: center; /* 가로 중앙 배치 */
+            align-items: center;
+
+            .start{
+                font-weight: bold;
+            }
+
+            .startbtn{
+                width: 150px;
+                margin-top: 10px;
+                font-size: 30px;
+            }
+        }
     }
 
-    .sidecontent{
-        border: 1px solid black;
-    }
 }
 
-.maincontent{
-    border: 1px solid black;
-}
 
-.sidecontent{
-    border: 1px solid black;
+//슬라이드
+#root {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
 }
+  
+.slide_container {
+    height: 100%;
+    overflow-y: hidden;
+    scroll-snap-type: y mandatory;
+  }
+  
+  .slide {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    scroll-snap-align: start;
+  }

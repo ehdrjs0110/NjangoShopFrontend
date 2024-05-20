@@ -4,6 +4,8 @@ import axios from "axios";
 
 import styles from '../../styles/Sign/Sign.module.scss';
 
+import Container from 'react-bootstrap/Container';
+
 import logoImg from '../../assets/Logo/logo.png';
 
 const Sign = () => {
@@ -18,8 +20,8 @@ const Sign = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.account}>
+    <Container fluid className={styles.container}>
+      <div className={styles.sign}>
         <img src={logoImg} alt='' className={styles.logoimg} />
         <form>
           <div className={styles.btnbox}>
@@ -39,7 +41,7 @@ const Sign = () => {
       </div>
     
 
-    </div>
+    </Container>
   );
 }
 

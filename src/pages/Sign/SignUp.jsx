@@ -4,6 +4,8 @@ import axios from "axios";
 
 import styles from '../../styles/Sign/SignUp.module.scss';
 
+import Container from 'react-bootstrap/Container';
+
 import logoImg from '../../assets/Logo/logo.png';
 
 const SignUp = () => {
@@ -50,7 +52,7 @@ const SignUp = () => {
 
 
   return (
-    <div className={styles.container}>
+    <Container fluid className={styles.container}>
       <div className={styles.signup}>
         <img src={logoImg} alt='' className={styles.logoimg} />
         <form onSubmit={handleSubmit} >
@@ -74,7 +76,7 @@ const SignUp = () => {
           </div>
         </form>
       </div>    
-    </div>
+    </Container>
   );
 }
 

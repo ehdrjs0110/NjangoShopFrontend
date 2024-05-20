@@ -4,9 +4,13 @@
     justify-content: space-around;
     text-align: center;
 
-    .account{
+    .sign{
         margin-top: 100px;
 
+        div{
+            margin-top: 30px;
+        }
+        
         .logoimg{
             height: 120px;
             width: 300px;
@@ -33,6 +37,27 @@
                 border-radius: 15px;
             }
         }
+
+        .account{
+            a{
+                cursor: pointer;
+                text-decoration-line: none;
+    
+                &:link{
+                    color: black;
+                }
+                &:visited{
+                    color: black;
+                }
+                &:hover{
+                    color: black;
+                }
+                &:active{
+                    color: black;
+                }
+            }
+        }
+        
         
     }
 
