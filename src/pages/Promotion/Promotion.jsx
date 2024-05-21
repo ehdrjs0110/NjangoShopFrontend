@@ -12,56 +12,63 @@ import styles from '../../styles/Promotion/Promotion.module.scss';
 const Promotion = () => {
   const navigate = useNavigate();
 
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const containerRef = useRef(null);
+  const isThrottled = useRef(false); // useRef로 변경
+
 
   useEffect(() => {
     const container = containerRef.current;
-    let currentIndex = 0;
-    let isThrottled = false;
   
     const scrollToIndex = (index) => {
       container.scrollTo({
         top: container.children[index].offsetTop,
         behavior: 'smooth',
       });
-      console.log(currentIndex);
+      console.log(currentSlide);
     };
   
     const onScroll = (event) => {
-      if (isThrottled) return;                                  
-      isThrottled = true;
-      setTimeout(() => (isThrottled = false), 800);
+      if (isThrottled.current) return; // useRef의 current 사용
+      isThrottled.current = true;
+      setTimeout(() => (isThrottled.current = false), 800);
   
       const direction = event.deltaY > 0 ? 1 : -1;
-      currentIndex = Math.max(0, Math.min(currentIndex + direction, container.children.length - 1));
+      const currentIndex = Math.max(0, Math.min(currentSlide + direction, container.children.length - 1));
+      setCurrentSlide(currentIndex);
       scrollToIndex(currentIndex);
     };
   
-    const onKeydown = (event) => {
-      if (isThrottled) return;
-      isThrottled = true;
-      setTimeout(() => (isThrottled = false), 800);
+    const onKeyup = (event) => {
+      if (isThrottled.current) return; // useRef의 current 사용
+      isThrottled.current = true;
+      setTimeout(() => (isThrottled.current = false), 800);
       
+      let currentIndex = currentSlide;
       if (event.key === 'ArrowDown') {
-        currentIndex = Math.min(currentIndex + 1, container.children.length - 1);
-        scrollToIndex(currentIndex);
+        currentIndex = Math.min(currentSlide + 1, container.children.length - 1);
       } else if (event.key === 'ArrowUp') {
-        currentIndex = Math.max(currentIndex - 1, 0);
-        scrollToIndex(currentIndex);
+        currentIndex = Math.max(currentSlide - 1, 0);
       }
+      setCurrentSlide(currentIndex);
+      scrollToIndex(currentIndex);
     };
 
-    
+    scrollToIndex(currentSlide);
   
     container.addEventListener('wheel', onScroll);
-    window.addEventListener('keydown', onKeydown);
+    window.addEventListener('keyup', onKeyup);
   
     return () => {
       container.removeEventListener('wheel', onScroll);
-      window.removeEventListener('keydown', onKeydown);
+      window.removeEventListener('keyup', onKeyup);
     };
-  }, []);
-  
+  }, [currentSlide]);
+
+  const clickDot = (index) => {
+    setCurrentSlide(index);
+  };
 
   const signin = () => {
     navigate('/SignIn');
@@ -72,6 +79,15 @@ const Promotion = () => {
     <Row className={styles.flexcontainer}>
       <Col className={styles.maincol} >
         <div className={styles.maincontent}>
+          <div className={styles.slide_dots}>
+            {[0, 1, 2, 3].map(index => (
+                  <div
+                    key={index}
+                    className={`${styles.dot} ${currentSlide === index ? styles.active : ''}`}
+                    onClick={() => clickDot(index)}
+                  ></div>
+            ))}
+          </div>
           <div ref={containerRef} class={styles.slide_container}>
             <div class={styles.slide}>slide1</div>
             <div class={styles.slide}>slide2</div>
