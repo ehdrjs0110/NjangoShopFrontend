@@ -60,7 +60,7 @@ const SignIn = () => {
         <img src={logoImg} alt='' className={styles.logoimg} />
         <form onSubmit={handleSubmit} >
           <div className='inputdiv'>
-            <input type="text" className={styles.inputbox} id='id' placeholder='아이디'/>
+            <input type="text" className={styles.inputbox} id='id' placeholder='이메일'/>
           </div>
           <div className='inputdiv'>
             <input type="password" className={styles.inputbox} id='password' placeholder='비밀번호'/>

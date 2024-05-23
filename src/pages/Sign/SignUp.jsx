@@ -15,9 +15,6 @@ const SignUp = () => {
   //입력받은 이메일 
   const [isEmail, setEmail] = useState();
 
-  //서버 인증 코드
-  const [isCheckCode, setCheckCode] = useState();
-
   //입력받은 인증 코드
   const [isCode, setCode] = useState();
 
@@ -72,14 +69,15 @@ const SignUp = () => {
 
     console.log(isEmail);
     const data = {
-      emailname : isEmail
+      email : isEmail
     };
   
     //axios 파일 전송
     axios
-      .post("http://localhost:8080/mail", data)
+      .post("http://localhost:8080/mail/send", data)
       .then((res) => {
-        setCheckCode(res.data);
+        alert("메일 보내기 성공");
+        console.log('메일 전송 성공:', res.data); // 성공 시 응답 출력
       })
       .catch((err) => {
         console.log("err message : " + err);
@@ -97,12 +95,26 @@ const SignUp = () => {
   };
 
   const checkCode = () => {
-    if(isCode === isCheckCode){
-      alert("코드 확인!");
-      setHidden(false);
-    }else{
-      alert("코드를 다시 입력해주세요.");
-    }
+
+    const data = {
+      email : isEmail,
+      code : isCode
+    };
+  
+    //axios 파일 전송
+    axios
+      .post("http://localhost:8080/verify/code", data)
+      .then((res) => {
+          alert("코드 확인!");
+          setHidden(false);
+          console.log('코드 검증 결과:', res.data); // 검증 결과 출력
+      })
+      .catch((err) => {
+        alert("인증 실패");
+        setRead(false);
+        console.error('코드 검증 실패:', err); // 실패 시 에러 출력
+      });  
+
   }
 
   return (
