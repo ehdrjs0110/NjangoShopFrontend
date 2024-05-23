@@ -1,0 +1,46 @@
+
+.container{
+
+    .main{
+
+        .linkrow{
+
+            .linkbox{
+                background-color: #CBECFF;
+                margin-top: 30px;
+                height: 400px;
+
+                display: flex;
+                justify-content: center;
+                align-items: center; 
+                flex-direction:column;
+                
+                h1{
+                    font-weight: bold;
+                }
+
+                a{
+                    margin-top: 20px;
+                    font-size: 1.5em;
+                    font-weight: bold;
+                    cursor: pointer;
+                    text-decoration-line: underline;
+        
+                    &:link{
+                        color: black;
+                    }
+                    &:visited{
+                        color: black;
+                    }
+                    &:hover{
+                        color: black;
+                    }
+                    &:active{
+                        color: black;
+                    }
+                }
+            }
+        }
+        
+    }
+}
