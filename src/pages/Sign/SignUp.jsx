@@ -12,7 +12,20 @@ import logoImg from '../../assets/Logo/logo.png';
 const SignUp = () => {
   const navigate = useNavigate();
 
+  //입력받은 이메일 
   const [isEmail, setEmail] = useState();
+
+  //서버 인증 코드
+  const [isCheckCode, setCheckCode] = useState();
+
+  //입력받은 인증 코드
+  const [isCode, setCode] = useState();
+
+  //이메일 인증 박스 보이기
+  const [isHidden, setHidden] = useState(false);
+
+  //이메일 수정 불가
+  const [isRead, setRead] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +67,8 @@ const SignUp = () => {
   };
 
   const sendEmail = () => {
+    setHidden(true);
+    setRead(true);
 
     console.log(isEmail);
     const data = {
@@ -64,11 +79,12 @@ const SignUp = () => {
     axios
       .post("http://localhost:8080/mail", data)
       .then((res) => {
-        console.log(res.data);
+        setCheckCode(res.data);
       })
       .catch((err) => {
         console.log("err message : " + err);
         alert("메일 보내기 실패");
+        setRead(false);
       });
   };
 
@@ -76,16 +92,33 @@ const SignUp = () => {
     setEmail(e.target.value);
   };
 
+  const handleCode = (e) => {
+    setCode(e.target.value);
+  };
+
+  const checkCode = () => {
+    if(isCode === isCheckCode){
+      alert("코드 확인!");
+      setHidden(false);
+    }else{
+      alert("코드를 다시 입력해주세요.");
+    }
+  }
+
   return (
     <Container fluid className={styles.container}>
       <div className={styles.signup}>
         <img src={logoImg} alt='' className={styles.logoimg} />
         <form onSubmit={handleSubmit} >
           <div className='inputbox'>  
-            <input type="email" id='email' className={styles.inputbox} onChange={handleEmail} placeholder='이메일'/>
+            <input type="email" id='email' className={styles.inputbox} onChange={handleEmail} readOnly={isRead} placeholder='이메일'/>
           </div>
           <div className='email'>
           <Button variant="primary" className={styles.emailbtn} onClick={sendEmail}>인증번호 전송</Button>
+          </div>
+          <div className={styles.hiddenbox} style={{ display: isHidden ? "block" : "none"}}>  
+            <input type="text" id='emailchk' className={styles.inputbox} onChange={handleCode} placeholder='코드확인'/>
+            <Button variant="primary" className={styles.emailbtn} onClick={checkCode}>인증코드 확인</Button>
           </div>
           <div className='inputbox'>  
             <input type="password" id='password' className={styles.inputbox} placeholder='비밀번호'/>
