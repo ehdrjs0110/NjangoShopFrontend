@@ -7,7 +7,7 @@ import styles from '../../styles/Sign/SignIn.module.scss';
 import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
-//?
+
 const SignIn = () => {
   const navigate = useNavigate();
 
@@ -50,6 +50,10 @@ const SignIn = () => {
     //   });
   };
 
+  const findid = () => {
+    navigate('/FindId');
+  };
+
   const signup = () => {
     navigate('/Sign');
   };
@@ -70,7 +74,7 @@ const SignIn = () => {
           </div>
         </form>
         <div className={styles.account}>
-          <a>아이디 찾기</a>
+          <a onClick={findid}>아이디 찾기</a>
           <span> | </span>
           <a>비밀번호 찾기</a>
           <span> | </span>

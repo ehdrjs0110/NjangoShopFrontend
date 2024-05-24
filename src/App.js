@@ -6,6 +6,8 @@ import SignIn from './pages/Sign/SignIn';
 import SignUp from './pages/Sign/SignUp';
 import Main from './pages/Main/Main';
 import Promotion from './pages/Promotion/Promotion';
+import FindId from './pages/Sign/FindId';
+import FindPw from './pages/Sign/FindPw';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -19,6 +21,8 @@ function App() {
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/Main" element={<Main />} />
           <Route path="/Promotion" element={<Promotion />} />
+          <Route path="/FindId" element={<FindId />} />
+          <Route path="/FindPw" element={<FindPw />} />
         </Routes>
       </Router>
       

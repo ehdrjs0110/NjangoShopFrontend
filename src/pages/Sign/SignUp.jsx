@@ -8,7 +8,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 
 import logoImg from '../../assets/Logo/logo.png';
-//?
+
 const SignUp = () => {
   const navigate = useNavigate();
 

@@ -2,21 +2,17 @@ import React, { useState , useRef , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import styles from '../../styles/Sign/Sign.module.scss';
+import styles from '../../styles/Sign/FindPw.module.scss';
 
 import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
 
-const Sign = () => {
+const FindPw = () => {
   const navigate = useNavigate();
 
   const emailsign = () => {
     navigate('/SignUp');
-  };
-
-  const findid = () => {
-    navigate('/FindId');
   };
 
   const signin = () => {
@@ -36,7 +32,7 @@ const Sign = () => {
           </div>
         </form>
         <div className={styles.account}>
-          <a onClick={findid}>아이디 찾기</a>
+          <a>아이디 찾기</a>
           <span> | </span>
           <a>비밀번호 찾기</a>
           <span> | </span>
@@ -49,4 +45,4 @@ const Sign = () => {
   );
 }
 
-export default  Sign;
+export default  FindPw;
