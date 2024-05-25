@@ -105,9 +105,14 @@ const SignUp = () => {
     axios
       .post("http://localhost:8080/verify/code", data)
       .then((res) => {
-          alert("코드 확인!");
-          setHidden(false);
-          console.log('코드 검증 결과:', res.data); // 검증 결과 출력
+          if(res.data === true){
+            alert("코드 확인!");
+            setHidden(false);
+            console.log('코드 검증 결과:', res.data); // 검증 결과 출력
+          }else{
+            alert("코드를 다시 입력해주세요.");
+          }
+          
       })
       .catch((err) => {
         alert("인증 실패");
