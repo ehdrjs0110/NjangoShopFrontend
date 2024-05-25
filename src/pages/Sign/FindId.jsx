@@ -7,9 +7,10 @@ import styles from '../../styles/Sign/FindId.module.scss';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/esm/FormGroup';
 
 import logoImg from '../../assets/Logo/logo.png';
-import FormGroup from 'react-bootstrap/esm/FormGroup';
+
 
 const FindId = () => {
 

@@ -54,6 +54,10 @@ const SignIn = () => {
     navigate('/FindId');
   };
 
+  const findpw = () => {
+    navigate('/FindPw');
+  };
+
   const signup = () => {
     navigate('/Sign');
   };
@@ -76,7 +80,7 @@ const SignIn = () => {
         <div className={styles.account}>
           <a onClick={findid}>아이디 찾기</a>
           <span> | </span>
-          <a>비밀번호 찾기</a>
+          <a onClick={findpw}>비밀번호 찾기</a>
           <span> | </span>
           <a onClick={signup}>회원가입</a>
         </div>
