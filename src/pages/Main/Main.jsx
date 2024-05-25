@@ -13,6 +13,10 @@ import Col from 'react-bootstrap/Col';
 function Main() {
   const navigate = useNavigate();
 
+  const AiSearch = () => {
+    navigate('/AiSearch');
+  };
+
   const signin = () => {
     navigate('/SignIn');
   };
@@ -25,7 +29,7 @@ function Main() {
           <Row className={styles.linkrow}>
             <Col md={{span: 3, offset: 2}} className={styles.linkbox}>
               <h1>AI 레시피 검색</h1>
-              <a onClick={signin}>바로가기</a>
+              <a onClick={AiSearch}>바로가기</a>
             </Col>
             <Col md={{span: 3, offset: 2}} className={styles.linkbox}>
               <h1>냉장고 관리</h1>
