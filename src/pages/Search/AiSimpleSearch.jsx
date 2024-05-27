@@ -8,34 +8,11 @@ import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {Accordion, Table} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import React, {useState} from "react";
 
 import aiSimpleCss from '../../styles/Search/AiSimpleSearch.module.scss';
-import {useAccordionButton} from "react-bootstrap/AccordionButton";
-
-
-
-function CustomToggle({ children, eventKey }) {
-
-
-
-    const decoratedOnClick = useAccordionButton(eventKey, () =>
-        console.log('totally custom!'),
-    );
-
-    return (
-        <button
-            type="button"
-            style={{ backgroundColor: 'pink' }}
-            onClick={decoratedOnClick}
-        >
-            {children}
-        </button>
-    );
-}
-
+import axios from "axios";
 
 
 
@@ -52,6 +29,7 @@ const AiSimpleSearch = () => {
     const  makeMyIngredientList = () => {
         const checkLsit = myIngredientList.map((ingredient, index) =>
             <Form.Check
+                key={index}
                 inline
                 type="checkbox"
                 name="group1"
@@ -59,7 +37,7 @@ const AiSimpleSearch = () => {
                 label={ingredient}
                 onChange={() => selectIngredient(ingredient)}
                 checked={selectedIngredientList.includes(ingredient)}
-                key={index}
+
             />)
         return checkLsit;
     }
@@ -78,13 +56,29 @@ const AiSimpleSearch = () => {
     // UI = Check 된 리스트 보여주기
     const makeCheckedList = () => {
         const checkedList = selectedIngredientList.map((ingredient, index) =>
-            <Col>{ingredient}</Col>
+            <Col key={index}>{ingredient}</Col>
         )
         return checkedList;
     }
 
 
 
+    async function aiSearchRequest () {
+        const requestBody = {"userContent" : "찌개 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 대해서는 130글자 내로 간략하게 알려줘 새우는 들어가면 안돼 두부는 2개 있어 형태는 요리제목,재료,과정으로 알려줘"};
+        try {
+            const searchResponse = await axios.post(
+                "http://localhost:8080/api/v1/chat-gpt",
+                requestBody,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
 
 
@@ -105,7 +99,7 @@ const AiSimpleSearch = () => {
                             <Card border="secondary" className={aiSimpleCss.myIngredientCard}>
                                 <Card.Body>
                                     <Card.Title>내 재료</Card.Title>
-                                    <Card.Text>
+                                    <Card.Text as="div">
                                         {/*재료 선택*/}
                                         {makeMyIngredientList()}
                                     </Card.Text>
