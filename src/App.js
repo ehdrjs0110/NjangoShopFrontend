@@ -8,6 +8,7 @@ import Main from './pages/Main/Main';
 import Promotion from './pages/Promotion/Promotion';
 import Logout from "./pages/Logout/Logout";
 import AiSearch from "./pages/Search/AiSearch";
+import AiSimpleSearch from "./pages/Search/AiSimpleSearch";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/Promotion" element={<Promotion />} />
           <Route path="/Logout" element={<Logout/>}/>
           <Route path="/AiSearch" element={<AiSearch/>} />
+          <Route path="/AiSimpleSearch" element={<AiSimpleSearch/>} />
         </Routes>
       </Router>
       

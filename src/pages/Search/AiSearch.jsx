@@ -135,19 +135,25 @@ const AiSearch = () => {
                         1 of 3
                     </Col>
                     <Col xs={8} lg={10}  className={styles.aiSearchMainCol}>
-                        <InputGroup className={styles.aiSearchInputGroup}>
-                            <Form.Control
-                                placeholder="레시피 검색"
-                                aria-label="Recipient's username"
-                                aria-describedby="basic-addon2"
-                                className="ai-search-input"
-                            />
-                            <Button variant="outline-secondary" id="button-addon2" className={styles.aiSearchButton}>
-                                검색
-                            </Button>
-                        </InputGroup>
-                        <Container style={{ paddingRight: '0', paddingLeft: '0' }}   className={styles.aiSearchOptionButtonContainer}>
-                            <Accordion defaultActiveKey="0" alwaysOpen>
+                        {/*레시피 명 입력 지작점*/}
+                        <div>
+                            <InputGroup className={styles.aiSearchInputGroup}>
+                                <Form.Control
+                                    placeholder="레시피 검색"
+                                    aria-label="Recipient's username"
+                                    aria-describedby="basic-addon2"
+                                    className="ai-search-input"
+                                />
+                                <Button variant="outline-secondary" id="button-addon2" className={styles.aiSearchButton}>
+                                    검색
+                                </Button>
+                            </InputGroup>
+                        </div>
+                        {/*레시피 명 입력 종료점*/}
+
+                        {/*레시피 옵션 시작점*/}
+                        <div>
+                            <Accordion defaultActiveKey="0" alwaysOpen style={{ paddingRight: '0', paddingLeft: '0', width:'100%'}}>
                                 <Card  className>
                                     <Card.Header className={styles.aiSearchOptionButton}>
                                         <CustomToggle eventKey="0"  >Option</CustomToggle>
@@ -185,7 +191,31 @@ const AiSearch = () => {
                                     </Accordion.Collapse>
                                 </Card>
                             </Accordion>
-                        </Container>
+                        </div>
+                        {/*레시피 옵션 종료점*/}
+
+
+                        {/*레시피 검색 결과 시작점*/}
+                        <div>
+                            <Card border="secondary" style={{ width: '100%' }}>
+                                <Card.Header>된장찌개</Card.Header>
+                                <Card.Body>
+                                    <Card.Title>재료</Card.Title>
+                                    <Card.Text>
+                                       양파 반개, 두무 반모, 파, 된장, 마늘
+                                    </Card.Text>
+                                    <Card.Title>레시피</Card.Title>
+                                    <Card.Text>
+                                        Some quick example text to build on the card title and make up the
+                                        bulk of the card's content.
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        {/*레시피 검색 결과 종료점*/}
+
+
+
                     </Col>
                     <Col xs lg="1" className="ai-search-col">
                         3 of 3
