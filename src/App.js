@@ -9,6 +9,7 @@ import Promotion from './pages/Promotion/Promotion';
 import FindId from './pages/Sign/FindId';
 import FindPw from './pages/Sign/FindPw';
 import Inven from './pages/Inven/Inven';
+import Excel from './pages/Inven/Excel';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/FindId" element={<FindId />} />
           <Route path="/FindPw" element={<FindPw />} />
           <Route path="/Inven" element={<Inven />} />
+          <Route path="/Excel" element={<Excel />} />
         </Routes>
       </Router>
       

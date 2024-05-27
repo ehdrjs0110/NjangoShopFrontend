@@ -56,7 +56,8 @@
 }
 
 .content {
-    background-color: lightcyan;
+    border: 1px solid black;
+    background-color: #fff;
     padding: 20px;
     height: 100%;
     overflow-y: auto;
@@ -90,21 +91,6 @@
             width: 30%;
             text-align: right;
         }
-    }
-
-    .odd {
-        background-color: lightskyblue;
-    }
-
-    .even {
-        background-color: lightblue;
-    }
-
-    .line:hover {
-        transform: translateY(-2px);
-        /* 떠오르는 효과 */
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        /* 그림자 효과 */
     }
 
 }
