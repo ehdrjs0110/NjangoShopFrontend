@@ -67,6 +67,7 @@ const Sign = () => {
             );
 
 
+
             console.log(kakaoResponse)
             setKakaoToken(kakaoResponse.data.access_token);
 

@@ -40,15 +40,25 @@ function CustomToggle({ children, eventKey }) {
 
 
 const AiSearch = () => {
+    // 냉장고 재료 반영 선택 여부
     const [activeKey, setActiveKey] = useState(null);
     const [recipe, setRecipe] = useState(null);
     const [searchValue, setSearchValue] = useState("");
     const [selectedKindOfFood, setSelectedKindOfFood] = useState([]);
 
-    var myIngredientList = ["양파", "당근","마늘","파"];
+    const [selectedMyIngredientList, setSelectedMyIngredientList] = useState([]);
+    // const [allergyFood, setAllergyFood] = useState([])
+
+
+    // 테스트 데이터
+    let allergyFood = ["새우,오징어"];
 
 
 
+    // 테스트 데이터
+    var myIngredientList = ["양파", "당근","마늘","파","옥수수"];
+
+    //  재료선택
     function makeIngredientList() {
         const IngredientList = myIngredientList.map((ingredient,index) =>
 
@@ -56,11 +66,30 @@ const AiSearch = () => {
                 inline
                 type="checkbox"
                 name="group3"
-                id={`inline-checkbox-${index}`}
-                // id={ingredient}
+                id={ingredient}
                 label={ingredient}
+                onChange={myIngredientHandler}
             />)
         return IngredientList;
+    }
+
+    const myIngredientHandler = (event) => {
+        const food = event.target.id;
+        const isCheked = event.target.checked;
+
+        setSelectedMyIngredientList((prevState) => {
+            if(!isCheked)
+                return prevState.filter(preItem => preItem !== food)
+            else{
+                return [...prevState, food];
+            }
+        })
+
+        console.log(selectedKindOfFood);
+
+        console.log(selectedKindOfFood);
+
+
     }
 
 
@@ -151,11 +180,16 @@ const AiSearch = () => {
 
     // prompt 요청
     async function aiSearchRequest () {
-        console.log(selectedKindOfFood);
+        console.log("selectedKindOfFood: " + selectedKindOfFood );
+        console.log("searchValue" + searchValue);
+        console.log("allergyFood" + allergyFood);
+        console.log("selectedMyIngredientList" + selectedMyIngredientList);
+        // console.log();
+
 
         console.log("요청 중");
-        const requestBody = {"userContent" : `${searchValue} 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
-                "대해서는 130글자 내로 간략하게 알려줘 새우는 들어가면 안돼 두부는 2개 있어 형태는 요리제목,재료,과정으로 알려줘" +
+        const requestBody = {"userContent" : `${selectedKindOfFood} 종류의 ${searchValue} 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
+                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 요리제목,재료,과정으로 알려줘` +
                 "그리고 json 객체로 {0:[요리 1], 1: [요리2], 2: [요리3}, 3:[요리], 4:[요리]} 형태로만 참고로 키는 무조건 숫자여야해 보내줘"};
         let searchResponse;
         try {
