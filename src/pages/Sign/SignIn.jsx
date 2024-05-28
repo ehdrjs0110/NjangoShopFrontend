@@ -7,7 +7,7 @@ import styles from '../../styles/Sign/SignIn.module.scss';
 import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
-//?
+
 const SignIn = () => {
   const navigate = useNavigate();
 
@@ -50,6 +50,14 @@ const SignIn = () => {
     //   });
   };
 
+  const findid = () => {
+    navigate('/FindId');
+  };
+
+  const findpw = () => {
+    navigate('/FindPw');
+  };
+
   const signup = () => {
     navigate('/Sign');
   };
@@ -60,7 +68,7 @@ const SignIn = () => {
         <img src={logoImg} alt='' className={styles.logoimg} />
         <form onSubmit={handleSubmit} >
           <div className='inputdiv'>
-            <input type="text" className={styles.inputbox} id='id' placeholder='아이디'/>
+            <input type="text" className={styles.inputbox} id='id' placeholder='이메일'/>
           </div>
           <div className='inputdiv'>
             <input type="password" className={styles.inputbox} id='password' placeholder='비밀번호'/>
@@ -70,9 +78,9 @@ const SignIn = () => {
           </div>
         </form>
         <div className={styles.account}>
-          <a>아이디 찾기</a>
+          <a onClick={findid}>아이디 찾기</a>
           <span> | </span>
-          <a>비밀번호 찾기</a>
+          <a onClick={findpw}>비밀번호 찾기</a>
           <span> | </span>
           <a onClick={signup}>회원가입</a>
         </div>

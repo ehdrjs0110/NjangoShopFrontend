@@ -9,6 +9,10 @@ import Promotion from './pages/Promotion/Promotion';
 import Logout from "./pages/Logout/Logout";
 import AiSearch from "./pages/Search/AiSearch";
 import AiSimpleSearch from "./pages/Search/AiSimpleSearch";
+import FindId from './pages/Sign/FindId';
+import FindPw from './pages/Sign/FindPw';
+import Inven from './pages/Inven/Inven';
+import Excel from './pages/Inven/Excel';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -25,6 +29,10 @@ function App() {
           <Route path="/Logout" element={<Logout/>}/>
           <Route path="/AiSearch" element={<AiSearch/>} />
           <Route path="/AiSimpleSearch" element={<AiSimpleSearch/>} />
+          <Route path="/FindId" element={<FindId />} />
+          <Route path="/FindPw" element={<FindPw />} />
+          <Route path="/Inven" element={<Inven />} />
+          <Route path="/Excel" element={<Excel />} />
         </Routes>
       </Router>
       

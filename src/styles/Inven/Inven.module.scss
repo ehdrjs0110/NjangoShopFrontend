@@ -1,0 +1,110 @@
+
+.container{
+    height: calc(100vh - 56px);
+
+    .main{
+        height: 100%;
+
+        .controllerRow{
+            height: 20%;
+        }
+
+        .contentRow{
+            height: 80%;
+        }
+    }
+}
+
+.controller {
+    height: 100%;
+    background-color: lightblue;
+    padding: 20px;
+
+    .controllerRow1{
+        height: 30%;
+    }
+
+    .controllerRow2{
+        height: 70%;
+    }
+
+    .title {
+        font-weight: bold;
+    }
+
+    .controlform {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        .serch {
+            width: 20%;
+            display: inline-block;
+        }
+    
+        .serchbtn{
+            margin-left: 10px;
+        }
+
+        .btn {
+            margin-left: 50px;
+        }
+    }
+    
+}
+
+.content {
+    background-color: lightcyan;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    
+    .line {
+        margin: 0 auto;
+        width: 95%;
+        display: flex;
+        padding: 5px;
+        margin-bottom: 5px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        .title {
+            font-weight: bold;
+        }
+
+        .text {
+            display: inline-block;
+            margin: 0;
+        }
+    
+        .btn {
+            margin-left: 5px;
+        }
+    
+        .count {
+            margin-left: 10px;
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+        }
+    }
+
+    .odd {
+        background-color: lightskyblue;
+    }
+
+    .even {
+        background-color: lightblue;
+    }
+
+    .line:hover {
+        transform: translateY(-2px);
+        /* 떠오르는 효과 */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        /* 그림자 효과 */
+    }
+
+}

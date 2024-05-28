@@ -18,6 +18,14 @@ const Sign = () => {
     navigate('/SignUp');
   };
 
+  const findid = () => {
+    navigate('/FindId');
+  };
+
+  const findpw = () => {
+    navigate('/FindPw');
+  };
+
   const signin = () => {
     navigate('/SignIn');
   };
@@ -97,6 +105,7 @@ const Sign = () => {
 
 
 //?
+
   return (
     <Container fluid className={styles.container}>
       <div className={styles.sign}>
@@ -110,9 +119,9 @@ const Sign = () => {
           </div>
         </form>
         <div className={styles.account}>
-          <a>아이디 찾기</a>
+          <a onClick={findid}>아이디 찾기</a>
           <span> | </span>
-          <a>비밀번호 찾기</a>
+          <a onClick={findpw}>비밀번호 찾기</a>
           <span> | </span>
           <a onClick={signin}>로그인</a>
         </div>
