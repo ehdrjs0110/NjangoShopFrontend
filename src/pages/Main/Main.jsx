@@ -20,6 +20,10 @@ function Main() {
   const signin = () => {
     navigate('/SignIn');
   };
+
+  const inven = () => {
+    navigate('/Inven');
+  };
   
   return (
     <>
@@ -33,7 +37,7 @@ function Main() {
             </Col>
             <Col md={{span: 3, offset: 2}} className={styles.linkbox}>
               <h1>냉장고 관리</h1>
-              <a onClick={signin}>바로가기</a>
+              <a onClick={inven}>바로가기</a>
             </Col>
           </Row>
           <Row className={styles.linkrow}>

@@ -12,7 +12,8 @@ import * as url from "url";
 const Sign = () => {
   const navigate = useNavigate();
 
-  const [kakaoToken, setKakaoToken] = useState(null);
+  const [isToken, setToken] = useState(0);
+  const [isCode, setCode] = useState("");
 
   const emailsign = () => {
     navigate('/SignUp');
@@ -40,71 +41,29 @@ const Sign = () => {
 
   const code = new URL(window.location.href).searchParams.get("code");
 
-
-
   useEffect(() => {
     if (code) {
-      getToken();
+      sendCode();
     }
   }, [code]);
 
+  async function sendCode() {
 
-  useEffect(() => {
-    if (kakaoToken) {
-      getAuth();
-    }
-  }, [kakaoToken]);
+    const body = {
+      code: code,
+    };
 
-  async function getToken() {
-    try {
-      const body = new URLSearchParams({
-        grant_type: "authorization_code",
-        client_id: CLIENT_ID,
-        redirect_uri: REDIRECT_URI,
-        code: code,
-      });
+    await axios
+    .post("http://localhost:8080/login/kakaoCode", body)
+    .then((res) => {
+      if(res.data!=null){
+        alert("카카오톡 회원가입 성공!");
+        console.log(res.data);
+        //navigate('/Main');
+      }
+    });
 
-      const kakaoResponse = await axios.post(
-          "https://kauth.kakao.com/oauth/token",
-          body.toString(),
-          {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-      );
-
-
-      console.log(kakaoResponse)
-      setKakaoToken(kakaoResponse.data.access_token);
-
-    } catch (e) {
-      console.error(e);
-    }
   }
-
-  async function getAuth() {
-    try {
-      const auth = await axios.post(
-          "http://localhost:8080/login/kakao",
-          kakaoToken,
-          {
-            headers: {
-              "Content-Type": "application/json", // 예시로 application/json으로 설정
-            },
-          }
-
-      );
-      console.log(auth);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-
-
-
-//?
 
   return (
     <Container fluid className={styles.container}>
