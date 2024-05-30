@@ -50,6 +50,40 @@ const SignIn = () => {
     //   });
   };
 
+  //카카오톡 로그인
+  const CLIENT_ID = '7a2afab08fdef9ddd3b09ac451ca30b9';
+  const REDIRECT_URI = 'http://localhost:3000/Sign';
+  const kakaoSignUp = () => {
+    const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
+    window.location.href = kakaoUrl;
+  };
+
+  const code = new URL(window.location.href).searchParams.get("code");
+
+  useEffect(() => {
+    if (code) {
+      sendCode();
+    }
+  }, [code]);
+
+  async function sendCode() {
+
+    const body = {
+      code: code,
+    };
+
+    await axios
+    .post("http://localhost:8080/login/kakaoCode", body)
+    .then((res) => {
+      if(res.data!=null){
+        alert("카카오톡 회원가입 성공!");
+        console.log(res.data);
+        //navigate('/Main');
+      }
+    });
+
+  }
+
   const findid = () => {
     navigate('/FindId');
   };
@@ -85,7 +119,7 @@ const SignIn = () => {
           <a onClick={signup}>회원가입</a>
         </div>
         <div className={styles.snslogin}>
-          <input type="button" className={styles.kakaobtn} onclick="" />
+          <input type="button" className={styles.kakaobtn} onClick={kakaoSignUp} />
         </div>
       </div>
     
