@@ -1,0 +1,37 @@
+
+.MyPageContainer
+{
+  padding: 0;
+  .ContainerRow{
+    background-color: beige;
+    height: 100vh;
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 0;
+
+    .ContainerCol{
+      background-color: wheat;
+      padding-right: 0;
+      padding-left: 0;
+      height: 100%;
+    }
+
+  }
+
+}
+
+.MyPageCardContainCol
+{
+  padding-left: 0;
+  padding-right: 0;
+  margin-bottom: 0;
+  height: 50vh;
+  .MyPageCard{
+    height: 100%;
+    margin-top: 5vh;
+
+    .MyPageCardBody {
+      background-color: beige;
+    }
+  }
+}

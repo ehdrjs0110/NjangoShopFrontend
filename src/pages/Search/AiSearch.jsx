@@ -260,16 +260,19 @@ const AiSearch = () => {
     return (
         <>
             <Navigation/>
-            <Container fluid className={styles.aiSearchContainer}>
-                <Row className="justify-content-md-center ai-search-row">
-                    <Col xs lg="1" className="ai-search-col">
-                        1 of 3
-                    </Col>
-                    <Col xs={8} lg={10}  className={styles.aiSearchMainCol}>
+            {/*<Container fluid className={styles.aiSearchContainer}>*/}
+            <Container fluid style={{paddingLeft:0, paddingRight:0}}>
+            <div className={styles.aiSearchContainer}>
+                {/*<Row className="justify-content-md-center ai-search-row">*/}
+                <Row  className={styles.aiSearchRow}>
+                    {/*<Col xs="0" lg="1"   className="ai-search-col">*/}
+                    {/*    1 of 3*/}
+                    {/*</Col>*/}
+                    <Col  style={{backgroundColor:"lightgrey", paddingLeft:0, paddingRight:0}} md={{ span: 10, offset: 1 }} >
                         {/*레시피 명 입력 지작점*/}
-                        <div>
-                            <InputGroup className={styles.aiSearchInputGroup}>
-                                <Form.Control
+                        <div  style={{padding:0}}>
+                            <InputGroup style={{padding:0}} className={styles.aiSearchInputGroup}>
+                                <Form.Control  style={{padding:0}}
                                     placeholder="레시피 검색"
                                     aria-label="Recipient's username"
                                     aria-describedby="basic-addon2"
@@ -347,16 +350,18 @@ const AiSearch = () => {
                             {recipeResponce()}
                             {/*</Card>*/}
                         </div>
-                        {/*레시피 검색 결과 종료점*/}
+                        {/*/!*레시피 검색 결과 종료점*!/*/}
 
 
 
                     </Col>
-                    <Col xs lg="1" className="ai-search-col">
-                        3 of 3
-                    </Col>
+                    {/*<Col xs="0" lg="1" className="ai-search-col">*/}
+                    {/*    3 of 3*/}
+                    {/*</Col>*/}
                 </Row>
-            </Container>
+
+            </div>
+                </Container>
         </>
     );
 }

@@ -13,6 +13,11 @@ import FindId from './pages/Sign/FindId';
 import FindPw from './pages/Sign/FindPw';
 import Inven from './pages/Inven/Inven';
 import Excel from './pages/Inven/Excel';
+import Profile from "./pages/Profile/Profile";
+import Demo from "./pages/Demo";
+import Navigation from "./components/Nav/Navigation";
+import MyPage from "./pages/MyPage/MyPage";
+
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -21,6 +26,7 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
+          <Route path="/nav" element={<Navigation/>}/>
           <Route path="/Sign" element={<Sign />} />
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/" element={<SignUp />} />
@@ -33,6 +39,9 @@ function App() {
           <Route path="/FindPw" element={<FindPw />} />
           <Route path="/Inven" element={<Inven />} />
           <Route path="/Excel" element={<Excel />} />
+          <Route path="/ProFile" element={<Profile/>}/>
+          <Route path="/MyPage" element={<MyPage/>}/>
+          <Route path="/Demo" element={<Demo/>}/>
         </Routes>
       </Router>
       

@@ -1,5 +1,21 @@
 
 
+
+.noPaddingMargin {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+.aiSearchContainer
+{
+  .aiSearchRow
+  {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 .aiSearchMainCol {
   height: 100vh;
   background-color: lightblue;
@@ -24,7 +40,7 @@
 
 .aiSearchInputGroup
 {
-  margin-top: 3vh;
+  //margin-top: 3vh;
 }
 
 
