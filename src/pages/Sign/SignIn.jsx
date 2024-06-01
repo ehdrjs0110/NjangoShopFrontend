@@ -76,9 +76,8 @@ const SignIn = () => {
     .post("http://localhost:8080/login/kakaoCode", body)
     .then((res) => {
       if(res.data!=null){
-        alert("카카오톡 회원가입 성공!");
         console.log(res.data);
-        //navigate('/Main');
+        navigate('/Main');
       }
     });
 

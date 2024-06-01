@@ -12,9 +12,6 @@ import * as url from "url";
 const Sign = () => {
   const navigate = useNavigate();
 
-  const [isToken, setToken] = useState(0);
-  const [isCode, setCode] = useState("");
-
   const emailsign = () => {
     navigate('/SignUp');
   };
@@ -57,9 +54,9 @@ const Sign = () => {
     .post("http://localhost:8080/login/kakaoCode", body)
     .then((res) => {
       if(res.data!=null){
-        alert("카카오톡 회원가입 성공!");
+        //alert("카카오 계정으로 회원가입 성공!");
         console.log(res.data);
-        //navigate('/Main');
+        navigate('/Main');
       }
     });
 

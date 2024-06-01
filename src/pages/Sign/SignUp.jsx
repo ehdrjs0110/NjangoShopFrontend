@@ -24,66 +24,109 @@ const SignUp = () => {
   //이메일 수정 불가
   const [isRead, setRead] = useState(false);
 
+  //이메일 인증 여부
+  const [isAuth, setAuth] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if(isAuth){  
 
-    const form = e.target;
-    const id = form.elements.id.value;
-    const password = form.elements.password.value;
-   
-    const formData = new FormData();
-    formData.append("id", id);
-    formData.append("password", password);
+      const form = e.target;
+      const email = form.elements.email.value;
+      const password = form.elements.password.value;
+      const nickname = form.elements.nickname.value;
+    
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("name", nickname);
 
-    formData.forEach((value, key) => {
-      console.log("key : " + key + " value : " + value);
-    });
+      // formData.forEach((value, key) => {
+      //   console.log("key : " + key + " value : " + value);
+      // });
 
-  
-    //axios 파일 전송
-    // axios
-    //   .post("localhost:8080/SignUp", formData, {
-    //     headers: {
-    //       "Content-type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     if(res.data==true){
-    //       alert("회원가입 성공 하셨습니다!");
-    //       //페이지 이동
-    //       navigate('/Main');
-    //     }else{
-    //       alert("회원가입 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log("err message : " + err);
-    //     alert("회원가입 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //   });
+      //axios 파일 전송
+      axios
+        .post("http://localhost:8080/api/v1/auth/register", formData, {
+          headers: {
+            "Content-type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          if(res.data!=null){
+            alert("회원가입 성공 하셨습니다!");
+            //페이지 이동
+            navigate('/SignIn');
+          }else{
+            alert("회원가입 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
+          }
+        })
+        .catch((err) => {
+          console.log("err message : " + err);
+          alert("회원가입 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
+        });
+
+    }else {
+      alert("이메일 인증을 진행해주세요.");
+    }
+    
   };
 
-  const sendEmail = () => {
-    setHidden(true);
-    setRead(true);
-
-    console.log(isEmail);
+  const checkEmail = async () => {
     const data = {
       email : isEmail
     };
-  
-    //axios 파일 전송
-    axios
-      .post("http://localhost:8080/mail/send", data)
-      .then((res) => {
+
+    try{
+      const res = await axios.post("http://localhost:8080/api/v1/auth/checkAccount", data);
+        if(res.data){
+          alert("계정이 존재");
+          return false;
+        }else{
+          alert("계정이 없음");
+          return true;
+        }      
+    }catch(err){
+      alert("확인 실패");
+      return false;
+    }
+  };
+
+  const sendEmail = async() => {
+    const checkAccount = await checkEmail();
+
+    if(checkAccount){
+      setHidden(true);
+      setRead(true);
+
+
+      console.log(isEmail);
+      const data = {
+        email : isEmail
+      };
+    
+      try{
+        const res = await axios
+        .post("http://localhost:8080/mail/send", data)
+
         alert("메일 보내기 성공");
         console.log('메일 전송 성공:', res.data); // 성공 시 응답 출력
-      })
-      .catch((err) => {
+        setAuth(true);
+
+      }catch(err){
         console.log("err message : " + err);
-        alert("메일 보내기 실패");
-        setRead(false);
-      });
+          alert("메일 보내기 실패");
+          setRead(false);
+
+      }
+      //axios 파일 전송
+      
+    }else {
+      console.log(isEmail);
+    }
+    
   };
 
   const handleEmail = (e) => {
@@ -134,8 +177,12 @@ const SignUp = () => {
           <Button variant="primary" className={styles.emailbtn} onClick={sendEmail}>인증번호 전송</Button>
           </div>
           <div className={styles.hiddenbox} style={{ display: isHidden ? "block" : "none"}}>  
-            <input type="text" id='emailchk' className={styles.inputbox} onChange={handleCode} placeholder='코드확인'/>
+            <div>
+              <input type="text" id='emailchk' className={styles.inputbox} onChange={handleCode} placeholder='코드확인'/>
+            </div>
+          <div>
             <Button variant="primary" className={styles.emailbtn} onClick={checkCode}>인증코드 확인</Button>
+          </div>
           </div>
           <div className='inputbox'>  
             <input type="password" id='password' className={styles.inputbox} placeholder='비밀번호'/>
@@ -150,7 +197,7 @@ const SignUp = () => {
             <input type="text" id='phone' className={styles.inputbox} placeholder='전화번호'/>
           </div>
           <div className='btnbox'>
-            <input type="submit" className={styles.submitbtn} value={"회원가입"} />
+            <input type="submit" className={styles.submitbtn} value="회원가입" />
           </div>
         </form>
       </div>    
