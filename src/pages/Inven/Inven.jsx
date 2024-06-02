@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import classNames from 'classnames';
 
 import Navigation from '../../components/Nav/Navigation'
+import axios from "axios";
 
 import styles from '../../styles/Inven/Inven.module.scss'
 
@@ -14,9 +15,61 @@ import Col from 'react-bootstrap/Col';
 
 
 function Inven() {
+  
   const navigate = useNavigate();
 
-  const items = Array(10).fill(0);
+  //페이지 변화
+  const [isChange, setChange] = useState(false);
+  //재료 데이터
+  const [isData, setData] = useState([]);
+
+
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+
+      const params = { userid:"ehdrjs0110"};
+
+      try{
+        const res = await axios.get("http://localhost:8080/inven/manage", {params});
+        console.log(res.data);
+        setData(res.data);
+
+      }catch(err){
+        console.log("err message : " + err);
+      }
+    }
+
+    fetchData();
+
+  }, [isChange]);
+
+  const addData = async () => {
+
+    const data = { 
+      userid : "ehdrjs0110",
+      ingredientname : "오이",
+      size : "없음",
+      count : 0,
+      dateofuse :"",
+      lastuse :"",
+      lastget :"",
+      memo : ""
+    };
+
+    try{
+      console.log(data);
+      const res = await axios.post("http://localhost:8080/inven/manage/add", {data});
+      console.log(res.data);
+      setData(res.data);
+      setChange(!isChange);
+
+    }catch(err){
+      console.log("err message : " + err);
+    }
+
+  };
 
   const excelmode = () => {
     navigate('/Excel');
@@ -49,48 +102,8 @@ function Inven() {
           </Row>
           <Row className={styles.contentRow}>
             <Col md={{span: 10, offset: 1}} className={styles.content}>
-              <Row className={`${styles.line} ${styles.odd}`}>
-                <Col>
-                  <h3 className={styles.title}>양파</h3>
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="secondary">없음</Button>
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="warning">적음</Button>
-                  <Button className={styles.btn} variant="primary">적당함</Button>
-                  <Button className={styles.btn} variant="success" disabled>많음</Button>
-                </Col>
-                <Col>
-                  <p className={styles.text}>수량</p>
-                  <Form.Control type="number" className={styles.count} placeholder="8" />
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="danger">삭제</Button>
-                </Col>
-              </Row>
-              <Row className={`${styles.line} ${styles.even}`}>
-                <Col>
-                  <h3 className={styles.title}>대파</h3>
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="secondary">없음</Button>
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="warning">적음</Button>
-                  <Button className={styles.btn} variant="primary" disabled>적당함</Button>
-                  <Button className={styles.btn} variant="success">많음</Button>
-                </Col>
-                <Col>
-                  <p className={styles.text}>수량</p>
-                  <Form.Control type="number" className={styles.count} placeholder="5" />
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="danger">삭제</Button>
-                </Col>
-              </Row>
 
-              {items.map((_, index) => {
+              {isData.map((item, index) => {
                 // 클래스 네임 결합
                 const combinedClassName = classNames(
                   index % 2 === 0 ? styles.odd : styles.even,
@@ -101,7 +114,7 @@ function Inven() {
                   <div key={index} className="item">
                     <Row className={combinedClassName}>
                       <Col>
-                        <h3 className={styles.title}>마늘</h3>
+                        <h3 className={styles.title}>{item.ingredientname}</h3>
                       </Col>
                       <Col>
                         <Button className={styles.btn} variant="secondary" disabled>없음</Button>
@@ -113,7 +126,7 @@ function Inven() {
                       </Col>
                       <Col>
                         <p className={styles.text}>수량</p>
-                        <Form.Control type="number" className={styles.count} placeholder="0" />
+                        <Form.Control type="number" className={styles.count} placeholder="0" value={item.count} />
                       </Col>
                       <Col>
                         <Button className={styles.btn} variant="danger">삭제</Button>
@@ -122,6 +135,8 @@ function Inven() {
                   </div>
                 );
               })}
+
+              <Button variant="primary" onClick={addData}>+</Button>
 
             </Col>
           </Row>
