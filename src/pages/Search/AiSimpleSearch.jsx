@@ -9,11 +9,12 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import aiSimpleCss from '../../styles/Search/AiSimpleSearch.module.scss';
 import axios from "axios";
-import {isNumber} from "@mui/x-data-grid/internals";
+import {useNavigate} from "react-router-dom";
+
 
 
 
@@ -27,9 +28,16 @@ const AiSimpleSearch = () => {
     // 레시피 갯수
     const [recipeCount, setRecipeCount] = useState("5");
     var myIngredientList = ["양파", "당근","마늘","파","가지","사과","토마토","김치"];
+    const navigate = useNavigate();
 
 
 
+    useEffect(() => {
+        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
+        if (storedRecipe) {
+            setRecipe(JSON.parse(storedRecipe));
+        }
+    }, []);
     // 레시피 갯수 입력받기
     const recipeHendler = (event) => {
         const {value} = event.target;
@@ -141,6 +149,16 @@ const AiSimpleSearch = () => {
 
         console.log(recipesList);
         setRecipe(recipesList);
+        sessionStorage.setItem("recipeSimpleSearchList",JSON.stringify(recipesList));
+    }
+
+
+    // 레시피 상세 보기로 값 넘겨주가
+
+    const startDetailAiSearch = (recipe) =>
+    {
+        navigate('/AiDetailSearch', { state: { recipe } }); // 레시피 전달
+
     }
 
 
@@ -150,8 +168,19 @@ const AiSimpleSearch = () => {
         if (recipe != null)
         {
             return recipe.map((recipe, index) => (
-                <Card key={index}>
-                    <Card.Header>{JSON.stringify(recipe.요리제목)}</Card.Header>
+                <Card className={aiSimpleCss.recipeCard} key={index}>
+                    <Card.Header>
+                        <Row xs={1} md={2}>
+                            <Col className={aiSimpleCss.recipeTitleCol}>
+                                {JSON.stringify(recipe.요리제목)}
+                            </Col>
+                            <Col className={aiSimpleCss.recipeDetailSearchCol}>
+                                <Button className={aiSimpleCss.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe)}>
+                                    상세보기
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card.Header>
                     <Card.Body>
                         <Card.Text>
                             <strong>재료:</strong> {JSON.stringify(recipe.재료)}
@@ -163,6 +192,7 @@ const AiSimpleSearch = () => {
                 </Card>
             ));
         }
+
 
         return null;
 

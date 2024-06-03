@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -15,6 +15,7 @@ import Navigation from '../../components/Nav/Navigation'
 
 import styles from '../../styles/Search/AiSearch.module.scss';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -30,7 +31,6 @@ function CustomToggle({ children, eventKey }) {
     return (
         <button
             type="button"
-            style={{ backgroundColor: 'pink' }}
             onClick={decoratedOnClick}
         >
             {children}
@@ -45,9 +45,18 @@ const AiSearch = () => {
     const [recipe, setRecipe] = useState(null);
     const [searchValue, setSearchValue] = useState("");
     const [selectedKindOfFood, setSelectedKindOfFood] = useState([]);
+    const navigate = useNavigate();
 
     const [selectedMyIngredientList, setSelectedMyIngredientList] = useState([]);
     // const [allergyFood, setAllergyFood] = useState([])
+
+
+    useEffect(() => {
+        const storedRecipe = sessionStorage.getItem("recipeList");
+        if (storedRecipe) {
+            setRecipe(JSON.parse(storedRecipe));
+        }
+    }, []);
 
 
     // 테스트 데이터
@@ -225,6 +234,7 @@ const AiSearch = () => {
 
         console.log(recipesList);
         setRecipe(recipesList);
+        sessionStorage.setItem("recipeList",JSON.stringify(recipesList));
     }
 
 
@@ -234,8 +244,19 @@ const AiSearch = () => {
         if (recipe != null)
         {
             return recipe.map((recipe, index) => (
-                <Card key={index}>
-                    <Card.Header>{JSON.stringify(recipe.요리제목)}</Card.Header>
+                <Card className={styles.recipeCard} key={index}>
+                    <Card.Header>
+                        <Row xs={1} md={2}>
+                            <Col className={styles.recipeTitleCol}>
+                                {JSON.stringify(recipe.요리제목)}
+                            </Col>
+                            <Col className={styles.recipeDetailSearchCol}>
+                                <Button className={styles.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe)}>
+                                        상세보기
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card.Header>
                     <Card.Body>
                         <Card.Text>
                             <strong>재료:</strong> {JSON.stringify(recipe.재료)}
@@ -257,6 +278,15 @@ const AiSearch = () => {
         setSearchValue(value);
     }
 
+
+    // 레시피 상세 보기로 값 넘겨주가
+
+    const startDetailAiSearch = (recipe) =>
+    {
+        navigate('/AiDetailSearch', { state: { recipe } }); // 레시피 전달
+
+    }
+
     return (
         <>
             <Navigation/>
@@ -268,7 +298,7 @@ const AiSearch = () => {
                     {/*<Col xs="0" lg="1"   className="ai-search-col">*/}
                     {/*    1 of 3*/}
                     {/*</Col>*/}
-                    <Col  style={{backgroundColor:"lightgrey", paddingLeft:0, paddingRight:0}} md={{ span: 10, offset: 1 }} >
+                    <Col  style={{backgroundColor:"snow", paddingLeft:0, paddingRight:0}} md={{ span: 10, offset: 1 }} >
                         {/*레시피 명 입력 지작점*/}
                         <div  style={{padding:0}}>
                             <InputGroup style={{padding:0}} className={styles.aiSearchInputGroup}>
@@ -288,7 +318,7 @@ const AiSearch = () => {
                         {/*레시피 명 입력 종료점*/}
 
                         {/*레시피 옵션 시작점*/}
-                        <div>
+                        <div className={styles.aiSearchOptionContainer}>
                             <Accordion defaultActiveKey="0" alwaysOpen style={{ paddingRight: '0', paddingLeft: '0', width:'100%'}}>
                                 <Card  className>
                                     <Card.Header className={styles.aiSearchOptionButton}>
@@ -332,23 +362,9 @@ const AiSearch = () => {
 
 
                         {/*레시피 검색 결과 시작점*/}
-                        <div>
-                            {/*<Card border="secondary" style={{ width: '100%' }}>*/}
-                                {/*<Card.Header>된장찌개</Card.Header>*/}
-                                {/*<Card.Body>*/}
-                                {/*    <Card.Title>재료</Card.Title>*/}
-                                {/*    <Card.Text>*/}
-                                {/*       양파 반개, 두무 반모, 파, 된장, 마늘*/}
-                                {/*    </Card.Text>*/}
-                                {/*    <Card.Title>레시피</Card.Title>*/}
-                                {/*    <Card.Text>*/}
-                                {/*        Some quick example text to build on the card title and make up the*/}
-                                {/*        bulk of the card's content.*/}
-                                {/*    </Card.Text>*/}
-                                {/*</Card.Body>*/}
-                                {/*{recipe && recipeResponce}*/}
+                        <div className={styles.recipeContainer}>
+
                             {recipeResponce()}
-                            {/*</Card>*/}
                         </div>
                         {/*/!*레시피 검색 결과 종료점*!/*/}
 

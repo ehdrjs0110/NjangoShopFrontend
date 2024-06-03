@@ -17,6 +17,7 @@ import Profile from "./pages/Profile/Profile";
 import Demo from "./pages/Demo";
 import Navigation from "./components/Nav/Navigation";
 import MyPage from "./pages/MyPage/MyPage";
+import AiDetailSearch from "./pages/Search/AiDetailSearch";
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,6 +36,7 @@ function App() {
           <Route path="/Logout" element={<Logout/>}/>
           <Route path="/AiSearch" element={<AiSearch/>} />
           <Route path="/AiSimpleSearch" element={<AiSimpleSearch/>} />
+          <Route path="/AiDetailSearch" element={<AiDetailSearch/>}/>
           <Route path="/FindId" element={<FindId />} />
           <Route path="/FindPw" element={<FindPw />} />
           <Route path="/Inven" element={<Inven />} />
@@ -42,6 +44,7 @@ function App() {
           <Route path="/ProFile" element={<Profile/>}/>
           <Route path="/MyPage" element={<MyPage/>}/>
           <Route path="/Demo" element={<Demo/>}/>
+
         </Routes>
       </Router>
       

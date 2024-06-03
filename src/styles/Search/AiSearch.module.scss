@@ -1,57 +1,94 @@
 
 
 
-.noPaddingMargin {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-
 .aiSearchContainer
 {
   .aiSearchRow
   {
     margin-left: 0;
     margin-right: 0;
+    .aiSearchInputGroup
+    {
+      height: 60px;
+      // 검색버튼
+      .aiSearchButton
+      {
+
+      }
+    }
   }
 }
 
-.aiSearchMainCol {
-  height: 100vh;
-  background-color: lightblue;
-  //box-sizing: border-box;
+
+
+
+
+// 옵션 토글 버튼
+
+.aiSearchOptionContainer
+{
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  .aiSearchOptionButton
+  {
+
+
+  }
 }
 
-.aiSearchOptionButtonContainer
-{
-  //padding: 0;
-  //padding-left: 100%;
-  //padding-right: 100%;
-  //box-sizing: border-box;
-  //contain: layout;
-  //position: relative;
 
-  .aiSearchOptionButton{
-    //padding-left: 93%;
-    //right: 0;
+// 레시피 보여주기
+.recipeContainer
+{
+
+  .recipeCard
+  {
+    margin-bottom: 2vh;
+
+    // 레시피 제목 부분
+    .recipeTitleCol
+    {
+      text-align: center;
+      font-size: 1.5rem;
+
+    }
+
+    // 레시피 상세보기 버튼 부분
+    .recipeDetailSearchCol
+    {
+      text-align: right;
+      //text-align: center;
+
+      .recipeDetailSearchButton
+      {
+        width: 70%;
+      }
+    }
   }
 
+
 }
 
-.aiSearchInputGroup
+
+// 부트스트랩 기준 md: 중형 (Medium, ≥768px)
+@media (max-width: 767px)
 {
-  //margin-top: 3vh;
+
+  // 레시피 상세보기 버튼 부분
+  .recipeDetailSearchCol .recipeDetailSearchButton
+  {
+    background-color: #CBECFF;
+    margin-left: 0;
+    padding-left: 0;
+    flex-grow: 1;
+  }
+
+  .recipeDetailSearchCol {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+
+
+
 }
-
-
-.aiSearchButton
-{
-  //margin-top: 1vh;
-}
-
-.aiSearchOptionButton
-{
-  //margin-right: 100%;
-
-}
-
