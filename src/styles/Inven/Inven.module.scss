@@ -107,4 +107,38 @@
         /* 그림자 효과 */
     }
 
+    .addline {
+        margin: 0 auto;
+        width: 95%;
+        display: flex;
+        padding: 5px;
+        margin-bottom: 5px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background-color: lightslategray;
+
+        .ingredientname {
+
+        }
+        
+        .text {
+            color: #fff;
+            display: inline-block;
+            margin: 0;
+        }
+    
+        .btn {
+            margin: 5px;
+        }
+    
+        .count {
+            margin-left: 10px;
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+        }
+    }
+    
+
 }
