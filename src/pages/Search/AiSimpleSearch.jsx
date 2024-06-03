@@ -9,7 +9,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useLocation } from 'react-router-dom';
 
 import aiSimpleCss from '../../styles/Search/AiSimpleSearch.module.scss';
@@ -21,6 +21,8 @@ import {useNavigate} from "react-router-dom";
 
 
 const AiSimpleSearch = () => {
+    const navigate = useNavigate();
+
 
     // 선택한 재료
     const [selectedIngredientList, setSelectedIngredientList] = useState([]);
@@ -34,6 +36,27 @@ const AiSimpleSearch = () => {
     const state = useLocation();
     console.table(state);
 
+    useEffect(() => {
+        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
+        if (storedRecipe) {
+            setRecipe(JSON.parse(storedRecipe));
+        }
+    }, []);
+    // 레시피 갯수 입력받기
+    const recipeHendler = (event) => {
+        const {value} = event.target;
+        console.log(typeof value);
+        console.log(value);
+        if(Number(value) <= 5){
+            console.log("검색가능");
+            setRecipeCount(value);
+        }
+        else {
+            console.error("검색 불가능");
+        }
+
+
+    }
 
     // UI = 냉장고 속 재료 보여주기
     const  makeMyIngredientList = () => {
