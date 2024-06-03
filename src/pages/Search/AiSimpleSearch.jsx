@@ -10,6 +10,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import React, {useState} from "react";
+import { useLocation } from 'react-router-dom';
 
 import aiSimpleCss from '../../styles/Search/AiSimpleSearch.module.scss';
 import axios from "axios";
@@ -22,7 +23,9 @@ const AiSimpleSearch = () => {
     const [selectedIngredientList, setSelectedIngredientList] = useState([]);
     var myIngredientList = ["양파", "당근","마늘","파","가지","사과","토마토","김치"];
 
-
+    //inven에서 가져온 값
+    const state = useLocation();
+    console.table(state);
 
 
     // UI = 냉장고 속 재료 보여주기
