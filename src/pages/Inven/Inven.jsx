@@ -15,8 +15,7 @@ import Col from 'react-bootstrap/Col';
 
 
 function Inven() {
-  
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
   //페이지 변화
   const [isChange, setChange] = useState(false);
@@ -283,12 +282,12 @@ function Inven() {
                 );
               })}
 
-            </Col>
-          </Row>
-        </div>
-        </Container>
-    </>
-  );
+                        </Col>
+                    </Row>
+                </div>
+            </Container>
+        </>
+    );
 }
 
 export default Inven;

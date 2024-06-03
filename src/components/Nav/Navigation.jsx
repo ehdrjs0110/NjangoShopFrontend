@@ -10,7 +10,7 @@ function Navigation() {
   return (
     <>
 
-      <Navbar bg="light" data-bs-theme="light">
+      <Navbar bg="light" data-bs-theme="light" >
         <Container>
           <Navbar.Brand href="#home">Njango(logo)</Navbar.Brand>
           <Nav className="me-auto">
