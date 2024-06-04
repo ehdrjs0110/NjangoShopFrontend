@@ -217,9 +217,9 @@ function Inven() {
                     <Form.Control type="text" placeholder="재료검색" />
                   </div>
                   <Button className={styles.serchbtn} variant="primary">검색</Button>
-                  <Button className={styles.btn} onClick={excelmode} variant="dark">전문가 모드</Button>
-                  <Button className={styles.btn} onClick={cookmode} variant="light">나의 재료로 요리하기</Button>
-                  <Button className={styles.btn} onClick={updateData} variant="primary">일괄 저장</Button>
+                  <Button className={styles.btn} onClick={excelmode} variant="none">전문가 모드</Button>
+                  <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
+                  <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
                 </Col>
               </Row>
             </Col>
@@ -235,16 +235,16 @@ function Inven() {
                   <Button className={styles.btn} variant="secondary" onClick={setSize} value={"없음"} disabled={isClickSize==="없음"} >없음</Button>
                 </Col>
                 <Col>
-                  <Button className={styles.btn} variant="primary" onClick={setSize} value={"적음"} disabled={isClickSize==="적음"} >적음</Button>
-                  <Button className={styles.btn} variant="primary" onClick={setSize} value={"적당함"} disabled={isClickSize==="적당함"} >적당함</Button>
-                  <Button className={styles.btn} variant="primary" onClick={setSize} value={"많음"} disabled={isClickSize==="많음"} >많음</Button>
+                  <Button className={styles.btn} variant="none" onClick={setSize} value={"적음"} disabled={isClickSize==="적음"} >적음</Button>
+                  <Button className={styles.btn} variant="none" onClick={setSize} value={"적당함"} disabled={isClickSize==="적당함"} >적당함</Button>
+                  <Button className={styles.btn} variant="none" onClick={setSize} value={"많음"} disabled={isClickSize==="많음"} >많음</Button>
                 </Col>
                 <Col>
                   <p className={styles.text}>수량</p>
                   <Form.Control type="number" className={styles.count} onChange={setCount} placeholder="0"/>
                 </Col>
                 <Col>
-                <Button className={styles.btn} variant="primary" onClick={addData}>추가</Button>
+                <Button className={styles.btn} variant="none" onClick={addData}>추가</Button>
                 </Col>
               </Row>
 
@@ -266,9 +266,9 @@ function Inven() {
                         <Button className={styles.btn} variant="secondary" value={"없음"} disabled={item.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
                       </Col>
                       <Col>
-                        <Button className={styles.btn}  variant="primary" value={"적음"} disabled={item.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
-                        <Button className={styles.btn} variant="primary" value={"적당함"} disabled={item.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
-                        <Button className={styles.btn} variant="primary" value={"많음"} disabled={item.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
+                        <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
+                        <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
+                        <Button className={styles.btn} variant="none" value={"많음"} disabled={item.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
                       </Col>
                       <Col>
                         <p className={styles.text}>수량</p>

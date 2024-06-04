@@ -17,7 +17,7 @@
 
 .controller {
     height: 100%;
-    background-color: lightblue;
+    background-color: #F3E8E2;
     //padding: 20px;
 
     .controllerRow1{
@@ -56,7 +56,7 @@
 }
 
 .content {
-    background-color: lightcyan;
+    background-color: #FFFDFD;
     //padding: 20px;
     height: 100%;
     overflow-y: auto;
@@ -73,6 +73,7 @@
 
         .title {
             font-weight: bold;
+            color: #516A6F;
         }
 
         .text {
@@ -82,6 +83,9 @@
     
         .btn {
             margin: 5px;
+            background-color: #fca85b;
+            color : #FFF;
+            font-weight: bold;
         }
     
         .count {
@@ -93,11 +97,11 @@
     }
 
     .odd {
-        background-color: lightskyblue;
+        background-color: #f2ece8;
     }
 
     .even {
-        background-color: lightblue;
+        background-color: #f2ece8;
     }
 
     .line:hover {
@@ -116,7 +120,7 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-        background-color: lightslategray;
+        background-color: #666E63;
 
         .ingredientname {
 
@@ -130,6 +134,9 @@
     
         .btn {
             margin: 5px;
+            background-color: #fca85b;
+            color : #FFF;
+            font-weight: bold;
         }
     
         .count {
