@@ -9,24 +9,54 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useLocation } from 'react-router-dom';
 
 import aiSimpleCss from '../../styles/Search/AiSimpleSearch.module.scss';
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
+
 
 
 
 
 const AiSimpleSearch = () => {
+    const navigate = useNavigate();
 
+
+    // 선택한 재료
     const [selectedIngredientList, setSelectedIngredientList] = useState([]);
+    // 레시피 답변
+    const [recipe, setRecipe] = useState(null);
+    // 레시피 갯수
+    const [recipeCount, setRecipeCount] = useState("5");
     var myIngredientList = ["양파", "당근","마늘","파","가지","사과","토마토","김치"];
 
     //inven에서 가져온 값
     const state = useLocation();
     console.table(state);
 
+    useEffect(() => {
+        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
+        if (storedRecipe) {
+            setRecipe(JSON.parse(storedRecipe));
+        }
+    }, []);
+    // 레시피 갯수 입력받기
+    const recipeHendler = (event) => {
+        const {value} = event.target;
+        console.log(typeof value);
+        console.log(value);
+        if(Number(value) <= 5){
+            console.log("검색가능");
+            setRecipeCount(value);
+        }
+        else {
+            console.error("검색 불가능");
+        }
+
+
+    }
 
     // UI = 냉장고 속 재료 보여주기
     const  makeMyIngredientList = () => {
@@ -44,6 +74,10 @@ const AiSimpleSearch = () => {
             />)
         return checkLsit;
     }
+
+
+
+
 
     // Logic = 선택한 재료 정리, selectedIngredientList에 반영
     const selectIngredient = (ingredient) => {
@@ -66,10 +100,25 @@ const AiSimpleSearch = () => {
 
 
 
+    // prompt 요청
     async function aiSearchRequest () {
-        const requestBody = {"userContent" : "찌개 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 대해서는 130글자 내로 간략하게 알려줘 새우는 들어가면 안돼 두부는 2개 있어 형태는 요리제목,재료,과정으로 알려줘"};
+        console.log("selectedMyIngredientList" + selectedIngredientList);
+        // console.log();
+        console.log(recipeCount);
+
+        if(recipeCount == null || Number(recipeCount) <= 0 )
+        {
+            setRecipeCount("1");
+        }
+
+
+        console.log("요청 중");
+        const requestBody = {"userContent" : ` ${selectedIngredientList}를 이용한 레시피를 ${recipeCount}개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
+                `대해서는 130글자 내로 간략하게 알려줘  ${myIngredientList}가 있어 형태는 요리제목,재료,과정으로 알려줘` +
+                `그리고 json 객체로 {0:[요리 1], ...} 형태로 ${recipeCount}갯수로 참고로 키는 무조건 숫자여야해 보내줘`};
+        let searchResponse;
         try {
-            const searchResponse = await axios.post(
+            searchResponse = await axios.post(
                 "http://localhost:8080/api/v1/chat-gpt",
                 requestBody,
                 {
@@ -78,11 +127,79 @@ const AiSimpleSearch = () => {
                     },
                 }
             )
+
         } catch (e) {
             console.error(e);
         }
+
+        let response = searchResponse.data.choices[0].message.content;
+
+        console.log(recipeCount);
+
+        console.log("최종 응답");
+
+        console.log(response);
+
+        // ```json과 ```를 제거하는 코드
+        const cleanString = response.replace(/```json|```/g, '').trim();
+
+        // JSON 문자열을 JavaScript 객체로 변환
+        const recipes = JSON.parse(cleanString);
+
+        console.log("JavaScript 객체를 콘솔에 출력");
+        console.log(recipes);
+        const recipesList =  Object.values(recipes);
+
+        console.log(recipesList);
+        setRecipe(recipesList);
+        sessionStorage.setItem("recipeSimpleSearchList",JSON.stringify(recipesList));
     }
 
+
+    // 레시피 상세 보기로 값 넘겨주가
+
+    const startDetailAiSearch = (recipe) =>
+    {
+        navigate('/AiDetailSearch', { state: { recipe } }); // 레시피 전달
+
+    }
+
+
+    // recipe UI
+    function recipeResponce()
+    {
+        if (recipe != null)
+        {
+            return recipe.map((recipe, index) => (
+                <Card className={aiSimpleCss.recipeCard} key={index}>
+                    <Card.Header>
+                        <Row xs={1} md={2}>
+                            <Col className={aiSimpleCss.recipeTitleCol}>
+                                {JSON.stringify(recipe.요리제목)}
+                            </Col>
+                            <Col className={aiSimpleCss.recipeDetailSearchCol}>
+                                <Button className={aiSimpleCss.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe)}>
+                                    상세보기
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card.Header>
+                    <Card.Body>
+                        <Card.Text>
+                            <strong>재료:</strong> {JSON.stringify(recipe.재료)}
+                        </Card.Text>
+                        <Card.Text>
+                            <strong>과정:</strong> {JSON.stringify(recipe.과정)}
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+            ));
+        }
+
+
+        return null;
+
+    }
 
 
 
@@ -134,12 +251,14 @@ const AiSimpleSearch = () => {
                             <InputGroup>
                                 <InputGroup.Text id="basic-addon1">레시피 개수</InputGroup.Text>
                                 <Form.Control
-                                    placeholder="기본: 5"
                                     aria-label="Recipient's username"
                                     aria-describedby="basic-addon2"
                                     className="ai-search-input"
+                                    onChange={recipeHendler}
+                                    value={recipeCount}
+
                                 />
-                                <Button variant="outline-secondary" id="button-addon2" className={styles.aiSearchButton}>
+                                <Button variant="outline-secondary" id="button-addon2" className={styles.aiSearchButton} onClick={aiSearchRequest}>
                                     검색
                                 </Button>
                             </InputGroup>
@@ -149,20 +268,7 @@ const AiSimpleSearch = () => {
 
                         {/*레시피 결과 리스트 시작점*/}
                         <div className={aiSimpleCss.aiSearchListContainer}>
-                            <Card border="secondary" style={{ width: '100%' }}>
-                                <Card.Header>된장찌개</Card.Header>
-                                <Card.Body>
-                                    <Card.Title>재료</Card.Title>
-                                    <Card.Text>
-                                        양파 반개, 두무 반모, 파, 된장, 마늘
-                                    </Card.Text>
-                                    <Card.Title>레시피</Card.Title>
-                                    <Card.Text>
-                                        Some quick example text to build on the card title and make up the
-                                        bulk of the card's content.
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
+                            {recipeResponce()}
                         </div>
                         {/*레시피 결과 리스트 종료점*/}
 

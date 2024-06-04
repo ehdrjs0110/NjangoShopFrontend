@@ -17,8 +17,8 @@
 
 .controller {
     height: 100%;
-    background-color: lightblue;
-    padding: 20px;
+    background-color: #F3E8E2;
+    //padding: 20px;
 
     .controllerRow1{
         height: 30%;
@@ -72,6 +72,7 @@
 
         .title {
             font-weight: bold;
+            color: #516A6F;
         }
 
         .text {
@@ -81,6 +82,9 @@
     
         .btn {
             margin: 5px;
+            background-color: #fca85b;
+            color : #FFF;
+            font-weight: bold;
         }
     
         .count {
@@ -91,7 +95,17 @@
         }
     }
 
+    .odd {
+        background-color: #f2ece8;
+    }
 
+    .even {
+        background-color: #f2ece8;
+    }
+
+    .select {
+        border: 1px solid black;
+    }
 
     .line:hover {
         transform: translateY(-2px);
@@ -109,7 +123,7 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-        background-color: lightslategray;
+        background-color: #666E63;
 
         .ingredientname {
 
@@ -123,6 +137,9 @@
     
         .btn {
             margin: 5px;
+            background-color: #fca85b;
+            color : #FFF;
+            font-weight: bold;
         }
     
         .count {
