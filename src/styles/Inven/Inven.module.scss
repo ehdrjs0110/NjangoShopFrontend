@@ -56,7 +56,6 @@
 }
 
 .content {
-    background-color: lightcyan;
     padding: 20px;
     height: 100%;
     overflow-y: auto;
@@ -92,13 +91,7 @@
         }
     }
 
-    .odd {
-        background-color: lightskyblue;
-    }
 
-    .even {
-        background-color: lightblue;
-    }
 
     .line:hover {
         transform: translateY(-2px);
