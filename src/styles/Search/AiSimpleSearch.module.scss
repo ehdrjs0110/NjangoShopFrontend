@@ -1,23 +1,95 @@
+@import '../index.scss';
 
 
-.aiSearchMainCol {
+.aiSimpleSearchContiner{
   height: 100%;
-  background-color: lightblue;
-  //box-sizing: border-box;
+
+  .aiSimpleSearchContinerRow{
+    background-color: $bg-color;
+
+    .aiSearchMainCol {
+      height: 100%;
+      background-color: #FFFFFF;
+      //box-sizing: border-box;
+    }
+  }
+
 }
+
 
 // 내 재료 선택 영역
 .myIngredientContainer{
 
+  padding: 0;
+
+  .title{
+
+    font-size: 1.5rem;
+
+  }
+
   .myIngredientCard {
     width: 100%;
   }
+
+  .check{
+    input[type="checkbox"] {
+      /* Hide the default checkbox */
+      display: none;
+    }
+
+
+    /* Container for checkbox and label */
+    label {
+      display: flex; /* Use flexbox for alignment */
+      align-items: center; /* Center vertically */
+    }
+
+    input[type="checkbox"] + label::before {
+      /* Style the custom checkbox */
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      //border: 1px solid $accent-color;/* Use your primary color */
+      border: 1px solid $p-color;/* Use your primary color */
+
+      background-color: transparent;
+      border-radius: 3px;
+    }
+
+    input[type="checkbox"]:checked + label::before {
+      /* Change the background color when the checkbox is checked */
+      //background-color: $accent-color; /* Use your primary color */
+      background-color: $p-color; /* Use your primary color */
+      //border: 1px solid $p-color;/* Use your primary color */
+    }
+  }
+
 
 }
 
 
 // 선택된 재료 영역
 .checkedIngredientContainer{
+  margin-top: 2vh;
+
+
+  .card {
+    background-color: $accent-color;
+    color: #FFFFFF;
+  }
+
+  .title{
+    font-size: 2rem;
+    border-bottom: #FFFFFF solid 2px;
+  }
+
+  .list {
+    font-size: 1.3rem;
+  }
+
 
 }
 
@@ -26,21 +98,43 @@
 .aiSearchNumberContainer{
   margin-top: 2vh;
   margin-bottom: 2vh;
+
+  .inputGroup{
+    background-color: $p-color;
+  }
+
+  .aiSearchButton{
+    background-color: $p-color;
+
+  }
 }
+
 
 
 // 레시피 결과 리스트 영역
 .aiSearchListContainer{
 
+
+
+
   .recipeCard
   {
+    border: solid 2px $accent-color;
     margin-bottom: 2vh;
+
+    .hearder
+    {
+      background-color: #FFFFFF;
+
+    }
 
     // 레시피 제목 부분
     .recipeTitleCol
     {
-      text-align: center;
+      //text-align: center;
       font-size: 1.5rem;
+      //color: $p-font-color;
+
 
     }
 
@@ -52,9 +146,32 @@
 
       .recipeDetailSearchButton
       {
-        width: 70%;
+        width: 20%;
+        //background-color: $p-color;
+        border: solid 3px $p-color;
+        color: black;
+        font-weight: 2rm;
       }
+
+      .recipeDetailSearchButton:hover
+      {
+        background-color: $p-color;
+        border: solid 3px $p-color;
+        color: black;
+        font-weight: 2rm;
+
+      }
+
+
     }
+
+
+    .recipeText
+    {
+      color: $p-font-color;
+    }
+
+
   }
 
 }
@@ -62,11 +179,20 @@
 // 부트스트랩 기준 md: 중형 (Medium, ≥768px)
 @media (max-width: 767px)
 {
+  // 레시피 제목 부분
+  .recipeTitleCol
+  {
+    text-align: center;
+    font-size: 1.5rem;
+    //color: $p-font-color;
+
+
+  }
 
   // 레시피 상세보기 버튼 부분
   .recipeDetailSearchCol .recipeDetailSearchButton
   {
-    background-color: #CBECFF;
+    //background-color: #CBECFF;
     margin-left: 0;
     padding-left: 0;
     flex-grow: 1;

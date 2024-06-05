@@ -22,7 +22,7 @@ import {
 import {useLocation} from "react-router-dom";
 import axios from "axios";
 
-
+import styles from '../../styles/Search/AiDetailSearch.module.scss';
 
 
 const AiDetaileSearch = () => {
@@ -61,8 +61,8 @@ const AiDetaileSearch = () => {
     function makeIngredient () {
         return Object.entries(ingredientObject).map(([key, value], index) => (
             <Row key={index} xs={2} md={2} lg={2}>
-                <Col>{key}</Col>
-                <Col style={{textAlign: "right"}}>{value}</Col>
+                <Col  className={styles.listText}>{key}</Col>
+                <Col  className={styles.listText} >{value}</Col>
             </Row>
         ));
     }
@@ -73,24 +73,24 @@ const AiDetaileSearch = () => {
             return (
                 <div>
 
-                    <FontAwesomeIcon icon={faStar} style={{fontSize: "0.8rem"}}/>
+                    <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
                 </div>
             )
         }
         else if (level == 2 ) {
             return (
                 <div>
-                    <FontAwesomeIcon icon={faStar} style={{fontSize: "0.8rem"}}/>
-                    <FontAwesomeIcon icon={faStar} style={{fontSize: "0.8rem"}}/>
+                    <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
+                    <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
                 </div>
             )
         }
         else {
             return (
                 <div>
-                    <FontAwesomeIcon icon={faStar} style={{fontSize: "0.8rem"}}/>
-                    <FontAwesomeIcon icon={faStar} style={{fontSize: "0.8rem"}}/>
-                    <FontAwesomeIcon icon={faStar} style={{fontSize: "0.8rem"}}/>
+                    <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
+                    <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
+                    <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
                 </div>
             )
         }
@@ -210,19 +210,19 @@ const AiDetaileSearch = () => {
         if(detailRecipe != null)
         {
             return detailRecipe.map((recipe,index) => (
-                <div key={index}>
+                <div key={index} className={styles.detailRecipeCard} >
                     <Row>
-                        <Col style={{padding:0}}>
+                        <Col className={styles.numberCol}>
                             <div>
-                                <Card style={{height: "100%", textAlign:"center"}}>
-                                    {index}
+                                <Card className={styles.index}>
+                                        {index}
                                 </Card>
                             </div>
 
                         </Col>
-                        <Col xs={11} style={{}}>
-                            <Card style={{ width: '100%',border:"0",padding:"0" }}>
-                                <Card.Body style={{border:"0",padding:"0 "}}>
+                        <Col className={styles.recipeCol} xs={11}>
+                            <Card className={styles.card}>
+                                <Card.Body className={styles.body}>
                                     <Card.Title>{recipe[0].과정제목}</Card.Title>
                                     <Card.Text>
                                         {recipe[1].과정}
@@ -250,43 +250,44 @@ const AiDetaileSearch = () => {
         <>
             <Navigation />
             <div>
-                <Container fluid style={{padding:0}} >
-                    <Row style={{ backgroundColor: "lightblue", height: "100vh" ,paddingLeft:0, paddingRight:0}}>
-                        <Col style={{ backgroundColor: "white", paddingLeft: 0, paddingRight: 0 }} md={{ span: 10, offset: 1 }}>
+                <Container fluid style={{padding:0,height:"100%"}} className={styles.AiDetaileSearchContainer}>
+                    <Row className={styles.AiDetaileSearchRow} style={{ paddingLeft:0, paddingRight:0}}>
+                        <Col className={styles.col} style={{paddingLeft: 0, paddingRight: 0 }} md={{ span: 10, offset: 1 }}>
                             <Col md={{ span:  8, offset: 2 }} >
-                                <Card style={{height: "100vh"}}>
+                                <Card className={styles.contentContainer} >
                                     <Card.Body>
-                                        <Card.Title>
+                                        <Card.Title className={styles.upperHalfContain}>
                                             <Row xs={2} md={2} lg={2}>
-                                                <Col>
+                                                <Col className={styles.titleCol}>
                                                     {recipyTitle}
+                                                    <div  className={styles.bottomLine}></div>
                                                 </Col>
-                                                <Col>
-                                                    <Button variant="outline-secondary">
-                                                        <FontAwesomeIcon icon={faHeart} />
+                                                <Col className={styles.iconCol}>
+                                                    <Button  className={styles.iconButton} variant="outline-secondary">
+                                                        <FontAwesomeIcon className={styles.icon} icon={faHeart} />
                                                     </Button>{' '}
-                                                    <Button variant="outline-secondary">
-                                                        <FontAwesomeIcon icon={faMobile} />
+                                                    <Button  className={styles.iconButton}  variant="outline-secondary">
+                                                        <FontAwesomeIcon className={styles.icon} icon={faMobile} />
                                                     </Button>{' '}
-                                                    <Button variant="outline-secondary">
-                                                        <FontAwesomeIcon icon={faEllipsis} />
+                                                    <Button  className={styles.iconButton}  variant="outline-secondary">
+                                                        <FontAwesomeIcon className={styles.icon} icon={faEllipsis} />
                                                     </Button>{' '}
                                                 </Col>
                                             </Row>
                                         </Card.Title>
                                         <Card.Subtitle className="mb-2 text-muted">
                                             <Row xs={2} md={2} lg={2}>
-                                                <Row xs={3} md={3} lg={3}>
+                                                <Row xs={3} md={3} lg={3} className={styles.iconRow}>
                                                     <Col>
                                                         <p>
                                                             {makeLeve()}
                                                         </p>
                                                     </Col>
                                                     <Col>
-                                                        <p><FontAwesomeIcon icon={faUsers} style={{fontSize:"1.5rem"}}/></p>
+                                                        <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
                                                     </Col>
                                                     <Col>
-                                                        <p><FontAwesomeIcon icon={faHourglassHalf} style={{fontSize:"1.5rem"}} /></p>
+                                                        <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
                                                     </Col>
                                                 </Row>
                                                 <Row xs={2} md={2} lg={2}>
@@ -294,7 +295,7 @@ const AiDetaileSearch = () => {
                                                     {/*    여기는 비율 맞추기 위한 공백  */}
                                                     </Col>
                                                     <Col>
-                                                        <Button variant="outline-secondary" style={{padding:0, width:"100%", height:"100%"}}>요리완료</Button>
+                                                        <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
                                                     </Col>
                                                 </Row>
                                             </Row>
@@ -318,10 +319,10 @@ const AiDetaileSearch = () => {
                                         </Card.Subtitle>
                                         {/*재료*/}
                                             <div>
-                                            <Card style={{ width: '100%' }}>
+                                            <Card className={styles.ingredientContainer}>
                                                 <Card.Body>
-                                                    <Card.Title>재료</Card.Title>
-                                                    <div>
+                                                    <Card.Title className={styles.ingredientTitle}>재료</Card.Title>
+                                                    <div className={styles.ingredientList}>
                                                         {makeIngredient()}
                                                     </div>
                                                 </Card.Body>
@@ -329,10 +330,17 @@ const AiDetaileSearch = () => {
                                             </div>
                                         {/*재료 종료*/}
                                         {/*레시피*/}
-                                            <div>
-                                                <Card style={{ width: '100%' }}>
+                                            <div className={styles.detailContainer}>
+                                                <Card className={styles.recipeContainCard}>
                                                     <Card.Body>
-                                                        <Card.Title>레시피</Card.Title>
+                                                        <Card.Title  className={styles.titleContianer}>
+                                                            <div className={styles.title}>
+                                                                레시피
+                                                            </div>
+
+                                                            <div  className={styles.test} >
+                                                            </div>
+                                                        </Card.Title>
                                                         {makeDetailRecipe()}
                                                     </Card.Body>
                                                 </Card>
