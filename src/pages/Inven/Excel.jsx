@@ -4,6 +4,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import SelectEditor from '../../components/Inven/SelectEditor';
 
 import Navigation from '../../components/Nav/Navigation'
+import axios from "axios";
 
 import styles from '../../styles/Inven/Excel.module.scss'
 
@@ -17,13 +18,17 @@ function Excel() {
     
     const navigate = useNavigate();
 
+    //페이지 변화
+    const [isChange, setChange] = useState(false);
+    //재료 데이터
+    const [isData, setData] = useState([]);
+
     const items = Array(10).fill(0);
 
 
     //columns 변수에는 테이블의 제목에 들어갈 내용을 배열에 객체 요소로 담는다.
     const columns = [
-        { field: "id", headerName: "ID", width: 100},
-        { field: "ingredientName", headerName: "재료명", width: 150, editable: true },
+        { field: "ingredientname", headerName: "재료명", width: 150},
         { 
             field: "size", 
             headerName: "재료양", 
@@ -32,22 +37,34 @@ function Excel() {
             renderEditCell: (params) => <SelectEditor {...params} />
         },
         { field: "count", headerName: "개수", type: "number", width: 130, editable: true },
-        { field: "dateOFUse", headerName: "사용기한", type: "Date", width: 200, editable: true },
-        { field: "lastUse", headerName: "마지막 사용 날짜", type: "Date", width: 200, editable: true },
-        { field: "lastGet", headerName: "마지막 구입 날짜", type: "Date", width: 200, editable: true },
+        { field: "dateofuse", headerName: "사용기한", type: "Date", width: 200, editable: true },
+        { field: "lastuse", headerName: "마지막 사용 날짜", type: "Date", width: 200, editable: true },
+        { field: "lastget", headerName: "마지막 구입 날짜", type: "Date", width: 200, editable: true },
         { field: "memo", headerName: "기타", width: 300, editable: true },
     ];
 
-    const [rows, setRows] = useState([
-        { id: 1, ingredientName: "양파", size: "많음", count: 8, dateOFUse: "2024.04.14", lastUse: "2024.04.02", lastGet: "2024.04.08", memo: null },
-        { id: 2, ingredientName: "대파", size: "적당함", count: null, dateOFUse: null, lastUse: "2024.04.02", lastGet: "2024.03.25", memo: null },
-        { id: 3, ingredientName: "마늘", size: "없음", count: 0, dateOFUse: null, lastUse: "2024.04.08", lastGet: "2024.03.25", memo: null },
-        { id: 4, ingredientName: "김치", size: "많음", count: null, dateOFUse: null, lastUse: "2024.02.17", lastGet: "2024.03.27", memo: null },
-        { id: 5, ingredientName: "두부", size: "적당함", count: 4, dateOFUse: "2024.04.12", lastUse: "2024.03.30", lastGet: "2024.04.01", memo: "찌개용 두부" },
-    ]);
+    useEffect(() => {
+
+      const fetchData = async () => {
+  
+        const params = { userid:"ehdrjs0110"};
+  
+        try{
+          const res = await axios.get("http://localhost:8080/inven/manage", {params});
+          console.log(res.data);
+          setData(res.data);        
+  
+        }catch(err){
+          console.log("err message : " + err);
+        }
+      }
+  
+      fetchData();
+  
+    }, [isChange]);
     
     const handleProcessRowUpdate = (newRow, oldRow) => {
-        setRows((prevRows) => prevRows.map((row) => (row.id === newRow.id ? newRow : row)));
+        setData((prevRows) => prevRows.map((row) => (row.ingredientname === newRow.ingredientname ? newRow : row)));
         return newRow;
     };
 
@@ -85,8 +102,9 @@ function Excel() {
               <Row>
                 <Col>
                 <DataGrid
-                    rows={rows}
+                    rows={isData}
                     columns={columns}
+                    getRowId={(row) => row.ingredientname}
                     processRowUpdate={handleProcessRowUpdate}
                     checkboxSelection
                     disableColumnFilter
