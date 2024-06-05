@@ -4,6 +4,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 
+import styles from '../../styles/Components/Nav/Navigation.module.scss';
+import logo from '../../assets/Logo/logo.png';
+
 const id = "tester";
 
 function Navigation() {
@@ -12,7 +15,9 @@ function Navigation() {
 
       <Navbar bg="light" data-bs-theme="light" >
         <Container>
-          <Navbar.Brand href="#home">Njango(logo)</Navbar.Brand>
+          <Navbar.Brand href="#home">
+            <img src={logo} className={styles.logo} alt='' />
+          </Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="#inven">냉장고 관리</Nav.Link>
             <Nav.Link href="#search">레시피 검색</Nav.Link>

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Navigation from '../../components/Nav/Navigation'
 import axios from "axios";
 
+import '../../styles/Bootstrap/Bootstrap.scss';     
 import styles from '../../styles/Inven/Inven.module.scss'
 
 import Container from 'react-bootstrap/Container';
@@ -31,8 +32,6 @@ function Inven() {
   const [isIngred, setIngred] = useState([]);
   //재료 선택 인덱스
   const [isIndex, setIndex] = useState(0);
-  //재료 선택 이벤트
-  const [isSelect, setSelect] = useState(false);
 
   const userid = "ehdrjs0110";
 
@@ -219,7 +218,7 @@ function Inven() {
                     <Form.Control type="text" placeholder="재료검색" />
                   </div>
                   <Button className={styles.serchbtn} variant="primary">검색</Button>
-                  <Button className={styles.btn} onClick={excelmode} variant="primary">전문가 모드</Button>
+                  <Button className={styles.btn} onClick={excelmode} variant="none">전문가 모드</Button>
                   <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
                   <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
                 </Col>
@@ -255,11 +254,7 @@ function Inven() {
                 // 클래스 네임 결합
                 const combinedClassName = classNames(
                   index % 2 === 0 ? styles.odd : styles.even,
-                  styles.line,
-                  {
-                    [styles.select]: Object.values(isIngred).includes(item.ingredientname),
-                  }
-                  
+                  styles.line
                 );
 
                 return (
