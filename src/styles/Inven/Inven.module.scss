@@ -24,23 +24,18 @@
 }
 
 .controller {
+    background-color: $white-color;
     height: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    .controllerRow1{
+    .controllerRow{
         width: 100%;
-        height: 30%;
+        height: 100%;
         margin: 0;
-    }
-
-    .controllerRow2{
-        width: 100%;
-        height: 70%;
-        margin: 0;
-    }
-
-    .title {
-        font-weight: bold;
-        font-size: 2.5em;
     }
 
     .controlform {
@@ -67,10 +62,21 @@
 }
 
 .content {
-    background-color: #FFF;
+    background-color: $white-color;
     height: 100%;
     overflow-y: auto;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
     
+    .scroll {
+        position: absolute;
+    }
+
+    .item{
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
     .line {
         margin: 0 auto;
         width: 95%;
@@ -80,10 +86,11 @@
         justify-content: center;
         align-items: center;
         text-align: center;
+        border-radius: 5px;
 
         .title {
             font-weight: bold;
-            color: #516A6F;
+            color: $p-font-color;
         }
 
         .text {
@@ -94,7 +101,14 @@
         .btn {
             margin: 5px;
             background-color: $p-color;
-            color : #FFF;
+            color : $white-color;
+            font-weight: bold;
+        }
+
+        .delBtn {
+            margin: 5px;
+            background-color: $danger-color;
+            color : $white-color;
             font-weight: bold;
         }
     
@@ -107,7 +121,7 @@
     }
 
     .select {
-        border: 1px solid black;
+        border: 3px solid $p-color;
     }
 
     .line:hover {
@@ -115,33 +129,44 @@
         /* 떠오르는 효과 */
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         /* 그림자 효과 */
-    }
+    }    
+
+}
+
+.addContent {
+    background-color: $accent-color;
+    height: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .addline {
         margin: 0 auto;
         width: 95%;
         display: flex;
-        padding: 5px;
-        margin-bottom: 5px;
         justify-content: center;
         align-items: center;
         text-align: center;
-        background-color: #666E63;
-
-        .ingredientname {
-
-        }
         
         .text {
-            color: #fff;
+            color: $white-color;
             display: inline-block;
             margin: 0;
         }
     
         .btn {
             margin: 5px;
-            background-color: #fca85b;
-            color : #FFF;
+            background-color: $p-color;
+            color : $white-color;
+            font-weight: bold;
+        }
+
+        .addBtn {
+            margin: 5px;
+            background-color: $primary-color;
+            color : $white-color;
             font-weight: bold;
         }
     
