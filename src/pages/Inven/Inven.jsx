@@ -219,7 +219,7 @@ function Inven() {
                     <Form.Control type="text" placeholder="재료검색" />
                   </div>
                   <Button className={styles.serchbtn} variant="primary">검색</Button>
-                  <Button className={styles.btn} onClick={excelmode} variant="none">전문가 모드</Button>
+                  <Button className={styles.btn} onClick={excelmode} variant="primary">전문가 모드</Button>
                   <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
                   <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
                 </Col>
