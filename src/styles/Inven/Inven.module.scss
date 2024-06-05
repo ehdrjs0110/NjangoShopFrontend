@@ -2,38 +2,45 @@
 
 .container{
     background-color: $bg-color;
-    height: calc(100vh - 56px);
+    height: calc(100vh - 91px);
 
     .main{
         height: 100%;
 
         .controllerRow{
-            height: 20%;
+            height: 15%;
+            margin-bottom: 10px;
+        }
+
+        .addContentRow{
+            height: 10%;
+            margin-bottom: 10px;
         }
 
         .contentRow{
-            height: 80%;
+            height: 70%;
         }
     }
 }
 
 .controller {
     height: 100%;
-    background-color: #FFF;
-    border: 1px solid black;
-    border-radius: 30px;
-    //padding: 20px;
 
     .controllerRow1{
+        width: 100%;
         height: 30%;
+        margin: 0;
     }
 
     .controllerRow2{
+        width: 100%;
         height: 70%;
+        margin: 0;
     }
 
     .title {
         font-weight: bold;
+        font-size: 2.5em;
     }
 
     .controlform {
@@ -61,7 +68,6 @@
 
 .content {
     background-color: #FFF;
-    padding: 20px !important;
     height: 100%;
     overflow-y: auto;
     
@@ -87,7 +93,7 @@
     
         .btn {
             margin: 5px;
-            background-color: #fca85b;
+            background-color: $p-color;
             color : #FFF;
             font-weight: bold;
         }

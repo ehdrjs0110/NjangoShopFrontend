@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
+import '../../styles/Bootstrap/Bootstrap.scss';
 import styles from '../../styles/Promotion/Promotion.module.scss';
 
 const Promotion = () => {

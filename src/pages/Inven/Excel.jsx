@@ -6,6 +6,7 @@ import SelectEditor from '../../components/Inven/SelectEditor';
 import Navigation from '../../components/Nav/Navigation'
 import axios from "axios";
 
+import '../../styles/Bootstrap/Bootstrap.scss';
 import styles from '../../styles/Inven/Excel.module.scss'
 
 import Container from 'react-bootstrap/Container';
