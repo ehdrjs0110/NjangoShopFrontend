@@ -7,6 +7,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
+import slideImg1 from "../../assets/Promotion/refrigerator.jpg";
+import slideImg2 from "../../assets/Promotion/manage.jpg";
+import slideImg3 from "../../assets/Promotion/cook.jpg";
+import slideImg4 from "../../assets/Promotion/ingred.webp";
+
+import '../../styles/Bootstrap/Bootstrap.scss';
 import styles from '../../styles/Promotion/Promotion.module.scss';
 
 const Promotion = () => {
@@ -89,10 +95,30 @@ const Promotion = () => {
             ))}
           </div>
           <div ref={containerRef} class={styles.slide_container}>
-            <div class={styles.slide}>slide1</div>
-            <div class={styles.slide}>slide2</div>
-            <div class={styles.slide}>slide3</div>
-            <div class={styles.slide}>slide4</div>
+            <div class={styles.slide}>
+              <img src={slideImg1} className={styles.img} alt='' />
+              <div className={styles.panel}>
+              Njango는 바쁜 일상 속에서도 편리한 요리 생활을 제공하는 스마트 주방 도우미입니다. 냉장고 속 재료를 쉽게 관리하고, 맞춤형 레시피를 찾아주며, 알레르기 걱정 없는 요리를 지원합니다. Njango와 함께라면 요리가 간단하고 즐거워집니다.
+              </div>
+            </div>
+            <div class={styles.slide}>
+              <img src={slideImg2} className={styles.img} alt='' />
+              <div className={styles.panel}>
+              냉장고 속 식재료를 스마트하게 관리하세요. 유통기한 알림, 남은 재료 확인, 구매 리스트 생성 등 효율적인 주방 관리를 도와드립니다.
+              </div>
+            </div>
+            <div class={styles.slide}>
+              <img src={slideImg3} className={styles.img} alt='' />
+              <div className={styles.panel}>
+              냉장고에 있는 재료만으로도 맛있는 요리를 완성할 수 있습니다. 인공지능이 제안하는 맞춤형 레시피로 매일 새로운 요리를 시도해보세요.
+              </div>
+            </div>
+            <div class={styles.slide}>
+              <img src={slideImg4} className={styles.img} alt='' />
+              <div className={styles.panel}>
+              필요한 식재료를 손쉽게 구매할 수 있는 쇼핑몰을 제공합니다. 신선한 재료를 편리하게 주문하고, 요리의 퀄리티를 높여보세요.
+              </div>
+            </div>
           </div>
         </div>
       </Col>
@@ -102,7 +128,7 @@ const Promotion = () => {
             <h2 className={styles.start}>Let's Start</h2>
           </div>
           <div>
-            <Button variant="primary" size="lg" className={styles.startbtn} onClick={signin}>Sign</Button>
+            <Button variant="none" size="lg" className={styles.startbtn} onClick={signin}>Sign</Button>
           </div>
         </div>
       </Col>

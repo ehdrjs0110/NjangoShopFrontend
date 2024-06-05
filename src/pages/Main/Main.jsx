@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import Navigation from '../../components/Nav/Navigation'
 
+import '../../styles/Bootstrap/Bootstrap.scss';
 import styles from '../../styles/Main/Main.module.scss'
 
 import Container from 'react-bootstrap/Container';

@@ -1,10 +1,12 @@
 import React, { useState , useRef , useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import Scrollbars from '../../components/Inven/CustomScrollbar';
 import classNames from 'classnames';
 
 import Navigation from '../../components/Nav/Navigation'
 import axios from "axios";
 
+import '../../styles/Bootstrap/Bootstrap.scss';
 import styles from '../../styles/Inven/Inven.module.scss'
 
 import Container from 'react-bootstrap/Container';
@@ -12,6 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 
 
 function Inven() {
@@ -31,8 +34,6 @@ function Inven() {
   const [isIngred, setIngred] = useState([]);
   //재료 선택 인덱스
   const [isIndex, setIndex] = useState(0);
-  //재료 선택 이벤트
-  const [isSelect, setSelect] = useState(false);
 
   const userid = "ehdrjs0110";
 
@@ -204,97 +205,94 @@ function Inven() {
   
   return (
     <>
-        <Navigation></Navigation>
-        <Container fluid className={styles.container}>
-          <div className={styles.main}>
-          <Row className={styles.controllerRow}>
-            <Col md={{span: 10, offset: 1}} className={styles.controller}>
-              <Row className={styles.controllerRow1}>
-                <Col>
-                  <h2 className={styles.title}>냉장고 관리</h2>
-                </Col>
-              </Row>
-              <Row className={styles.controllerRow2}>
-                <Col className={styles.controlform}>
-                  <div className={styles.serch}>
-                    <Form.Control type="text" placeholder="재료검색" />
-                  </div>
-                  <Button className={styles.serchbtn} variant="primary">검색</Button>
-                  <Button className={styles.btn} onClick={excelmode} variant="primary">전문가 모드</Button>
-                  <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
-                  <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className={styles.contentRow}>
-            <Col md={{span: 10, offset: 1}} className={styles.content}>
-
-            <Row className={styles.addline}>
-                <Col>
-                <Form.Control type="text" className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="secondary" onClick={setSize} value={"없음"} disabled={isClickSize==="없음"} >없음</Button>
-                </Col>
-                <Col>
-                  <Button className={styles.btn} variant="none" onClick={setSize} value={"적음"} disabled={isClickSize==="적음"} >적음</Button>
-                  <Button className={styles.btn} variant="none" onClick={setSize} value={"적당함"} disabled={isClickSize==="적당함"} >적당함</Button>
-                  <Button className={styles.btn} variant="none" onClick={setSize} value={"많음"} disabled={isClickSize==="많음"} >많음</Button>
-                </Col>
-                <Col>
-                  <p className={styles.text}>수량</p>
-                  <Form.Control type="number" className={styles.count} onChange={setCount} placeholder="0"/>
-                </Col>
-                <Col>
-                <Button className={styles.btn} variant="none" onClick={addData}>추가</Button>
-                </Col>
-              </Row>
-
-
-              {isData.map((item, index) => {
-                // 클래스 네임 결합
-                const combinedClassName = classNames(
-                  index % 2 === 0 ? styles.odd : styles.even,
-                  styles.line,
-                  {
-                    [styles.select]: Object.values(isIngred).includes(item.ingredientname),
-                  }
-                  
-                );
-
-                return (
-                  <div key={index} className="item">
-                    <Row className={combinedClassName} onClick={(e) => selectIngred(item.ingredientname)}>
-                      <Col>
-                        <h3 className={styles.title}>{item.ingredientname}</h3>
-                      </Col>
-                      <Col>
-                        <Button className={styles.btn} variant="secondary" value={"없음"} disabled={item.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
-                      </Col>
-                      <Col>
-                        <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
-                        <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
-                        <Button className={styles.btn} variant="none" value={"많음"} disabled={item.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
-                      </Col>
-                      <Col>
-                        <p className={styles.text}>수량</p>
-                        <Form.Control type="number" className={styles.count} placeholder={item.count} onChange={(e) => updateCount(index, e)} />
-                      </Col>
-                      <Col>
-                        <Button className={styles.btn} onClick={() => deleteData(index)} variant="danger">삭제</Button>
-                      </Col>
-                    </Row>
-                  </div>
-                );
-              })}
-
-                        </Col>
-                    </Row>
+      <Navigation></Navigation>
+      <Container fluid className={styles.container}>
+        <div className={styles.main}>
+        <Row className={styles.controllerRow}>
+          <Col md={{span: 10, offset: 1}} className={styles.controller}>
+            <Row className={styles.controllerRow}>
+              <Col className={styles.controlform}>
+                <div className={styles.serch}>
+                  <Form.Control type="text" placeholder="재료검색" />
                 </div>
-            </Container>
-        </>
-    );
+                <Button className={styles.serchbtn} variant="primary">검색</Button>
+                <Button className={styles.btn} onClick={excelmode} variant="none">전문가 모드</Button>
+                <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
+                <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={styles.addContentRow}>
+          <Col md={{span: 10, offset: 1}} className={styles.addContent}>
+            <Row className={styles.addline}>
+              <Col>
+              <Form.Control type="text" className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
+              </Col>
+              <Col>
+                <Button className={styles.btn} variant="secondary" onClick={setSize} value={"없음"} disabled={isClickSize==="없음"} >없음</Button>
+              </Col>
+              <Col>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"적음"} disabled={isClickSize==="적음"} >적음</Button>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"적당함"} disabled={isClickSize==="적당함"} >적당함</Button>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"많음"} disabled={isClickSize==="많음"} >많음</Button>
+              </Col>
+              <Col>
+                <p className={styles.text}>수량</p>
+                <Form.Control type="number" className={styles.count} onChange={setCount} placeholder="0"/>
+              </Col>
+              <Col>
+              <Button className={styles.addBtn} variant="none" onClick={addData}>추가</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={styles.contentRow}>
+          <Col md={{span: 10, offset: 1}} className={styles.content}>
+          <Scrollbars className={styles.scroll}>
+            <div className={styles.item}>
+            {isData.map((item, index) => {
+              // 클래스 네임 결합
+              const combinedClassName = classNames(
+                styles.line,
+                {
+                  [styles.select]: Object.values(isIngred).includes(item.ingredientname),
+                }
+              );
+
+              return (
+                <div key={index} className="item">
+                  <Row className={combinedClassName} onClick={(e) => selectIngred(item.ingredientname)}>
+                    <Col>
+                      <h3 className={styles.title}>{item.ingredientname}</h3>
+                    </Col>
+                    <Col>
+                      <Button className={styles.btn} variant="secondary" value={"없음"} disabled={item.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
+                    </Col>
+                    <Col>
+                      <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
+                      <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
+                      <Button className={styles.btn} variant="none" value={"많음"} disabled={item.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
+                    </Col>
+                    <Col>
+                      <p className={styles.text}>수량</p>
+                      <Form.Control type="number" className={styles.count} placeholder={item.count} onChange={(e) => updateCount(index, e)} />
+                    </Col>
+                    <Col>
+                      <Button className={styles.delBtn} onClick={() => deleteData(index)} variant="danger">삭제</Button>
+                    </Col>
+                  </Row>
+                </div>
+              );
+            })}   
+            </div>
+            </Scrollbars>
+          </Col>
+        </Row>
+        </div>
+      </Container>
+    </>
+  );
 }
 
 export default Inven;
