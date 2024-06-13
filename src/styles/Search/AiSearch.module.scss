@@ -179,3 +179,39 @@
 
 
 }
+
+
+.check{
+  input[type="checkbox"] {
+    /* Hide the default checkbox */
+    display: none;
+  }
+
+
+  /* Container for checkbox and label */
+  label {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center vertically */
+  }
+
+  input[type="checkbox"] + label::before {
+    /* Style the custom checkbox */
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    //border: 1px solid $accent-color;/* Use your primary color */
+    border: 1px solid $p-color;/* Use your primary color */
+
+    background-color: transparent;
+    border-radius: 3px;
+  }
+
+  input[type="checkbox"]:checked + label::before {
+    /* Change the background color when the checkbox is checked */
+    //background-color: $accent-color; /* Use your primary color */
+    background-color: $p-color; /* Use your primary color */
+    //border: 1px solid $p-color;/* Use your primary color */
+  }
+}

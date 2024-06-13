@@ -77,6 +77,7 @@ const AiSearch = () => {
                 type="checkbox"
                 name="group3"
                 id={ingredient}
+                className={styles.check}
                 label={ingredient}
                 onChange={myIngredientHandler}
             />)
@@ -136,6 +137,7 @@ const AiSearch = () => {
                 name="group1"
                 id={kind}
                 label={kind}
+                className={styles.check}
                 onChange={kindOfFoodHandler}
             />)
     }
@@ -163,6 +165,7 @@ const AiSearch = () => {
                     name="group2"
                     id="inline-checkbox-4"
                     label="냉장고 재료 반영"
+                    className={styles.check}
                     onChange={handleCheckboxChange}
                     checked={activeKey === "1"}
                 />
@@ -174,6 +177,7 @@ const AiSearch = () => {
                         inline
                         type="checkbox"
                         name="group2"
+                        className={styles.check}
                         id={`inline-checkbox-${index}`}
                         label={etc}
                     />
@@ -199,7 +203,7 @@ const AiSearch = () => {
 
         console.log("요청 중");
         const requestBody = {"userContent" : `${selectedKindOfFood} 종류의 ${searchValue} 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
-                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 요리제목,재료,과정으로 알려줘` +
+                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 title,재료,과정으로 알려줘` +
                 "그리고 json 객체로 {0:[요리 1], 1: [요리2], 2: [요리3}, 3:[요리], 4:[요리]} 형태로만 참고로 키는 무조건 숫자여야해 보내줘"};
         let searchResponse;
         try {
@@ -249,7 +253,7 @@ const AiSearch = () => {
                     <Card.Header  className={styles.hearder}>
                         <Row xs={1} md={2}>
                             <Col className={styles.recipeTitleCol}>
-                                {JSON.stringify(recipe.요리제목)}
+                                {JSON.stringify(recipe.title)}
                             </Col>
                             <Col className={styles.recipeDetailSearchCol}>
                                 <Button className={styles.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe)}>

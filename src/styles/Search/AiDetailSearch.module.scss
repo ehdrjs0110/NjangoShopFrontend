@@ -219,11 +219,13 @@
   .recipeCol
   {
     border-left: 5px solid $accent-color;
+
     margin-bottom: 1.5vh;
     .card
     {
+      padding-left: 1.5vh;
       border: 0;
-      padding: 0;
+      //padding: 0;
       width: 100%;
       .body
       {
