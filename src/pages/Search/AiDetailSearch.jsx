@@ -40,7 +40,7 @@ const AiDetaileSearch = () => {
 
     console.log(recipe);
 
-    let recipyTitle = recipe.요리제목;
+    let recipyTitle = recipe.title;
     // setRecipyTitle(recipe.요리제목);z
     const ingredientObject = recipe.재료;
     const recipyIndigredient = JSON.stringify(ingredientObject);
@@ -275,51 +275,59 @@ const AiDetaileSearch = () => {
                                                 </Col>
                                             </Row>
                                         </Card.Title>
-                                        <Card.Subtitle className="mb-2 text-muted">
-                                            <Row xs={2} md={2} lg={2}>
-                                                <Row xs={3} md={3} lg={3} className={styles.iconRow}>
-                                                    <Col>
-                                                        <p>
-                                                            {makeLeve()}
-                                                        </p>
-                                                    </Col>
-                                                    <Col>
-                                                        <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
-                                                    </Col>
-                                                    <Col>
-                                                        <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
-                                                    </Col>
-                                                </Row>
-                                                <Row xs={2} md={2} lg={2}>
-                                                    <Col>
-                                                    {/*    여기는 비율 맞추기 위한 공백  */}
-                                                    </Col>
-                                                    <Col>
-                                                        <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
-                                                    </Col>
-                                                </Row>
-                                            </Row>
-                                            <Row xs={2} md={2} lg={2}>
-                                                <Row xs={3} md={3} lg={3}>
-                                                    <Col>
-                                                        <p>난이도</p>
-                                                    </Col>
-                                                    <Col>
-                                                        <p>{serve}인분</p>
-                                                    </Col>
-                                                    {/*{aiSearchEtcRequest()}*/}
-                                                    <Col>
-                                                        <p>{time}분</p>
-                                                    </Col>
-                                                </Row>
-                                                <Row xs={2} md={2} lg={2}>
-                                                {/*여기는 비율 맞추기 위한 공백    */}
-                                                </Row>
-                                            </Row>
+                                        <Card.Subtitle  className="mb-2 text-muted" >
+                                            <div >
+                                                <Card style={{border:0}}>
+                                                    <Card.Body style={{paddingBottom:0}}>
+                                                    <Row  style={{margin:0}} xs={2} md={2} lg={2}>
+                                                        <Row   style={{margin:0}} xs={3} md={3} lg={3} className={styles.iconRow}>
+                                                            <Col>
+                                                                <p>
+                                                                    {makeLeve()}
+                                                                </p>
+                                                            </Col>
+                                                            <Col>
+                                                                <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
+                                                            </Col>
+                                                            <Col>
+                                                                <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row  xs={2} md={2} lg={2}>
+                                                            <Col>
+                                                                {/*    여기는 비율 맞추기 위한 공백  */}
+                                                            </Col>
+                                                            <Col>
+                                                                <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
+                                                            </Col>
+                                                        </Row>
+                                                    </Row>
+                                                    <Row  style={{margin:0}} xs={2} md={2} lg={2}>
+                                                        <Row style={{margin:0}} xs={3} md={3} lg={3}>
+                                                            <Col>
+                                                                <p>난이도</p>
+                                                            </Col>
+                                                            <Col>
+                                                                <p>{serve}인분</p>
+                                                            </Col>
+                                                            {/*{aiSearchEtcRequest()}*/}
+                                                            <Col>
+                                                                <p>{time}분</p>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row xs={2} md={2} lg={2}>
+                                                            {/*여기는 비율 맞추기 위한 공백    */}
+                                                        </Row>
+                                                    </Row>
+                                                    </Card.Body>
+                                                </Card>
+
+                                            </div>
+
                                         </Card.Subtitle>
                                         {/*재료*/}
                                             <div>
-                                            <Card className={styles.ingredientContainer}>
+                                            <Card className={styles.ingredientContainer}  >
                                                 <Card.Body>
                                                     <Card.Title className={styles.ingredientTitle}>재료</Card.Title>
                                                     <div className={styles.ingredientList}>
