@@ -53,7 +53,7 @@ function Inven() {
       try{
         const res = await axios.get("http://localhost:8080/inven/manage", {params});
         console.log(res.data);
-        setData(res.data);        
+        setData(res.data);
 
       }catch(err){
         console.log("err message : " + err);
@@ -163,6 +163,7 @@ function Inven() {
       ...isNewData,
       "ingredientname" : e.target.value,
     }));
+
   };
 
   //재료양 입력

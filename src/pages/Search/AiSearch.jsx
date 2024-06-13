@@ -32,6 +32,7 @@ function CustomToggle({ children, eventKey }) {
         <button
             type="button"
             onClick={decoratedOnClick}
+            className={styles.button}
         >
             {children}
         </button>
@@ -245,7 +246,7 @@ const AiSearch = () => {
         {
             return recipe.map((recipe, index) => (
                 <Card className={styles.recipeCard} key={index}>
-                    <Card.Header>
+                    <Card.Header  className={styles.hearder}>
                         <Row xs={1} md={2}>
                             <Col className={styles.recipeTitleCol}>
                                 {JSON.stringify(recipe.요리제목)}
@@ -298,15 +299,16 @@ const AiSearch = () => {
                     {/*<Col xs="0" lg="1"   className="ai-search-col">*/}
                     {/*    1 of 3*/}
                     {/*</Col>*/}
-                    <Col  style={{backgroundColor:"snow", paddingLeft:0, paddingRight:0}} md={{ span: 10, offset: 1 }} >
+                    <Col  style={{paddingLeft:0, paddingRight:0}} md={{ span: 10, offset: 1 }} className={styles.aiSearchCol} >
                         {/*레시피 명 입력 지작점*/}
-                        <div  style={{padding:0}}>
+                        <div  style={{padding:0}} >
                             <InputGroup style={{padding:0}} className={styles.aiSearchInputGroup}>
                                 <Form.Control  style={{padding:0}}
                                     placeholder="레시피 검색"
                                     aria-label="Recipient's username"
                                     aria-describedby="basic-addon2"
-                                    className="ai-search-input"
+                                    // className="ai-search-input"
+                                    className={styles.form}
                                     onChange={searchInputHandler}
                                     value={searchValue}
                                 />
@@ -320,9 +322,9 @@ const AiSearch = () => {
                         {/*레시피 옵션 시작점*/}
                         <div className={styles.aiSearchOptionContainer}>
                             <Accordion defaultActiveKey="0" alwaysOpen style={{ paddingRight: '0', paddingLeft: '0', width:'100%'}}>
-                                <Card  className>
-                                    <Card.Header className={styles.aiSearchOptionButton}>
-                                        <CustomToggle eventKey="0"  >Option</CustomToggle>
+                                <Card  className={styles.containCard} >
+                                    <Card.Header className={styles.aiSearchOptionHeader}>
+                                        <CustomToggle eventKey="0" className={styles.button} >Option</CustomToggle>
                                     </Card.Header>
                                     <Accordion.Collapse eventKey="0">
                                         <Card.Body>
@@ -338,12 +340,12 @@ const AiSearch = () => {
                                                     {makeEtcList()}
                                                 </Form.Group>
                                             </div>
-                                            <Accordion activeKey={activeKey}>
-                                                <Card>
+                                            <Accordion activeKey={activeKey} className={styles.ingredientContainer}>
+                                                <Card  className={styles.card}>
                                                     <Accordion.Collapse eventKey="1">
-                                                        <Card.Body>
+                                                        <Card.Body >
                                                             <div>
-                                                                <h5>내 재료</h5>
+                                                                <h5 className={styles.title}>내 재료</h5>
                                                                 <Form.Group>
                                                                     {makeIngredientList()}
                                                                 </Form.Group>

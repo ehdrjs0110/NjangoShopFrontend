@@ -18,6 +18,7 @@ import Demo from "./pages/Demo";
 import Navigation from "./components/Nav/Navigation";
 import MyPage from "./pages/MyPage/MyPage";
 import AiDetailSearch from "./pages/Search/AiDetailSearch";
+// import index from '../src/styles/index.css'
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
