@@ -4,18 +4,21 @@
     height: calc(100vh - 91px);
     background-color: $bg-color;
 
-    .main{
-        height: 100%;
 
-        .controllerRow{
-            height: 13%;
-            margin-bottom: 10px;
-        }
-
-        .contentRow{
-            height: 85%;
-        }
+    .controllerRow{
+        height: 10%;
+        margin-bottom: 10px;
     }
+
+    .addContentRow{
+        height: 12%;
+        margin-bottom: 10px;
+    }
+
+    .contentRow{
+        height: 75%;
+    }
+    
 }
 
 .controller {
@@ -63,7 +66,7 @@
 
 .content {
     background-color: $white-color;
-    padding: 20px;
+    padding: 10px;
     height: 100%;
     overflow-y: auto;
     border: 1px solid lightgrey;
@@ -75,9 +78,61 @@
     .excel {
         height: 100%;
         width: 100%;
-        padding: 30px 20px;
+        padding: 20px 20px;
     }
     
+    
+
+}
+
+.addContent {
+    background-color: $accent-color;
+    height: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .addline {
+        margin: 0 auto;
+        width: 95%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        
+        .text {
+            color: $white-color;
+            display: inline-block;
+            margin: 0;
+        }
+    
+        .selectSize {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .addBtn {
+            margin: 5px;
+            background-color: $primary-color;
+            color : $white-color;
+            font-weight: bold;
+        }
+    
+        .count {
+            margin-left: 10px;
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+        }
+
+        .day {
+            margin-left: 10px;
+            display: inline-block;
+            width: 50%;
+        }
+    }
     
 
 }
