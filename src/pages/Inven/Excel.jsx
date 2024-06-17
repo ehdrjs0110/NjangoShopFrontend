@@ -25,8 +25,6 @@ function Excel() {
     const [isData, setData] = useState([]);
     //추가 재료 데이터
     const [isNewData, setNewData] = useState([]);
-    //추가 사이즈 선택 버튼
-    const [isClickSize, setClickSize] = useState("");
     //select박스 체크
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -35,6 +33,7 @@ function Excel() {
     useEffect(() => {
       setNewData({      
         userid : "ehdrjs0110",
+        size : "없음",
       });
     },[]);
 
@@ -83,10 +82,6 @@ function Excel() {
         ...isNewData,
         [e.target.id] : e.target.value,
       }));
-
-      if(e.target.id==="size"){
-        setClickSize(e.target.value);
-      }
 
     };
 
@@ -144,16 +139,19 @@ function Excel() {
     //재료 삭제
   const deleteData = async () => {
 
-    const params = selectedRows;
-    console.log(selectedRows);
-    const showdata = params
+    const params = selectedRows.map(item => `ingredientname=${encodeURIComponent(item)}`).join('&');
+    const showdata = selectedRows
     .map(item => `${item}`)
     .join(', ');
 
     if(window.confirm(`정말 ${showdata}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete(`http://localhost:8080/inven/manage/delete/${userid}`, {params});
+        await axios.delete(`http://localhost:8080/inven/manage/delete/${userid}?${params}`, {
+          headers: {
+            'Content-Type': 'application/json'
+        }
+        });
         alert("삭제 되었습니다.");
         setChange(!isChange);
       }catch(err){
@@ -196,7 +194,7 @@ function Excel() {
               <Form.Control type="text" id='ingredientname' className={styles.ingredientname} onChange={setInsertData} placeholder="재료명"/>
               </Col>
               <Col>
-                <Form.Select id='size' className={styles.selectSize} onChange={setInsertData} aria-label="Default select example">
+                <Form.Select id='size' className={styles.selectSize} onChange={setInsertData}>
                   <option value={"없음"}>없음</option>
                   <option value={"적음"}>적음</option>
                   <option value={"적당함"}>적당함</option>
@@ -232,10 +230,11 @@ function Excel() {
                         getRowId={(row) => row.ingredientname}
                         processRowUpdate={handleProcessRowUpdate}
                         checkboxSelection
+                        disableRowSelectionOnClick
                         disableColumnFilter
                         disableColumnSelector
                         disableDensitySelector
-                        onSelectionModelChange={(newSelection) => handleSelectionModelChange(newSelection)}
+                        onRowSelectionModelChange={(newSelection) => handleSelectionModelChange(newSelection)}
                         selectionModel={selectedRows}
                         slots={{ toolbar: GridToolbar }}
                         slotProps={{
