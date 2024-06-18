@@ -98,8 +98,8 @@ const AiDetaileSearch = () => {
 
 
     async function aiSearchEtcRequest (){
-        let level = `${recipyTitle} 종류의 ${recipyProgress} 레시피가 난이도는 1~3에서 어느 정도인지, 몇 인분인지, 소요 예상 시간은 어떤지 보내줘` +
-            "그리고 json 객체로  {0:{난이도: },1:{인분: },2:{소요시간: },} ```형태로만 참고로 키는 무조건 숫자여야해 보내줘";
+        let level = `${recipyTitle} 종류의 ${recipyProgress} 레시피가 난이도는 1~3에서 어느 정도인지, 몇 인분인지, 소요 예상 시간은 어떤지만 보내줘` +
+            "그리고 json 객체로  ```json {0:{난이도: },1:{인분: },2:{소요시간: }} ```형태로 참고로 키는 무조건 숫자여야해 보내줘";
         let ectResponse;
         console.log("요청중");
 
@@ -122,24 +122,15 @@ const AiDetaileSearch = () => {
             console.error(e);
         }
 
-        // console.log("인분");
-        // console.log(ectResponse);
-        let response = ectResponse.data.choices[0].message.content;
-        console.log(response);
-        // const cleanString = response.replace(/```json|```/g, '').trim();
-        // console.log("cleanString: " + cleanString);
-        // const stringObject = JSON.parse(cleanString);
-        // const ectList =  Object.values(stringObject);
-        // console.log(ectList);
 
-        var startNum = response.indexOf( "```json");
-        var lastNum = response.indexOf ("```", startNum + 10 );
-        var cleanString =  response.slice(startNum+7,lastNum);
-        console.log(cleanString);
+        let response = ectResponse.data;
+        console.log(response);
+        let jsonString = JSON.stringify(response);
+
 
 
         // JSON 문자열을 JavaScript 객체로 변환
-        const etc = JSON.parse(cleanString);
+        const etc = JSON.parse(jsonString);
         const etcList =  Object.values(etc);
         console.log(etcList);
 
@@ -160,7 +151,7 @@ const AiDetaileSearch = () => {
     async function aiSearchRequest () {
         let recipyIndigredientString = makeString();
         let request  = `${recipyTitle} 종류의 ${recipyProgress} 레시피를 알려주는데 만드는 과정을 더욱 자세하게 얘기해주고 재료는 종류, 양 변화 없이 ${recipyIndigredientString} 추가사항 없이 사용되어야 해 ` +
-                "그리고 json 객체로 {0:[{과정제목: },{과정:  }], 1: [{과정제목: },{과정:  }, ..} 형태로만 참고로 키는 무조건 숫자여야해 보내줘";
+            "그리고 json 객체로 {0:[{과정제목: },{과정:  }], 1: [{과정제목: },{과정:  }, ..} 형태로만 참고로 키는 무조건 숫자여야해 보내줘";
 
         console.log("요청 중");
 
@@ -185,16 +176,17 @@ const AiDetaileSearch = () => {
 
         console.log(searchResponse);
 
-        let response = searchResponse.data.choices[0].message.content;
+        let response = searchResponse.data;
         console.log("최종 응답");
 
-        console.log(response);
+        // console.log(response);
 
+        let jsonString = JSON.stringify(response);
         // ```json과 ```를 제거하는 코드
-        const cleanString = response.replace(/```json|```/g, '').trim();
+        // const cleanString = response.replace(/```json|```/g, '').trim();
 
         // JSON 문자열을 JavaScript 객체로 변환
-        const recipes = JSON.parse(cleanString);
+        const recipes = JSON.parse(jsonString);
         const recipesList =  Object.values(recipes);
 
         console.log(recipesList);
@@ -215,7 +207,7 @@ const AiDetaileSearch = () => {
                         <Col className={styles.numberCol}>
                             <div>
                                 <Card className={styles.index}>
-                                        {index}
+                                    {index}
                                 </Card>
                             </div>
 
@@ -279,46 +271,46 @@ const AiDetaileSearch = () => {
                                             <div >
                                                 <Card style={{border:0}}>
                                                     <Card.Body style={{paddingBottom:0}}>
-                                                    <Row  style={{margin:0}} xs={2} md={2} lg={2}>
-                                                        <Row   style={{margin:0}} xs={3} md={3} lg={3} className={styles.iconRow}>
-                                                            <Col>
-                                                                <p>
-                                                                    {makeLeve()}
-                                                                </p>
-                                                            </Col>
-                                                            <Col>
-                                                                <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
-                                                            </Col>
-                                                            <Col>
-                                                                <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
-                                                            </Col>
+                                                        <Row  style={{margin:0}} xs={2} md={2} lg={2}>
+                                                            <Row   style={{margin:0}} xs={3} md={3} lg={3} className={styles.iconRow}>
+                                                                <Col>
+                                                                    <p>
+                                                                        {makeLeve()}
+                                                                    </p>
+                                                                </Col>
+                                                                <Col>
+                                                                    <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
+                                                                </Col>
+                                                                <Col>
+                                                                    <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row  xs={2} md={2} lg={2}>
+                                                                <Col>
+                                                                    {/*    여기는 비율 맞추기 위한 공백  */}
+                                                                </Col>
+                                                                <Col>
+                                                                    <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
+                                                                </Col>
+                                                            </Row>
                                                         </Row>
-                                                        <Row  xs={2} md={2} lg={2}>
-                                                            <Col>
-                                                                {/*    여기는 비율 맞추기 위한 공백  */}
-                                                            </Col>
-                                                            <Col>
-                                                                <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
-                                                            </Col>
+                                                        <Row  style={{margin:0}} xs={2} md={2} lg={2}>
+                                                            <Row style={{margin:0}} xs={3} md={3} lg={3}>
+                                                                <Col>
+                                                                    <p>난이도</p>
+                                                                </Col>
+                                                                <Col>
+                                                                    <p>{serve}인분</p>
+                                                                </Col>
+                                                                {/*{aiSearchEtcRequest()}*/}
+                                                                <Col>
+                                                                    <p>{time}분</p>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row xs={2} md={2} lg={2}>
+                                                                {/*여기는 비율 맞추기 위한 공백    */}
+                                                            </Row>
                                                         </Row>
-                                                    </Row>
-                                                    <Row  style={{margin:0}} xs={2} md={2} lg={2}>
-                                                        <Row style={{margin:0}} xs={3} md={3} lg={3}>
-                                                            <Col>
-                                                                <p>난이도</p>
-                                                            </Col>
-                                                            <Col>
-                                                                <p>{serve}인분</p>
-                                                            </Col>
-                                                            {/*{aiSearchEtcRequest()}*/}
-                                                            <Col>
-                                                                <p>{time}분</p>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row xs={2} md={2} lg={2}>
-                                                            {/*여기는 비율 맞추기 위한 공백    */}
-                                                        </Row>
-                                                    </Row>
                                                     </Card.Body>
                                                 </Card>
 
@@ -326,7 +318,7 @@ const AiDetaileSearch = () => {
 
                                         </Card.Subtitle>
                                         {/*재료*/}
-                                            <div>
+                                        <div>
                                             <Card className={styles.ingredientContainer}  >
                                                 <Card.Body>
                                                     <Card.Title className={styles.ingredientTitle}>재료</Card.Title>
@@ -335,24 +327,24 @@ const AiDetaileSearch = () => {
                                                     </div>
                                                 </Card.Body>
                                             </Card>
-                                            </div>
+                                        </div>
                                         {/*재료 종료*/}
                                         {/*레시피*/}
-                                            <div className={styles.detailContainer}>
-                                                <Card className={styles.recipeContainCard}>
-                                                    <Card.Body>
-                                                        <Card.Title  className={styles.titleContianer}>
-                                                            <div className={styles.title}>
-                                                                레시피
-                                                            </div>
+                                        <div className={styles.detailContainer}>
+                                            <Card className={styles.recipeContainCard}>
+                                                <Card.Body>
+                                                    <Card.Title  className={styles.titleContianer}>
+                                                        <div className={styles.title}>
+                                                            레시피
+                                                        </div>
 
-                                                            <div  className={styles.test} >
-                                                            </div>
-                                                        </Card.Title>
-                                                        {makeDetailRecipe()}
-                                                    </Card.Body>
-                                                </Card>
-                                            </div>
+                                                        <div  className={styles.test} >
+                                                        </div>
+                                                    </Card.Title>
+                                                    {makeDetailRecipe()}
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
                                         {/*레시피 종료*/}
                                     </Card.Body>
                                 </Card>

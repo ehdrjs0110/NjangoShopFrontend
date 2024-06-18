@@ -7,9 +7,20 @@ import styles from '../../styles/Sign/SignIn.module.scss';
 import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
+import {Cookies, useCookies} from "react-cookie";
 
 const SignIn = () => {
   const navigate = useNavigate();
+
+  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+  // const cookies = new Cookies();
+
+
+  let accessToken;
+  let refreshToken;
+  const expireDate = new Date();
+  expireDate.setMinutes(expireDate.getMinutes() + 30);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,35 +30,69 @@ const SignIn = () => {
     const password = form.elements.password.value;
 
     const formData = new FormData();
-    formData.append("id", id);
+    formData.append("email", id);
     formData.append("password", password);
 
     formData.forEach((value, key) => {
       console.log("key : " + key + " value : " + value);
     });
 
-  
-    //axios 파일 전송
-    // axios
-    //   .post("localhost:8080/Login", formData, {
+
+    // /axios 파일 전송
+    axios
+        .post("http://localhost:8080/api/v1/auth/authenticate", formData, {
+          headers: {
+            "Content-type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          accessToken = res.data.accessToken;
+          refreshToken = res.data.refreshToken;
+
+          refreshToken = JSON.stringify(refreshToken);
+
+
+
+          setCookie(
+              'refreshToken',
+              refreshToken,
+              {
+                path:'/',
+                maxAge: 7 * 24 * 60 * 60, // 7일
+                // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+              }
+          )
+
+
+        })
+        .then(() => {
+          console.log("refresh token cookie" +cookies.refreshToken)
+            navigate('/Main',{state:{accessToken}});
+
+        })
+        .catch(console.log)
+
+    // // axios 파일 전송
+    //  axios
+    //   .post("http:localhost:8080/api/v1/auth/authenticate", formData, {
     //     headers: {
     //       "Content-type": "multipart/form-data",
     //     },
     //   })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     if(res.data==true){
-    //       alert("로그인 성공 하셨습니다!");
-    //       //페이지 이동
-    //       navigate('/Main');
-    //     }else{
-    //       alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log("err message : " + err);
-    //     alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-    //   });
+
+      //   if(res.data==true){
+      //     alert("로그인 성공 하셨습니다!");
+      //     //페이지 이동
+      //     navigate('/Main');
+      //   }else{
+      //     alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
+      //   }
+      // })
+      // .catch((err) => {
+      //   console.log("err message : " + err);
+      //   alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
+      // });
   };
 
   //카카오톡 로그인
@@ -80,6 +125,8 @@ const SignIn = () => {
         navigate('/Main');
       }
     });
+
+
 
   }
 
