@@ -24,6 +24,9 @@ import axios from "axios";
 
 import styles from '../../styles/Search/AiDetailSearch.module.scss';
 
+//임시 아이디
+const id = "ehdrjs0110@naver.com";
+
 
 const AiDetaileSearch = () => {
     const location = useLocation(); // 현재 위치 객체를 가져옴
@@ -98,8 +101,8 @@ const AiDetaileSearch = () => {
 
 
     async function aiSearchEtcRequest (){
-        let level = `${recipyTitle} 종류의 ${recipyProgress} 레시피가 난이도는 1~3에서 어느 정도인지, 몇 인분인지, 소요 예상 시간은 어떤지 보내줘` +
-            "그리고 json 객체로  {0:{난이도: },1:{인분: },2:{소요시간: },} ```형태로만 참고로 키는 무조건 숫자여야해 보내줘";
+        let level = `${recipyTitle} 종류의 ${recipyProgress} 레시피가 난이도는 1~3에서 어느 정도인지, 몇 인분인지, 소요 예상 시간은 어떤지만 보내줘` +
+            "그리고 json 객체로  ```json {0:{난이도: },1:{인분: },2:{소요시간: }} ```형태로 참고로 키는 무조건 숫자여야해 보내줘";
         let ectResponse;
         console.log("요청중");
 
@@ -122,24 +125,15 @@ const AiDetaileSearch = () => {
             console.error(e);
         }
 
-        // console.log("인분");
-        // console.log(ectResponse);
-        let response = ectResponse.data.choices[0].message.content;
-        console.log(response);
-        // const cleanString = response.replace(/```json|```/g, '').trim();
-        // console.log("cleanString: " + cleanString);
-        // const stringObject = JSON.parse(cleanString);
-        // const ectList =  Object.values(stringObject);
-        // console.log(ectList);
 
-        var startNum = response.indexOf( "```json");
-        var lastNum = response.indexOf ("```", startNum + 10 );
-        var cleanString =  response.slice(startNum+7,lastNum);
-        console.log(cleanString);
+        let response = ectResponse.data;
+        console.log(response);
+        let jsonString = JSON.stringify(response);
+
 
 
         // JSON 문자열을 JavaScript 객체로 변환
-        const etc = JSON.parse(cleanString);
+        const etc = JSON.parse(jsonString);
         const etcList =  Object.values(etc);
         console.log(etcList);
 
@@ -185,16 +179,17 @@ const AiDetaileSearch = () => {
 
         console.log(searchResponse);
 
-        let response = searchResponse.data.choices[0].message.content;
+        let response = searchResponse.data;
         console.log("최종 응답");
 
-        console.log(response);
+        // console.log(response);
 
+        let jsonString = JSON.stringify(response);
         // ```json과 ```를 제거하는 코드
-        const cleanString = response.replace(/```json|```/g, '').trim();
+        // const cleanString = response.replace(/```json|```/g, '').trim();
 
         // JSON 문자열을 JavaScript 객체로 변환
-        const recipes = JSON.parse(cleanString);
+        const recipes = JSON.parse(jsonString);
         const recipesList =  Object.values(recipes);
 
         console.log(recipesList);
@@ -203,12 +198,49 @@ const AiDetaileSearch = () => {
         setDetailRecipe(recipesList);
     }
 
+    //요리종료
+    const finishCook = async () => {
+        if(window.confirm("요리를 끝내시겠습니까?")){
+
+            const userId = id;
+
+            let StringRecipe = "";
+            detailRecipe.map((recipe,index) => (
+                StringRecipe += recipe[1].과정
+            ));
+            
+            console.log("출력!"+StringRecipe);
+
+
+            const requestBody = {
+                "title": recipyTitle,
+                "progress": StringRecipe,
+                "ingredients": recipyIndigredient,
+                "level": level,
+                "time": time,
+                "servings": serve,
+            };
+
+            await axios.post(
+                `http://localhost:8080/history/finish/${userId}`,
+                requestBody,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+            alert("요리 종료");
+        }else{
+            alert("취소 되었습니다.")
+        }
+    };
 
     // 레시피 자세히 보기 ui
     function makeDetailRecipe ()
     {
         if(detailRecipe != null)
         {
+            
             return detailRecipe.map((recipe,index) => (
                 <div key={index} className={styles.detailRecipeCard} >
                     <Row>
@@ -298,7 +330,7 @@ const AiDetaileSearch = () => {
                                                                 {/*    여기는 비율 맞추기 위한 공백  */}
                                                             </Col>
                                                             <Col>
-                                                                <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
+                                                                <Button variant="outline-secondary" className={styles.cookingClearButton} onClick={finishCook} >요리완료</Button>
                                                             </Col>
                                                         </Row>
                                                     </Row>

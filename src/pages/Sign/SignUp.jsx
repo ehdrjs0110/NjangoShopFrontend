@@ -36,15 +36,13 @@ const SignUp = () => {
       const email = form.elements.email.value;
       const password = form.elements.password.value;
       const nickname = form.elements.nickname.value;
+      const phone = form.elements.phone.value;
     
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("name", nickname);
-
-      // formData.forEach((value, key) => {
-      //   console.log("key : " + key + " value : " + value);
-      // });
+      formData.append("nickname", nickname);
+      formData.append("phoneNumber", phone);
 
       //axios 파일 전송
       axios
@@ -189,9 +187,6 @@ const SignUp = () => {
           </div>
           <div className='inputbox'>  
             <input type="text" id='nickname' className={styles.inputbox} placeholder='닉네임'/>
-          </div>
-          <div className='inputbox'>  
-            <input type="text" id='name' className={styles.inputbox} placeholder='이름'/>
           </div>
           <div className='inputbox'>  
             <input type="text" id='phone' className={styles.inputbox} placeholder='전화번호'/>
