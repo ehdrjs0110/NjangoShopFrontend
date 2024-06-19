@@ -29,6 +29,15 @@ const id = "ehdrjs0110@naver.com";
 
 
 const AiDetaileSearch = () => {
+    var today = new Date(); //현재시간 가져오기
+    let year = today.getFullYear(); // 년도
+    let month = today.getMonth() + 1;  // 월
+    let date = today.getDate();  // 날짜
+    let hours = today.getHours(); // 시
+    let minutes = today.getMinutes();  // 분
+    let seconds = today.getSeconds();  // 초
+    const nowTime = year + "" + month + "" + date + "" + hours + "" + minutes + "" + seconds;
+
     const location = useLocation(); // 현재 위치 객체를 가져옴
     const { recipe } = location.state || {}; // 전달된 상태에서 recipe 추출, 없을 경우 빈 객체로 대체
     // const {detailRecipe, setDetailRecipe} = useState(null);
@@ -48,6 +57,10 @@ const AiDetaileSearch = () => {
     const ingredientObject = recipe.재료;
     const recipyIndigredient = JSON.stringify(ingredientObject);
     let recipyProgress = recipe.과정;
+
+    //Recipe ID 생성
+    const recipeId = id + nowTime;
+    console.log(recipeId);
 
     function makeString () {
         let string;
@@ -204,17 +217,15 @@ const AiDetaileSearch = () => {
 
             const userId = id;
 
-            let StringRecipe = "";
-            detailRecipe.map((recipe,index) => (
-                StringRecipe += recipe[1].과정
-            ));
+            const RecipeProgress = JSON.stringify(detailRecipe);
             
-            console.log("출력!"+StringRecipe);
+            console.log("출력! : "+detailRecipe);
 
 
             const requestBody = {
+                "recipeId": recipeId,
                 "title": recipyTitle,
-                "progress": StringRecipe,
+                "progress": RecipeProgress,
                 "ingredients": recipyIndigredient,
                 "level": level,
                 "time": time,
@@ -233,6 +244,39 @@ const AiDetaileSearch = () => {
         }else{
             alert("취소 되었습니다.")
         }
+    };
+
+    //좋아요
+    const clickLike = async () => {
+        
+        const userId = id;
+
+        const RecipeProgress = JSON.stringify(detailRecipe);
+        
+        console.log("출력! : "+detailRecipe);
+
+
+        const requestBody = {
+            "recipeId": recipeId,
+            "title": recipyTitle,
+            "progress": RecipeProgress,
+            "ingredients": recipyIndigredient,
+            "level": level,
+            "time": time,
+            "servings": serve,
+        };
+
+        await axios.post(
+            `http://localhost:8080/like/likeAdd/${userId}`,
+            requestBody,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+        alert("좋아요!!");
+        
     };
 
     // 레시피 자세히 보기 ui
@@ -295,7 +339,7 @@ const AiDetaileSearch = () => {
                                                     <div  className={styles.bottomLine}></div>
                                                 </Col>
                                                 <Col className={styles.iconCol}>
-                                                    <Button  className={styles.iconButton} variant="outline-secondary">
+                                                    <Button  className={styles.iconButton} variant="outline-secondary" onClick={clickLike}>
                                                         <FontAwesomeIcon className={styles.icon} icon={faHeart} />
                                                     </Button>{' '}
                                                     <Button  className={styles.iconButton}  variant="outline-secondary">
