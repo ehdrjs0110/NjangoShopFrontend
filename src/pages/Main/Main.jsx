@@ -16,68 +16,61 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import axios from "axios";
 import { useCookies } from 'react-cookie';
-// import {useAuth} from '../../services/auth';
+import {useDispatch, useSelector} from "react-redux";
+import {getNewToken} from '../../services/auth2';
+import {containToken} from "../../Store/tokenSlice";
 
 function Main() {
   const navigate = useNavigate();
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
 
-  const location = useLocation();
-  const {accessToken} = location.state || {};
-  console.log(accessToken);
+
+
+ // redux에서 가져오기
+  let accessToken = useSelector(state => state.token.value);
+  const dispatch = useDispatch();
 
 
   useEffect(() => {
-      // getNewToken();
-      if(!accessToken){
-          getNewToken();
-      }
-  },[])
 
+    let refreshToken = cookies.refreshToken;
+    async function checkAccessToken() {
+      try {
 
-  let newAccessToken;
-  let newRefreshToken;
+        // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+        const result = await getNewToken(refreshToken);
+        refreshToken = result.newRefreshToken;
 
-  async function getNewToken() {
-    console.log("refresh token cookie" +cookies.refreshToken);
-    const refreshToken = cookies.refreshToken;
-
-    let response;
-    try {
-      response = await axios.post(
-          "http://localhost:8080/api/v1/auth/refreshToken",{},
-          {
-            headers: {
-              "Authorization": `Bearer ${refreshToken}`
+        // refresh token cookie에 재설정
+        setCookie(
+            'refreshToken',
+            refreshToken,
+            {
+              path:'/',
+              maxAge: 7 * 24 * 60 * 60, // 7일
+              // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
             }
-          }
-      );
-    }// 싪패시 로그인 유도
-    catch (e) {
-      console.log(e);
-      navigate('/Sign');
+        )
+
+        // Redux access token 재설정
+        dispatch(containToken(result.newToken));
+
+      } catch (error) {
+        console.log(error);
+        navigate('/Sign');
+      }
     }
-    // response.data;
-    console.log(response.data);
-    // console.log(res.data);
-    newAccessToken = response.data.accessToken;
-    newRefreshToken = response.data.refreshToken;
 
-    newRefreshToken = JSON.stringify(refreshToken);
+    if(accessToken == null || accessToken == undefined)
+    {
+      checkAccessToken();
+    }
+
+    },[])
 
 
 
-    setCookie(
-        'refreshToken',
-        refreshToken,
-        {
-          path:'/',
-          maxAge: 7 * 24 * 60 * 60, // 7일
-          // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-        }
-    )
 
-  }
 
 
 

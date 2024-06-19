@@ -1,4 +1,8 @@
 import Navigation from '../../components/Nav/Navigation'
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 const profile = () => {
     return (

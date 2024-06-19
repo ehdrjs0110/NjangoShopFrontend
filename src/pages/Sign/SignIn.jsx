@@ -1,4 +1,4 @@
-import React, { useState , useRef , useEffect } from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,20 +8,25 @@ import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
 import {Cookies, useCookies} from "react-cookie";
+import {useDispatch, useSelector} from "react-redux";
+import { containToken} from "../../Store/tokenSlice";
 
 const SignIn = () => {
   const navigate = useNavigate();
 
+  // refreshToken 보관을 위한 cookie 설정
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
-
-  // const cookies = new Cookies();
-
-
+  // redux 함수
+  const dispatch = useDispatch();
+  // accessToken && refreshToken 변수 선언
   let accessToken;
   let refreshToken;
+  // refreshToken 보관 기간
   const expireDate = new Date();
   expireDate.setMinutes(expireDate.getMinutes() + 30);
 
+
+  // 로그인 요청 부분
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,7 +43,10 @@ const SignIn = () => {
     });
 
 
-    // /axios 파일 전송
+
+
+
+    // 로그인 요청
     axios
         .post("http://localhost:8080/api/v1/auth/authenticate", formData, {
           headers: {
@@ -50,10 +58,13 @@ const SignIn = () => {
           accessToken = res.data.accessToken;
           refreshToken = res.data.refreshToken;
 
+
+          console.log("accesstoken "+ accessToken);
+
+          // redux 변수에 access token 넣는 부분
+          dispatch(containToken(accessToken));
+          // refresh token cookie에 넣는 부분
           refreshToken = JSON.stringify(refreshToken);
-
-
-
           setCookie(
               'refreshToken',
               refreshToken,
@@ -64,12 +75,11 @@ const SignIn = () => {
               }
           )
 
-
         })
         .then(() => {
-          console.log("refresh token cookie" +cookies.refreshToken)
-            navigate('/Main',{state:{accessToken}});
-
+          // console.log("refresh token cookie" +cookies.refreshToken)
+            navigate('/Main');
+          // navigate('/Main',{state:{accessToken}});
         })
         .catch(console.log)
 

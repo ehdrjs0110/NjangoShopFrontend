@@ -14,6 +14,10 @@ import Navigation from '../../components/Nav/Navigation'
 import imgPath from '../../assets/MyPageImg/img.png';
 import myPageStyle from '../../styles/MyPage/MyPage.module.scss'
 
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 
 

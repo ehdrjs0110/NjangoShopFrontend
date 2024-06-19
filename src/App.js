@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 import Sign from './pages/Sign/Sign';
@@ -21,11 +21,9 @@ import AiDetailSearch from "./pages/Search/AiDetailSearch";
 // import index from '../src/styles/index.css'
 
 
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
-
 
 
   return (

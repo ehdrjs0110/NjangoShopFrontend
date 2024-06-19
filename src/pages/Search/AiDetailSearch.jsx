@@ -19,10 +19,14 @@ import {
     faStar,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import styles from '../../styles/Search/AiDetailSearch.module.scss';
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useCookies} from "react-cookie";
+import {useDispatch, useSelector} from "react-redux";
 
 
 const AiDetaileSearch = () => {
@@ -35,7 +39,17 @@ const AiDetaileSearch = () => {
     const [time,setTime] = useState(0);
     const [serve,setServe] = useState(0);
 
+    const navigate = useNavigate();
     // const [recipyTitle, setRecipyTitle] = useState(recipe.요리제목);
+
+    // refresh token 가져오기
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+
+
+    // redux에서 가져오기
+    let accessToken = useSelector(state => state.token.value);
+    const dispatch = useDispatch();
 
 
     console.log(recipe);
@@ -172,6 +186,7 @@ const AiDetaileSearch = () => {
             )
         } catch (e) {
             console.error(e);
+
         }
 
         console.log(searchResponse);
@@ -193,6 +208,37 @@ const AiDetaileSearch = () => {
         // console.log("JavaScript 객체를 콘솔에 출력");
         // console.log(recipes);
         setDetailRecipe(recipesList);
+    }
+
+
+    // accesstoken 재요청 함수
+    async function checkAccessToken2() {
+
+        let refreshToken = cookies.refreshToken;
+        try {
+
+            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+            const result = await getNewToken(refreshToken);
+            refreshToken = result.newRefreshToken;
+
+            // refresh token cookie에 재설정
+            setCookie(
+                'refreshToken',
+                refreshToken,
+                {
+                    path:'/',
+                    maxAge: 7 * 24 * 60 * 60, // 7일
+                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                }
+            )
+
+            // Redux access token 재설정
+            dispatch(containToken(result.newToken));
+
+        } catch (error) {
+            console.log(error);
+            navigate('/Sign');
+        }
     }
 
 
@@ -230,6 +276,44 @@ const AiDetaileSearch = () => {
     }
 
     useEffect(() => {
+
+
+        // access token의 유무에 따라
+        let refreshToken = cookies.refreshToken;
+        async function checkAccessToken() {
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
+            }
+        }
+        checkAccessToken();
+
+        // checkAccessToken();
+        if(accessToken == null || accessToken == undefined)
+        {
+            checkAccessToken();
+        }
+
         aiSearchRequest()
         aiSearchEtcRequest()
         // setRecipyTitle(recipe.요리제목);
