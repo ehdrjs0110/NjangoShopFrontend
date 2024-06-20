@@ -60,6 +60,53 @@ const AiDetaileSearch = () => {
     const recipyIndigredient = JSON.stringify(ingredientObject);
     let recipyProgress = recipe.과정;
 
+
+
+    useEffect(() => {
+
+
+        // access token의 유무에 따라
+        let refreshToken = cookies.refreshToken;
+        async function checkAccessToken() {
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
+            }
+        }
+        // checkAccessToken();
+
+        // checkAccessToken();
+        if(accessToken == null || accessToken == undefined)
+        {
+            checkAccessToken();
+        }
+
+        aiSearchRequest()
+        aiSearchEtcRequest()
+        // setRecipyTitle(recipe.요리제목);
+    }, []);
+
+
     function makeString () {
         let string;
         Object.entries(ingredientObject).map(([key, value], index) => (
@@ -73,6 +120,8 @@ const AiDetaileSearch = () => {
     // 재료 리스트 ui
 
     function makeIngredient () {
+
+        console.log(ingredientObject)
         return Object.entries(ingredientObject).map(([key, value], index) => (
             <Row key={index} xs={2} md={2} lg={2}>
                 <Col  className={styles.listText}>{key}</Col>
@@ -129,11 +178,27 @@ const AiDetaileSearch = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}` // auth 설정
                     },
                 }
             )
         } catch (e) {
             console.error(e);
+            checkAccessToken2();
+            try {
+                ectResponse = await axios.post(
+                    "http://localhost:8080/api/v1/chat-gpt",
+                    requestBody,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    }
+                )
+            } catch (e) {
+                console.error(e);
+            }
         }
 
 
@@ -151,11 +216,17 @@ const AiDetaileSearch = () => {
         console.log(etcList[0]);
 
         setEtc(etcList);
-
         // 난이도
         setLevel(etcList[0].난이도);
         setServe(etcList[1].인분);
-        setTime(etcList[2].소요시간);
+        // setTime(etcList[2].소요시간);
+        // etcList[2].소요시간이 존재하고 문자열이라면 '분'을 제거한 후 setTime에 설정
+        if (etcList[2] && typeof etcList[2].소요시간 === 'string') {
+            setTime(etcList[2].소요시간.replace('분', ''));
+        } else {
+            // 소요시간이 정의되어 있지 않거나 문자열이 아닌 경우
+            setTime(etcList[2].소요시간);
+        }
 
     }
 
@@ -165,7 +236,7 @@ const AiDetaileSearch = () => {
     async function aiSearchRequest () {
         let recipyIndigredientString = makeString();
         let request  = `${recipyTitle} 종류의 ${recipyProgress} 레시피를 알려주는데 만드는 과정을 더욱 자세하게 얘기해주고 재료는 종류, 양 변화 없이 ${recipyIndigredientString} 추가사항 없이 사용되어야 해 ` +
-            "그리고 json 객체로 {0:[{과정제목: },{과정:  }], 1: [{과정제목: },{과정:  }, ..} 형태로만 참고로 키는 무조건 숫자여야해 보내줘";
+            "그리고 json 객체로 {0:[{과정제목: },{process:  }], 1: [{과정제목: },{process:  }, ..} 형태로만 참고로 키는 무조건 숫자여야해 보내줘";
 
         console.log("요청 중");
 
@@ -181,11 +252,28 @@ const AiDetaileSearch = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}` // auth 설정
                     },
                 }
             )
         } catch (e) {
             console.error(e);
+            checkAccessToken2();
+            try {
+                searchResponse = await axios.post(
+                    "http://localhost:8080/api/v1/chat-gpt",
+                    requestBody,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    }
+                )
+            } catch (e) {
+                console.error(e);
+
+            }
 
         }
 
@@ -263,7 +351,7 @@ const AiDetaileSearch = () => {
                                 <Card.Body className={styles.body}>
                                     <Card.Title>{recipe[0].과정제목}</Card.Title>
                                     <Card.Text>
-                                        {recipe[1].과정}
+                                        {recipe && recipe[1] && recipe[1].process}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -275,49 +363,8 @@ const AiDetaileSearch = () => {
         return null;
     }
 
-    useEffect(() => {
 
 
-        // access token의 유무에 따라
-        let refreshToken = cookies.refreshToken;
-        async function checkAccessToken() {
-            try {
-
-                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-                const result = await getNewToken(refreshToken);
-                refreshToken = result.newRefreshToken;
-
-                // refresh token cookie에 재설정
-                setCookie(
-                    'refreshToken',
-                    refreshToken,
-                    {
-                        path:'/',
-                        maxAge: 7 * 24 * 60 * 60, // 7일
-                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                    }
-                )
-
-                // Redux access token 재설정
-                dispatch(containToken(result.newToken));
-
-            } catch (error) {
-                console.log(error);
-                navigate('/Sign');
-            }
-        }
-        checkAccessToken();
-
-        // checkAccessToken();
-        if(accessToken == null || accessToken == undefined)
-        {
-            checkAccessToken();
-        }
-
-        aiSearchRequest()
-        aiSearchEtcRequest()
-        // setRecipyTitle(recipe.요리제목);
-    }, []);
 
 
 

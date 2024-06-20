@@ -15,8 +15,11 @@ import cart from '../../assets/Nav/cart.png'
 import {useCookies} from "react-cookie";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
+import {jwtDecode} from "jwt-decode";
+import {containEmail} from "../../Store/userEmailSlice";
+import {containNickName} from "../../Store/userNickName";
 
-const id = "ehdrjs0110";
+
 
 function Navigation() {
   const navigate = useNavigate();
@@ -24,19 +27,46 @@ function Navigation() {
   // auth 관련
   const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
   let refreshToken  = cookies.refreshToken;
+  const dispatch = useDispatch();
+
+  let reduxEmail = useSelector(state => state.userEmail.value);
+  let reduxNickname = useSelector( state => state.userNickName.value);
+
+  let id = reduxNickname;
+  // 토큰 decode
 
   useEffect(() => {
     getEmailAndNickname();
-  },[])
+  },[refreshToken])
 
+  //
   const getEmailAndNickname = ()  => {
-    console.log("위치 nav에서 출력, refreshToken:  " + refreshToken);
-    
+    try {
+      console.log("위치 nav에서 출력, refreshToken:  " + refreshToken);
+      const decoded = jwtDecode(refreshToken);
 
+      // useremail
+      reduxEmail = decoded.sub;
+      reduxNickname = decoded.nickname;
+
+      dispatch(containEmail(reduxEmail));
+      dispatch(containNickName(reduxNickname));
+
+
+      console.log(decoded);
+      console.log(decoded.sub); // useremail
+      console.log(decoded.nickname); //
+    } catch (error) {
+      console.error("Invalid token specified: ", error);
+    }
   }
 
 
-  const goToMain = () => {
+
+
+
+
+    const goToMain = () => {
     navigate("/Main");
   }
 

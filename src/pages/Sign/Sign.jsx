@@ -8,9 +8,20 @@ import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
 import * as url from "url";
+import {containToken} from "../../Store/tokenSlice";
+import {useCookies} from "react-cookie";
+import {useDispatch} from "react-redux";
 
 const Sign = () => {
   const navigate = useNavigate();
+
+  // refreshToken 보관을 위한 cookie 설정
+  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+  // redux 함수
+  const dispatch = useDispatch();
+  // accessToken && refreshToken 변수 선언
+  let accessToken;
+  let refreshToken;
 
   const emailsign = () => {
     navigate('/SignUp');
@@ -56,6 +67,31 @@ const Sign = () => {
       if(res.data!=null){
         //alert("카카오 계정으로 회원가입 성공!");
         console.log(res.data);
+        console.log("여기" + res);
+        if(res.data!=null){
+          console.log("여기" + res.data);
+
+          accessToken = res.data.accessToken;
+          refreshToken = res.data.refreshToken;
+
+
+          console.log("accesstoken "+ accessToken);
+
+          // redux 변수에 access token 넣는 부분
+          dispatch(containToken(accessToken));
+          // refresh token cookie에 넣는 부분
+          refreshToken = JSON.stringify(refreshToken);
+          setCookie(
+              'refreshToken',
+              refreshToken,
+              {
+                path:'/',
+                maxAge: 7 * 24 * 60 * 60, // 7일
+                // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+              }
+          )
+
+        }
         navigate('/Main');
       }
     });

@@ -351,7 +351,7 @@ const AiSearch = () => {
 
         console.log("요청 중");
         const requestBody = {"userContent" : `${selectedKindOfFood} 종류의 ${searchValue} 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
-                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 title,재료,과정으로 알려줘` +
+                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 title,재료,과정으로 알려줘 그리고 재료는 리스트 형태는 싫고 객체 형태로 재료, 양의 쌍으로 알려줘` +
                 "그리고 json 객체로 {0:[요리 1], 1: [요리2], 2: [요리3}, 3:[요리], 4:[요리]} 형태로만 참고로 키는 무조건 숫자여야해 보내줘"};
         let searchResponse;
         try {
@@ -417,6 +417,19 @@ const AiSearch = () => {
     }
 
 
+    function makeIngredient (ingredientObject) {
+
+        // console.log(ingredientObject);
+        let ingredientList = '';
+        Object.entries(ingredientObject).forEach(([key, value]) => {
+            ingredientList += `${key}: ${value}, `;;
+        });
+        return (
+            ingredientList
+        )
+    }
+
+
     // recipe UI
     function recipeResponce()
     {
@@ -438,7 +451,8 @@ const AiSearch = () => {
                     </Card.Header>
                     <Card.Body>
                         <Card.Text>
-                            <strong>재료:</strong> {JSON.stringify(recipe.재료)}
+                            {/*<strong>재료:</strong> {JSON.stringify(recipe.재료)}*/}
+                            <strong>재료:</strong> {makeIngredient(recipe.재료)}
                         </Card.Text>
                         <Card.Text>
                             <strong>과정:</strong> {JSON.stringify(recipe.과정)}

@@ -123,18 +123,20 @@ const SignIn = () => {
 
   async function sendCode() {
 
+
     const body = {
       code: code,
     };
 
+
+
     await axios
     .post("http://localhost:8080/login/kakaoCode", body)
     .then((res) => {
-      if(res.data!=null){
-        console.log(res.data);
-        navigate('/Main');
-      }
-    });
+
+      navigate('/Main');
+    }).catch(console.error)
+
 
 
 
