@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -7,9 +8,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 
-import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import Card from 'react-bootstrap/Card';
-import {Accordion} from "react-bootstrap";
 import Navigation from '../../components/Nav/Navigation'
 import imgPath from '../../assets/MyPageImg/img.png';
 import myPageStyle from '../../styles/MyPage/MyPage.module.scss'
@@ -18,7 +17,15 @@ import myPageStyle from '../../styles/MyPage/MyPage.module.scss'
 
 
 const MyPage = () => {
+    const navigate = useNavigate();
 
+    const goHistory = () => {
+        navigate('/HistoryList');
+    };
+
+    const goLike = () => {
+        navigate('/LikeList');
+    };
 
     return (
         <>
@@ -57,8 +64,8 @@ const MyPage = () => {
                                     </Card.Body>
                                     <Card.Footer className="text-muted">
                                         <Button variant="outline-secondary">필터 설정</Button>{' '}
-                                        <Button variant="outline-secondary">레시피 기록</Button>{' '}
-                                        <Button variant="outline-secondary">Like🖤</Button>{' '}
+                                        <Button variant="outline-secondary" onClick={goHistory}>레시피 기록</Button>{' '}
+                                        <Button variant="outline-secondary" onClick={goLike}>Like🖤</Button>{' '}
                                     </Card.Footer>
                                 </Card>
 
