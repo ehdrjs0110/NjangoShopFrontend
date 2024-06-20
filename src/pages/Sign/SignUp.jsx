@@ -42,7 +42,7 @@ const SignUp = () => {
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
-      formData.append("name", nickname);
+      formData.append("nickname", nickname);
       formData.append("phoneNumber", phoneNumber);
 
 

@@ -10,10 +10,31 @@ import logo from '../../assets/Logo/logo.png';
 
 import cart from '../../assets/Nav/cart.png'
 
+
+// auth관련
+import {useCookies} from "react-cookie";
+import {useDispatch, useSelector} from "react-redux";
+import {useEffect} from "react";
+
 const id = "ehdrjs0110";
 
 function Navigation() {
   const navigate = useNavigate();
+
+  // auth 관련
+  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+  let refreshToken  = cookies.refreshToken;
+
+  useEffect(() => {
+    getEmailAndNickname();
+  },[])
+
+  const getEmailAndNickname = ()  => {
+    console.log("위치 nav에서 출력, refreshToken:  " + refreshToken);
+    
+
+  }
+
 
   const goToMain = () => {
     navigate("/Main");
