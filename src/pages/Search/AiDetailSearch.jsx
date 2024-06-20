@@ -58,6 +58,7 @@ const AiDetaileSearch = () => {
 
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
+    let  id = useSelector(state=> state.userEmail.value);
     const dispatch = useDispatch();
 
 

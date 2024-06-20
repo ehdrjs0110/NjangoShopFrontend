@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -17,7 +16,7 @@ import {useCookies} from "react-cookie";
 import {getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
