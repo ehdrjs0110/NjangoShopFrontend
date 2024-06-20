@@ -1,4 +1,4 @@
-import React, { useState , useRef , useEffect } from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router-dom";
 import Scrollbars from '../../components/Inven/CustomScrollbar';
 import classNames from 'classnames';
@@ -15,6 +15,11 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
+
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 
 function Inven() {
@@ -37,11 +42,58 @@ function Inven() {
 
   const userid = "ehdrjs0110";
 
+  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+
+  // redux에서 가져오기
+    let accessToken = useSelector(state => state.token.value);
+    const dispatch = useDispatch();
+
+
+
+
 
   useEffect(() => {
     setNewData({      
       userid : "ehdrjs0110",
     });
+
+    // access token의 유무에 따라 재발급
+    let refreshToken = cookies.refreshToken;
+    async function checkAccessToken() {
+      try {
+        // console.log("useEffect에서 실행")
+
+        // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+        const result = await getNewToken(refreshToken);
+        refreshToken = result.newRefreshToken;
+
+        // refresh token cookie에 재설정
+        setCookie(
+            'refreshToken',
+            refreshToken,
+            {
+              path:'/',
+              maxAge: 7 * 24 * 60 * 60, // 7일
+              // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+            }
+        )
+
+        // Redux access token 재설정
+        dispatch(containToken(result.newToken));
+
+      } catch (error) {
+        console.log(error);
+        navigate('/Sign');
+      }
+    }
+    // checkAccessToken();
+
+    // checkAccessToken();
+    if(accessToken == null || accessToken == undefined)
+    {
+      checkAccessToken();
+    }
   },[]);
 
   useEffect(() => {
@@ -62,7 +114,38 @@ function Inven() {
 
     fetchData();
 
+
   }, [isChange]);
+
+  async function checkAccessToken2() {
+
+    let refreshToken = cookies.refreshToken;
+    try {
+
+      // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+      const result = await getNewToken(refreshToken);
+      refreshToken = result.newRefreshToken;
+
+      // refresh token cookie에 재설정
+      setCookie(
+          'refreshToken',
+          refreshToken,
+          {
+            path:'/',
+            maxAge: 7 * 24 * 60 * 60, // 7일
+            // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+          }
+      )
+
+      // Redux access token 재설정
+      dispatch(containToken(result.newToken));
+
+    } catch (error) {
+      console.log(error);
+      navigate('/Sign');
+    }
+  }
+
 
   const addData = async () => {
 
@@ -72,7 +155,8 @@ function Inven() {
       console.log(data);
       const res = await axios.post("http://localhost:8080/inven/manage/add", data, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${accessToken}`
         }
       });
       setChange(!isChange);

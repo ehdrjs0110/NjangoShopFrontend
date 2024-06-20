@@ -8,11 +8,22 @@ import Container from 'react-bootstrap/Container';
 
 import logoImg from '../../assets/Logo/logo.png';
 import * as url from "url";
+import {Cookies, useCookies} from "react-cookie";
+import {useDispatch, useSelector} from "react-redux";
+import { containToken} from "../../Store/tokenSlice";
 
 const Sign = () => {
     const navigate = useNavigate();
 
     const [kakaoToken, setKakaoToken] = useState(null);
+
+    // refreshToken 보관을 위한 cookie 설정
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+    // redux 함수
+    const dispatch = useDispatch();
+    // accessToken && refreshToken 변수 선언
+    let accessToken;
+    let refreshToken;
 
     const emailsign = () => {
         navigate('/SignUp');
@@ -88,6 +99,7 @@ const Sign = () => {
                 }
 
             );
+            console.log("여기임");
             console.log(auth);
         } catch (e) {
             console.error(e);

@@ -18,7 +18,10 @@ import {useNavigate} from "react-router-dom"
 import {css} from "@emotion/react";
 
 
-
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
 
 
 
@@ -226,71 +229,71 @@ const AiSimpleSearch = () => {
             <Navigation/>
 
 
-                    <Container fluid style={{padding:0}} className={aiSimpleCss.aiSimpleSearchContiner} >
-                        <Row className={aiSimpleCss.aiSimpleSearchContinerRow} style={{paddingLeft:0, paddingRight:0}}>
-                                <Col style={{ paddingLeft: 0, paddingRight: 0 }} md={{ span: 10, offset: 1 }}  className={aiSimpleCss.aiSearchMainCol}>
+            <Container fluid style={{padding:0}} className={aiSimpleCss.aiSimpleSearchContiner} >
+                <Row className={aiSimpleCss.aiSimpleSearchContinerRow} style={{paddingLeft:0, paddingRight:0}}>
+                    <Col style={{ paddingLeft: 0, paddingRight: 0 }} md={{ span: 10, offset: 1 }}  className={aiSimpleCss.aiSearchMainCol}>
 
-                                    {/* 내 재료 시작점 */}
-                                    <div className={aiSimpleCss.myIngredientContainer} >
-                                        <Card border="secondary" className={aiSimpleCss.myIngredientCard}>
-                                            <Card.Body>
-                                                <Card.Title  className={aiSimpleCss.title}>내 재료</Card.Title>
-                                                <Card.Text as="div">
-                                                    {/*재료 선택*/}
-                                                    {makeMyIngredientList()}
-                                                </Card.Text>
-                                            </Card.Body>
-                                        </Card>
-                                    </div>
-                                    {/*내 재료 카드 종료 */}
+                        {/* 내 재료 시작점 */}
+                        <div className={aiSimpleCss.myIngredientContainer} >
+                            <Card border="secondary" className={aiSimpleCss.myIngredientCard}>
+                                <Card.Body>
+                                    <Card.Title  className={aiSimpleCss.title}>내 재료</Card.Title>
+                                    <Card.Text as="div">
+                                        {/*재료 선택*/}
+                                        {makeMyIngredientList()}
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        {/*내 재료 카드 종료 */}
 
-                                    {/*선택된 재료 내역 시작점*/}
-                                    <div className={aiSimpleCss.checkedIngredientContainer}>
-                                        <Card border="secondary" className={aiSimpleCss.card}>
-                                            <Card.Body>
-                                                <Card.Title className={aiSimpleCss.title}>Check</Card.Title>
+                        {/*선택된 재료 내역 시작점*/}
+                        <div className={aiSimpleCss.checkedIngredientContainer}>
+                            <Card border="secondary" className={aiSimpleCss.card}>
+                                <Card.Body>
+                                    <Card.Title className={aiSimpleCss.title}>Check</Card.Title>
 
-                                                <Row xs={2} md={4} lg={6} className={aiSimpleCss.list}>
-                                                    {makeCheckedList()}
-                                                </Row>
-                                                <Card.Text>
-                                                </Card.Text>
-                                            </Card.Body>
-                                        </Card>
-                                    </div>
-                                    {/*선택된 재료 내역 종료*/}
-
-
-
-                                    {/*레시피 검색 버튼 시작점*/}
-                                    <div className={aiSimpleCss.aiSearchNumberContainer}>
-                                        <InputGroup>
-                                            <InputGroup.Text id="basic-addon1" >레시피 개수</InputGroup.Text>
-                                            <Form.Control
-                                                aria-label="Recipient's username"
-                                                aria-describedby="basic-addon2"
-                                                className="ai-search-input"
-                                                onChange={recipeHendler}
-                                                value={recipeCount}
-
-                                            />
-                                            <Button variant="primary" id="button-addon2"  onClick={aiSearchRequest}>
-                                                검색
-                                            </Button>
-                                        </InputGroup>
-                                    </div>
-                                    {/*레시피 검색 버튼 종료*/}
+                                    <Row xs={2} md={4} lg={6} className={aiSimpleCss.list}>
+                                        {makeCheckedList()}
+                                    </Row>
+                                    <Card.Text>
+                                    </Card.Text>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        {/*선택된 재료 내역 종료*/}
 
 
-                                    {/*레시피 결과 리스트 시작점*/}
-                                    <div className={aiSimpleCss.aiSearchListContainer}>
-                                        {recipeResponce()}
-                                    </div>
-                                    {/*레시피 결과 리스트 종료점*/}
 
-                                </Col>
-                        </Row>
-                    </Container>
+                        {/*레시피 검색 버튼 시작점*/}
+                        <div className={aiSimpleCss.aiSearchNumberContainer}>
+                            <InputGroup>
+                                <InputGroup.Text id="basic-addon1" >레시피 개수</InputGroup.Text>
+                                <Form.Control
+                                    aria-label="Recipient's username"
+                                    aria-describedby="basic-addon2"
+                                    className="ai-search-input"
+                                    onChange={recipeHendler}
+                                    value={recipeCount}
+
+                                />
+                                <Button variant="primary" id="button-addon2"  onClick={aiSearchRequest}>
+                                    검색
+                                </Button>
+                            </InputGroup>
+                        </div>
+                        {/*레시피 검색 버튼 종료*/}
+
+
+                        {/*레시피 결과 리스트 시작점*/}
+                        <div className={aiSimpleCss.aiSearchListContainer}>
+                            {recipeResponce()}
+                        </div>
+                        {/*레시피 결과 리스트 종료점*/}
+
+                    </Col>
+                </Row>
+            </Container>
         </div>
     )
 }

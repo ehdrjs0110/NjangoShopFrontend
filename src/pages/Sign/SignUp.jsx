@@ -25,7 +25,7 @@ const SignUp = () => {
   const [isRead, setRead] = useState(false);
 
   //이메일 인증 여부
-  const [isAuth, setAuth] = useState(false);
+  const [isAuth, setAuth] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,13 +36,19 @@ const SignUp = () => {
       const email = form.elements.email.value;
       const password = form.elements.password.value;
       const nickname = form.elements.nickname.value;
-      const phone = form.elements.phone.value;
-    
+      const phoneNumber = form.elements.phone.value;
+
+
       const formData = new FormData();
       formData.append("email", email);
       formData.append("password", password);
       formData.append("nickname", nickname);
-      formData.append("phoneNumber", phone);
+      formData.append("phoneNumber", phoneNumber);
+
+
+      // formData.forEach((value, key) => {
+      //   console.log("key : " + key + " value : " + value);
+      // });
 
       //axios 파일 전송
       axios

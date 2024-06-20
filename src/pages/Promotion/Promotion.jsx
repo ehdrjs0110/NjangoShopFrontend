@@ -14,6 +14,11 @@ import slideImg4 from "../../assets/Promotion/ingred.webp";
 
 import '../../styles/Bootstrap/Bootstrap.scss';
 import styles from '../../styles/Promotion/Promotion.module.scss';
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
+
 
 const Promotion = () => {
   const navigate = useNavigate();

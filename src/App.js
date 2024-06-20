@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 import Sign from './pages/Sign/Sign';
@@ -29,7 +29,10 @@ import LikeDetail from './pages/Like/LikeDetail';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+
+
   return (
+
     <div className="App">
       <Router>
         <Routes>
@@ -60,6 +63,7 @@ function App() {
       </Router>
       
     </div>
+
   );
 }
 

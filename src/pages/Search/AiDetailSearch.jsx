@@ -19,13 +19,14 @@ import {
     faStar,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import styles from '../../styles/Search/AiDetailSearch.module.scss';
-
-//임시 아이디
-const id = "ehdrjs0110@gmail.com";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useCookies} from "react-cookie";
+import {useDispatch, useSelector} from "react-redux";
 
 
 const AiDetaileSearch = () => {
@@ -47,7 +48,17 @@ const AiDetaileSearch = () => {
     const [time,setTime] = useState(0);
     const [serve,setServe] = useState(0);
 
+    const navigate = useNavigate();
     // const [recipyTitle, setRecipyTitle] = useState(recipe.요리제목);
+
+    // refresh token 가져오기
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+
+
+    // redux에서 가져오기
+    let accessToken = useSelector(state => state.token.value);
+    const dispatch = useDispatch();
 
 
     console.log(recipe);
@@ -57,6 +68,53 @@ const AiDetaileSearch = () => {
     const ingredientObject = recipe.재료;
     const recipyIndigredient = JSON.stringify(ingredientObject);
     let recipyProgress = recipe.과정;
+
+
+
+    useEffect(() => {
+
+
+        // access token의 유무에 따라
+        let refreshToken = cookies.refreshToken;
+        async function checkAccessToken() {
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
+            }
+        }
+        // checkAccessToken();
+
+        // checkAccessToken();
+        if(accessToken == null || accessToken == undefined)
+        {
+            checkAccessToken();
+        }
+
+        aiSearchRequest()
+        aiSearchEtcRequest()
+        // setRecipyTitle(recipe.요리제목);
+    }, []);
+
 
     //Recipe ID 생성
     const recipeId = id + nowTime;
@@ -75,6 +133,8 @@ const AiDetaileSearch = () => {
     // 재료 리스트 ui
 
     function makeIngredient () {
+
+        console.log(ingredientObject)
         return Object.entries(ingredientObject).map(([key, value], index) => (
             <Row key={index} xs={2} md={2} lg={2}>
                 <Col  className={styles.listText}>{key}</Col>
@@ -131,11 +191,27 @@ const AiDetaileSearch = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}` // auth 설정
                     },
                 }
             )
         } catch (e) {
             console.error(e);
+            checkAccessToken2();
+            try {
+                ectResponse = await axios.post(
+                    "http://localhost:8080/api/v1/chat-gpt",
+                    requestBody,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    }
+                )
+            } catch (e) {
+                console.error(e);
+            }
         }
 
 
@@ -153,11 +229,17 @@ const AiDetaileSearch = () => {
         console.log(etcList[0]);
 
         setEtc(etcList);
-
         // 난이도
         setLevel(etcList[0].난이도);
         setServe(etcList[1].인분);
-        setTime(etcList[2].소요시간);
+        // setTime(etcList[2].소요시간);
+        // etcList[2].소요시간이 존재하고 문자열이라면 '분'을 제거한 후 setTime에 설정
+        if (etcList[2] && typeof etcList[2].소요시간 === 'string') {
+            setTime(etcList[2].소요시간.replace('분', ''));
+        } else {
+            // 소요시간이 정의되어 있지 않거나 문자열이 아닌 경우
+            setTime(etcList[2].소요시간);
+        }
 
     }
 
@@ -167,7 +249,7 @@ const AiDetaileSearch = () => {
     async function aiSearchRequest () {
         let recipyIndigredientString = makeString();
         let request  = `${recipyTitle} 종류의 ${recipyProgress} 레시피를 알려주는데 만드는 과정을 더욱 자세하게 얘기해주고 재료는 종류, 양 변화 없이 ${recipyIndigredientString} 추가사항 없이 사용되어야 해 ` +
-                "그리고 json 객체로 {0:[{과정제목: },{과정:  }], 1: [{과정제목: },{과정:  }, ..} 형태로만 참고로 키는 무조건 숫자여야해 보내줘";
+            "그리고 json 객체로 {0:[{과정제목: },{process:  }], 1: [{과정제목: },{process:  }, ..} 형태로만 참고로 키는 무조건 숫자여야해 보내줘";
 
         console.log("요청 중");
 
@@ -183,11 +265,29 @@ const AiDetaileSearch = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}` // auth 설정
                     },
                 }
             )
         } catch (e) {
             console.error(e);
+            checkAccessToken2();
+            try {
+                searchResponse = await axios.post(
+                    "http://localhost:8080/api/v1/chat-gpt",
+                    requestBody,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    }
+                )
+            } catch (e) {
+                console.error(e);
+
+            }
+
         }
 
         console.log(searchResponse);
@@ -209,6 +309,37 @@ const AiDetaileSearch = () => {
         // console.log("JavaScript 객체를 콘솔에 출력");
         // console.log(recipes);
         setDetailRecipe(recipesList);
+    }
+
+
+    // accesstoken 재요청 함수
+    async function checkAccessToken2() {
+
+        let refreshToken = cookies.refreshToken;
+        try {
+
+            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+            const result = await getNewToken(refreshToken);
+            refreshToken = result.newRefreshToken;
+
+            // refresh token cookie에 재설정
+            setCookie(
+                'refreshToken',
+                refreshToken,
+                {
+                    path:'/',
+                    maxAge: 7 * 24 * 60 * 60, // 7일
+                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                }
+            )
+
+            // Redux access token 재설정
+            dispatch(containToken(result.newToken));
+
+        } catch (error) {
+            console.log(error);
+            navigate('/Sign');
+        }
     }
 
     //요리종료
@@ -291,7 +422,7 @@ const AiDetaileSearch = () => {
                         <Col className={styles.numberCol}>
                             <div>
                                 <Card className={styles.index}>
-                                        {index}
+                                    {index}
                                 </Card>
                             </div>
 
@@ -301,7 +432,7 @@ const AiDetaileSearch = () => {
                                 <Card.Body className={styles.body}>
                                     <Card.Title>{recipe[0].과정제목}</Card.Title>
                                     <Card.Text>
-                                        {recipe[1].과정}
+                                        {recipe && recipe[1] && recipe[1].process}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -313,11 +444,8 @@ const AiDetaileSearch = () => {
         return null;
     }
 
-    useEffect(() => {
-        aiSearchRequest()
-        aiSearchEtcRequest()
-        // setRecipyTitle(recipe.요리제목);
-    }, []);
+
+
 
 
 
@@ -402,7 +530,7 @@ const AiDetaileSearch = () => {
 
                                         </Card.Subtitle>
                                         {/*재료*/}
-                                            <div>
+                                        <div>
                                             <Card className={styles.ingredientContainer}  >
                                                 <Card.Body>
                                                     <Card.Title className={styles.ingredientTitle}>재료</Card.Title>
@@ -411,24 +539,24 @@ const AiDetaileSearch = () => {
                                                     </div>
                                                 </Card.Body>
                                             </Card>
-                                            </div>
+                                        </div>
                                         {/*재료 종료*/}
                                         {/*레시피*/}
-                                            <div className={styles.detailContainer}>
-                                                <Card className={styles.recipeContainCard}>
-                                                    <Card.Body>
-                                                        <Card.Title  className={styles.titleContianer}>
-                                                            <div className={styles.title}>
-                                                                레시피
-                                                            </div>
+                                        <div className={styles.detailContainer}>
+                                            <Card className={styles.recipeContainCard}>
+                                                <Card.Body>
+                                                    <Card.Title  className={styles.titleContianer}>
+                                                        <div className={styles.title}>
+                                                            레시피
+                                                        </div>
 
-                                                            <div  className={styles.test} >
-                                                            </div>
-                                                        </Card.Title>
-                                                        {makeDetailRecipe()}
-                                                    </Card.Body>
-                                                </Card>
-                                            </div>
+                                                        <div  className={styles.test} >
+                                                        </div>
+                                                    </Card.Title>
+                                                    {makeDetailRecipe()}
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
                                         {/*레시피 종료*/}
                                     </Card.Body>
                                 </Card>

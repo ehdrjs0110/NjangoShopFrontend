@@ -15,6 +15,11 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
+
 function Excel() {
     
     const navigate = useNavigate();
@@ -54,7 +59,15 @@ function Excel() {
         { field: "memo", headerName: "기타", width: 600, editable: true },
     ];
 
-    //데이터 가져오기
+
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+
+
+    // redux에서 가져오기
+    let accessToken = useSelector(state => state.token.value);  // 헤더에 추가
+    const dispatch = useDispatch();
+
     useEffect(() => {
 
       const fetchData = async () => {
@@ -62,18 +75,104 @@ function Excel() {
         const params = { userid:"ehdrjs0110"};
   
         try{
-          const res = await axios.get("http://localhost:8080/inven/manage/all", {params});
+          const res = await axios.get("http://localhost:8080/inven/manage", {params,
+              headers: {
+                  "Authorization": `Bearer ${accessToken}`
+              },});
           console.log(res.data);
           setData(res.data);        
   
         }catch(err){
           console.log("err message : " + err);
+            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
+            checkAccessToken2();
+            try {
+
+                const res = await axios.get("http://localhost:8080/inven/manage", {params,
+                    headers: {
+                        "Authorization": `Bearer ${accessToken}`
+                    },});
+                console.log(res.data);
+                setData(res.data);
+
+            } catch (e) {
+                console.error(e);
+            }
         }
       }
   
       fetchData();
+
+
+        // access token의 유무에 따라 재발급
+        let refreshToken = cookies.refreshToken;
+        async function checkAccessToken() {
+            try {
+                // console.log("useEffect에서 실행")
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
+            }
+        }
+        // checkAccessToken();
+
+        // checkAccessToken();
+        if(accessToken == null || accessToken == undefined)
+        {
+            checkAccessToken();
+        }
   
     }, [isChange]);
+
+
+
+    async function checkAccessToken2() {
+
+        let refreshToken = cookies.refreshToken;
+        try {
+
+            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+            const result = await getNewToken(refreshToken);
+            refreshToken = result.newRefreshToken;
+
+            // refresh token cookie에 재설정
+            setCookie(
+                'refreshToken',
+                refreshToken,
+                {
+                    path:'/',
+                    maxAge: 7 * 24 * 60 * 60, // 7일
+                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                }
+            )
+
+            // Redux access token 재설정
+            dispatch(containToken(result.newToken));
+
+        } catch (error) {
+            console.log(error);
+            navigate('/Sign');
+        }
+    }
 
     //재료 추가
     //재료명 입력
