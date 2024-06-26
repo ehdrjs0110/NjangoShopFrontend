@@ -8,9 +8,7 @@ import Col from 'react-bootstrap/Col';
 import UpdateModel from '../../components/MyPage/updateModel';
 
 
-import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import Card from 'react-bootstrap/Card';
-import {Accordion} from "react-bootstrap";
 import Navigation from '../../components/Nav/Navigation'
 import imgPath from '../../assets/MyPageImg/img.png';
 import myPageStyle from '../../styles/MyPage/MyPage.module.scss'
@@ -19,7 +17,7 @@ import {useCookies} from "react-cookie";
 import {getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
@@ -158,6 +156,14 @@ const MyPage = () => {
 
     }
 
+    const goHistory = () => {
+        navigate('/HistoryList');
+    };
+
+    const goLike = () => {
+        navigate('/LikeList');
+    };
+
 
     return (
         <>
@@ -179,14 +185,6 @@ const MyPage = () => {
                                                 <Col><p>닉네임</p></Col>
                                                 <Col><p>{infoData ? infoData.nickname : 'Loading...'}</p></Col>
                                             </Row>
-                                            {/*<Row xs={2} lg={2}>*/}
-                                            {/*    <Col><p>이름</p></Col>*/}
-                                            {/*    <Col><p>최은희</p></Col>*/}
-                                            {/*</Row>*/}
-                                            {/*<Row xs={2} lg={2}>*/}
-                                            {/*    <Col><p>이메일</p></Col>*/}
-                                            {/*    <Col><p>123dfeww@naver.com</p></Col>*/}
-                                            {/*</Row>*/}
                                             <Row xs={2} lg={2}>
                                                 <Col><p>전화번호</p></Col>
                                                 <Col><p>{infoData ? infoData.phoneNumber : 'Loading...'}</p></Col>
@@ -200,8 +198,8 @@ const MyPage = () => {
                                     </Card.Body>
                                     <Card.Footer className="text-muted">
                                         <Button variant="outline-secondary">필터 설정</Button>{' '}
-                                        <Button variant="outline-secondary">레시피 기록</Button>{' '}
-                                        <Button variant="outline-secondary">Like🖤</Button>{' '}
+                                        <Button variant="outline-secondary" onClick={goHistory}>레시피 기록</Button>{' '}
+                                        <Button variant="outline-secondary" onClick={goLike}>Like🖤</Button>{' '}
                                     </Card.Footer>
                                 </Card>
 

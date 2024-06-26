@@ -195,9 +195,6 @@ const SignUp = () => {
             <input type="text" id='nickname' className={styles.inputbox} placeholder='닉네임'/>
           </div>
           <div className='inputbox'>  
-            <input type="text" id='name' className={styles.inputbox} placeholder='이름'/>
-          </div>
-          <div className='inputbox'>  
             <input type="text" id='phone' className={styles.inputbox} placeholder='전화번호'/>
           </div>
           <div className='btnbox'>

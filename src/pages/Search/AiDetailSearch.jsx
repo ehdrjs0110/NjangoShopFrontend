@@ -30,6 +30,15 @@ import {useDispatch, useSelector} from "react-redux";
 
 
 const AiDetaileSearch = () => {
+    var today = new Date(); //현재시간 가져오기
+    let year = today.getFullYear(); // 년도
+    let month = today.getMonth() + 1;  // 월
+    let date = today.getDate();  // 날짜
+    let hours = today.getHours(); // 시
+    let minutes = today.getMinutes();  // 분
+    let seconds = today.getSeconds();  // 초
+    const nowTime = year + "" + month + "" + date + "" + hours + "" + minutes + "" + seconds;
+
     const location = useLocation(); // 현재 위치 객체를 가져옴
     const { recipe } = location.state || {}; // 전달된 상태에서 recipe 추출, 없을 경우 빈 객체로 대체
     // const {detailRecipe, setDetailRecipe} = useState(null);
@@ -49,6 +58,7 @@ const AiDetaileSearch = () => {
 
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
+    let  id = useSelector(state=> state.userEmail.value);
     const dispatch = useDispatch();
 
 
@@ -106,6 +116,10 @@ const AiDetaileSearch = () => {
         // setRecipyTitle(recipe.요리제목);
     }, []);
 
+
+    //Recipe ID 생성
+    const recipeId = id + nowTime;
+    console.log(recipeId);
 
     function makeString () {
         let string;
@@ -329,12 +343,80 @@ const AiDetaileSearch = () => {
         }
     }
 
+    //요리종료
+    const finishCook = async () => {
+        if(window.confirm("요리를 끝내시겠습니까?")){
+
+            const userId = id;
+
+            const RecipeProgress = JSON.stringify(detailRecipe);
+            
+            console.log("출력! : "+detailRecipe);
+
+
+            const requestBody = {
+                "recipeId": recipeId,
+                "title": recipyTitle,
+                "progress": RecipeProgress,
+                "ingredients": recipyIndigredient,
+                "level": level,
+                "time": time,
+                "servings": serve,
+            };
+
+            await axios.post(
+                `http://localhost:8080/history/finish/${userId}`,
+                requestBody,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+            alert("요리 종료");
+        }else{
+            alert("취소 되었습니다.")
+        }
+    };
+
+    //좋아요
+    const clickLike = async () => {
+        
+        const userId = id;
+
+        const RecipeProgress = JSON.stringify(detailRecipe);
+        
+        console.log("출력! : "+detailRecipe);
+
+
+        const requestBody = {
+            "recipeId": recipeId,
+            "title": recipyTitle,
+            "progress": RecipeProgress,
+            "ingredients": recipyIndigredient,
+            "level": level,
+            "time": time,
+            "servings": serve,
+        };
+
+        await axios.post(
+            `http://localhost:8080/like/likeAdd/${userId}`,
+            requestBody,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+        alert("좋아요!!");
+        
+    };
 
     // 레시피 자세히 보기 ui
     function makeDetailRecipe ()
     {
         if(detailRecipe != null)
         {
+            
             return detailRecipe.map((recipe,index) => (
                 <div key={index} className={styles.detailRecipeCard} >
                     <Row>
@@ -386,7 +468,7 @@ const AiDetaileSearch = () => {
                                                     <div  className={styles.bottomLine}></div>
                                                 </Col>
                                                 <Col className={styles.iconCol}>
-                                                    <Button  className={styles.iconButton} variant="outline-secondary">
+                                                    <Button  className={styles.iconButton} variant="outline-secondary" onClick={clickLike}>
                                                         <FontAwesomeIcon className={styles.icon} icon={faHeart} />
                                                     </Button>{' '}
                                                     <Button  className={styles.iconButton}  variant="outline-secondary">
@@ -402,46 +484,46 @@ const AiDetaileSearch = () => {
                                             <div >
                                                 <Card style={{border:0}}>
                                                     <Card.Body style={{paddingBottom:0}}>
-                                                        <Row  style={{margin:0}} xs={2} md={2} lg={2}>
-                                                            <Row   style={{margin:0}} xs={3} md={3} lg={3} className={styles.iconRow}>
-                                                                <Col>
-                                                                    <p>
-                                                                        {makeLeve()}
-                                                                    </p>
-                                                                </Col>
-                                                                <Col>
-                                                                    <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
-                                                                </Col>
-                                                                <Col>
-                                                                    <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
-                                                                </Col>
-                                                            </Row>
-                                                            <Row  xs={2} md={2} lg={2}>
-                                                                <Col>
-                                                                    {/*    여기는 비율 맞추기 위한 공백  */}
-                                                                </Col>
-                                                                <Col>
-                                                                    <Button variant="outline-secondary" className={styles.cookingClearButton} >요리완료</Button>
-                                                                </Col>
-                                                            </Row>
+                                                    <Row  style={{margin:0}} xs={2} md={2} lg={2}>
+                                                        <Row   style={{margin:0}} xs={3} md={3} lg={3} className={styles.iconRow}>
+                                                            <Col>
+                                                                <p>
+                                                                    {makeLeve()}
+                                                                </p>
+                                                            </Col>
+                                                            <Col>
+                                                                <p><FontAwesomeIcon icon={faUsers} className={styles.icon} /></p>
+                                                            </Col>
+                                                            <Col>
+                                                                <p><FontAwesomeIcon icon={faHourglassHalf} className={styles.icon} /></p>
+                                                            </Col>
                                                         </Row>
-                                                        <Row  style={{margin:0}} xs={2} md={2} lg={2}>
-                                                            <Row style={{margin:0}} xs={3} md={3} lg={3}>
-                                                                <Col>
-                                                                    <p>난이도</p>
-                                                                </Col>
-                                                                <Col>
-                                                                    <p>{serve}인분</p>
-                                                                </Col>
-                                                                {/*{aiSearchEtcRequest()}*/}
-                                                                <Col>
-                                                                    <p>{time}분</p>
-                                                                </Col>
-                                                            </Row>
-                                                            <Row xs={2} md={2} lg={2}>
-                                                                {/*여기는 비율 맞추기 위한 공백    */}
-                                                            </Row>
+                                                        <Row  xs={2} md={2} lg={2}>
+                                                            <Col>
+                                                                {/*    여기는 비율 맞추기 위한 공백  */}
+                                                            </Col>
+                                                            <Col>
+                                                                <Button variant="outline-secondary" className={styles.cookingClearButton} onClick={finishCook} >요리완료</Button>
+                                                            </Col>
                                                         </Row>
+                                                    </Row>
+                                                    <Row  style={{margin:0}} xs={2} md={2} lg={2}>
+                                                        <Row style={{margin:0}} xs={3} md={3} lg={3}>
+                                                            <Col>
+                                                                <p>난이도</p>
+                                                            </Col>
+                                                            <Col>
+                                                                <p>{serve}인분</p>
+                                                            </Col>
+                                                            {/*{aiSearchEtcRequest()}*/}
+                                                            <Col>
+                                                                <p>{time}분</p>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row xs={2} md={2} lg={2}>
+                                                            {/*여기는 비율 맞추기 위한 공백    */}
+                                                        </Row>
+                                                    </Row>
                                                     </Card.Body>
                                                 </Card>
 

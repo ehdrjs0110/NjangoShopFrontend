@@ -18,6 +18,11 @@ import Demo from "./pages/Demo";
 import Navigation from "./components/Nav/Navigation";
 import MyPage from "./pages/MyPage/MyPage";
 import AiDetailSearch from "./pages/Search/AiDetailSearch";
+import HistoryList from './pages/History/HistoryList';
+import HistoryDetail from './pages/History/HistoryDetail';
+import LikeList from './pages/Like/LikeList';
+import LikeDetail from './pages/Like/LikeDetail';
+
 // import index from '../src/styles/index.css'
 
 
@@ -47,6 +52,11 @@ function App() {
           <Route path="/Excel" element={<Excel />} />
           <Route path="/ProFile" element={<Profile/>}/>
           <Route path="/MyPage" element={<MyPage/>}/>
+          <Route path="/HistoryList" element={<HistoryList/>}/>
+          <Route path="/HistoryDetail" element={<HistoryDetail/>}/>
+          <Route path="/LikeList" element={<LikeList/>}/>
+          <Route path="/LikeDetail" element={<LikeDetail/>}/>
+
           <Route path="/Demo" element={<Demo/>}/>
 
         </Routes>
