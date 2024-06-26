@@ -5,6 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import UpdateModel from '../../components/MyPage/updateModel';
 
 
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
@@ -28,6 +29,8 @@ const MyPage = () => {
     // auth 관련 --
     const navigate = useNavigate();
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+    // update 기능 관련 model을 위한 상태 관리
+    const [modalShow, setModalShow] = useState(false);
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
     let reduxEmail = useSelector(state => state.userEmail.value);
@@ -189,7 +192,11 @@ const MyPage = () => {
                                                 <Col><p>{infoData ? infoData.phoneNumber : 'Loading...'}</p></Col>
                                             </Row>
                                         </Card.Text>
-                                        <Button variant="outline-secondary">정보수정</Button>
+                                        <Button variant="outline-secondary" onClick={() => setModalShow(true)}>정보수정</Button>
+                                        <UpdateModel
+                                            show={modalShow}
+                                            onHide={() => setModalShow(false)}
+                                        />
                                     </Card.Body>
                                     <Card.Footer className="text-muted">
                                         <Button variant="outline-secondary">필터 설정</Button>{' '}

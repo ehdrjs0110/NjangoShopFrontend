@@ -4,6 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
+import {kakaoLogout} from "../../services/logout";
 
 import styles from '../../styles/Components/Nav/Navigation.module.scss';
 import logo from '../../assets/Logo/logo.png';
@@ -18,6 +19,8 @@ import {useEffect} from "react";
 import {jwtDecode} from "jwt-decode";
 import {containEmail} from "../../Store/userEmailSlice";
 import {containNickName} from "../../Store/userNickName";
+import {containIsKaKao} from "../../Store/isKakaoSlice";
+import axios from "axios";
 
 
 
@@ -33,10 +36,14 @@ function Navigation() {
   let reduxNickname = useSelector( state => state.userNickName.value);
 
   let id = reduxNickname;
+  console.log("로그아웃 후 체크 " + id);
+  let isKakao = useSelector(state => state.isKaKao.value);
+  console.log("로그아웃 후 체크 " + isKakao);
   // 토큰 decode
 
   useEffect(() => {
     getEmailAndNickname();
+
   },[refreshToken])
 
   //
@@ -45,12 +52,18 @@ function Navigation() {
       console.log("위치 nav에서 출력, refreshToken:  " + refreshToken);
       const decoded = jwtDecode(refreshToken);
 
+      // refresh token 에서 해석해서 가져오는 부분
       // useremail
       reduxEmail = decoded.sub;
+      // nickname
       reduxNickname = decoded.nickname;
+      // kakao
+      isKakao = decoded.kakao;
+
 
       dispatch(containEmail(reduxEmail));
       dispatch(containNickName(reduxNickname));
+      dispatch(containIsKaKao(isKakao));
 
 
       console.log(decoded);
@@ -59,6 +72,47 @@ function Navigation() {
     } catch (error) {
       console.error("Invalid token specified: ", error);
     }
+  }
+
+  const logout =  async () => {
+
+    removeCookie('refreshToken');
+    console.log("토큰 제거 테스트");
+    console.log(refreshToken);
+    console.log("logout " + isKakao);
+
+
+    // redux에서 카카오로 로그인 여부 확인하기
+    if(isKakao)
+    {
+
+        try {
+          console.log("카카오 로그아웃 처리");
+          const CLIENT_ID = "7a2afab08fdef9ddd3b09ac451ca30b9";
+          const REDIRECT_URI = "http://localhost:3000/Main";
+          const KOKAO_LOGOUT_URL = `https://kauth.kakao.com/oauth/logout?client_id=${CLIENT_ID}&logout_redirect_uri=${REDIRECT_URI}`;
+          // const KOKAO_LOGOUT_URL = `https://kauth.kakao.com/oauth/logout`;
+
+
+
+
+          try {
+            const response = await axios.get(KOKAO_LOGOUT_URL);
+            console.log(response.data);
+            // 로그아웃 성공 후 추가 작업 수행 가능
+          } catch (error) {
+            console.error("로그아웃 오류:", error);
+            // 오류 처리
+          }
+
+        }catch (e) {
+          console.log(e);
+        }
+    }else {
+      goToSignIn();
+    }
+
+
   }
 
 
@@ -81,6 +135,10 @@ function Navigation() {
   const goToMy = () => {
     navigate("/MyPage");
   }
+  const goToSignIn = () =>
+  {
+    navigate("/SignIn");
+  }
 
   return (
     <>
@@ -101,9 +159,9 @@ function Navigation() {
             </a>
             <NavDropdown title={id} id="navbarScrollingDropdown">
               <NavDropdown.Item onClick={goToMy}>내 정보</NavDropdown.Item>
-              <NavDropdown.Item href="#action4">구매내역</NavDropdown.Item>
+              <NavDropdown.Item  href="#action4">구매내역</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#action5">
+              <NavDropdown.Item onClick={logout}>
                 로그아웃
               </NavDropdown.Item>
             </NavDropdown>

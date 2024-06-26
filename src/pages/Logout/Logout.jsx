@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 
+
 function KakaoLogout() {
     const CLIENT_ID = "7a2afab08fdef9ddd3b09ac451ca30b9";
     const REDIRECT_URI = "http://localhost:3000/login/kakao";
