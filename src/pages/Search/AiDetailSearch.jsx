@@ -364,14 +364,35 @@ const AiDetaileSearch = () => {
                 "servings": serve,
             };
 
-            await axios.post(
-                `http://localhost:8080/history/finish/${userId}`,
-                requestBody,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+            try{
+                await axios.post(
+                    `http://localhost:8080/history/finish/${userId}`,
+                    requestBody,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}`
+                        },
+                    });
+            }catch(err){
+                console.log("err message : " + err);
+                // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
+                checkAccessToken2();
+                try{
+                    await axios.post(
+                        `http://localhost:8080/history/finish/${userId}`,
+                        requestBody,
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${accessToken}`
+                            },
+                        });
+                }catch(err){
+                    console.log("err message : " + err);
+                }
+            }
+            
             alert("요리 종료");
         }else{
             alert("취소 되었습니다.")
@@ -398,14 +419,35 @@ const AiDetaileSearch = () => {
             "servings": serve,
         };
 
-        await axios.post(
-            `http://localhost:8080/like/likeAdd/${userId}`,
-            requestBody,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+        try{
+            await axios.post(
+                `http://localhost:8080/like/likeAdd/${userId}`,
+                requestBody,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`
+                    },
+                });
+        }catch(err){
+            console.log("err message : " + err);
+            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
+            checkAccessToken2();
+            try{
+                await axios.post(
+                    `http://localhost:8080/like/likeAdd/${userId}`,
+                    requestBody,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}`
+                        },
+                    });
+            }catch(err){
+                console.log("err message : " + err);
+            }
+        }
+        
 
         alert("좋아요!!");
         
