@@ -1,4 +1,9 @@
 import axios from "axios";
+import {containToken} from "../Store/tokenSlice";
+import {useDispatch} from "react-redux";
+import {useCookies} from "react-cookie";
+
+
 
 const getNewToken = async (refreshToken) => {
     // console.log("service layer 실행중");
@@ -33,5 +38,21 @@ const getNewToken = async (refreshToken) => {
 
 
 }
+
+// const fetchAccessTokenAndRefreshToken  = (fetchObject) => {
+//     const dispatch = useDispatch();
+//     // const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+//     // let refreshToken = fetchObject.newRefreshToken;
+//     // setCookie(
+//     //     'refreshToken',
+//     //     refreshToken,
+//     //     {
+//     //         path:'/',
+//     //         maxAge: 7 * 24 * 60 * 60, // 7일
+//     //         // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+//     //     }
+//     // )
+//     dispatch(containToken(fetchObject.newToken));
+// }
 
 export {getNewToken}

@@ -29,25 +29,38 @@ const MyPage = () => {
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
     // update 기능 관련 model을 위한 상태 관리
     const [modalShow, setModalShow] = useState(false);
+    const [isChange, setIschange] = useState(false);
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
     let reduxEmail = useSelector(state => state.userEmail.value);
     const dispatch = useDispatch();
     // --
 
+    let refreshToken = cookies.refreshToken;
+    let newAccessToken;
+
 
 
 
     useEffect(() => {
         // access token의 유무에 따라 재발급 --
-        let refreshToken = cookies.refreshToken;
+
         async function checkAccessToken() {
             try {
                 // console.log("useEffect에서 실행")
 
+                console.log("원래 refresh token" + refreshToken);
+
                 // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
                 const result = await getNewToken(refreshToken);
+                console.log("result" + result);
                 refreshToken = result.newRefreshToken;
+
+                console.log("refreshToken : " + refreshToken);
+                console.log("newToken: " + result.newToken);
+
+
+                newAccessToken = result.newToken;
 
                 // refresh token cookie에 재설정
                 setCookie(
@@ -73,13 +86,27 @@ const MyPage = () => {
         // checkAccessToken();
         if(accessToken == null || accessToken == undefined)
         {
+            console.log("없어서 다시 가져오기");
+           
             checkAccessToken();
+            setIschange(true);
+
+
+
+        }else {
+            fetchDate();
         }
 
-        fetchDate();
+
 
         // --
     }, []);
+    
+    
+    useEffect(() => {
+        console.log("isChange 난 후에 실행" + accessToken)
+        fetchDate();
+    },[isChange, accessToken])
 
 
     async function checkAccessToken2() {
@@ -115,6 +142,24 @@ const MyPage = () => {
         let response;
         console.log("요청 중");
         try {
+            if(accessToken == null || accessToken == undefined)
+            {
+                console.log("요청에서 accesstoken" + accessToken);
+                console.log("요청에서 accesstoken" + newAccessToken);
+                response = await axios.get(
+                    "http://localhost:8080/user/"+ reduxEmail,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${newAccessToken}`
+                        },
+                    }
+                )
+                console.log(response.data);
+                setInfoData(response.data);
+                console.log("cheking: " + response.data.id)
+            }
+
             response = await axios.get(
                 "http://localhost:8080/user/"+ reduxEmail,
                 {
@@ -193,7 +238,11 @@ const MyPage = () => {
                                         <Button variant="outline-secondary" onClick={() => setModalShow(true)}>정보수정</Button>
                                         <UpdateModel
                                             show={modalShow}
-                                            onHide={() => setModalShow(false)}
+                                            onHide={() => {
+                                                setModalShow(false);
+                                                fetchDate();
+                                                }
+                                            }
                                         />
                                     </Card.Body>
                                     <Card.Footer className="text-muted">
