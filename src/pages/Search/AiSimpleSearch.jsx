@@ -36,7 +36,20 @@ const AiSimpleSearch = () => {
     // 레시피 갯수
     const [recipeCount, setRecipeCount] = useState("5");
     // const [myIngredientList, setMyIngredientList] = useState(null);
+    //페이지 변화
+    const [isChange, setChange] = useState(false);
     var myIngredientList = ["미나리", "참기름","파슬리","대파","돼지고기","갸지","오이","양파","마늘","당근","양배추"];
+
+
+    // refresh token 가져오기
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+
+
+    // redux에서 가져오기
+    let accessToken = useSelector(state => state.token.value);
+    let  id = useSelector(state=> state.userEmail.value);
+    const dispatch = useDispatch();
 
 
     //inven에서 가져온 값
@@ -60,6 +73,45 @@ const AiSimpleSearch = () => {
         }
 
         const params = {};
+
+        // access token의 유무에 따라
+        let refreshToken = cookies.refreshToken;
+        async function checkAccessToken() {
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
+            }
+        }
+        // checkAccessToken();
+
+        // checkAccessToken();
+        if(accessToken == null || accessToken == undefined)
+        {
+            checkAccessToken();
+        }
+
+
+
 
     }, []);
     // 레시피 갯수 입력받기
@@ -149,6 +201,7 @@ const AiSimpleSearch = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}` // auth 설정
                     },
                 }
             )

@@ -22,6 +22,8 @@ import HistoryList from './pages/History/HistoryList';
 import HistoryDetail from './pages/History/HistoryDetail';
 import LikeList from './pages/Like/LikeList';
 import LikeDetail from './pages/Like/LikeDetail';
+import ManagementLogin from './pages/Management/ManagementLogin';
+import ManagementNav from "./pages/Management/ManagementNav";
 
 // import index from '../src/styles/index.css'
 
@@ -56,6 +58,12 @@ function App() {
           <Route path="/HistoryDetail" element={<HistoryDetail/>}/>
           <Route path="/LikeList" element={<LikeList/>}/>
           <Route path="/LikeDetail" element={<LikeDetail/>}/>
+
+
+          {/* Management Pages*/}
+          <Route path="/Management" element={<ManagementLogin/>}/>
+          <Route path="/Management/Nav" element={<ManagementNav/>}/>
+
 
           <Route path="/Demo" element={<Demo/>}/>
 
