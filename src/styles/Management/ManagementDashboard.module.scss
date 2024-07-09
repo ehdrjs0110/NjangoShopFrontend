@@ -1,0 +1,77 @@
+@import '../index.scss';
+
+.managementDashboardContainer {
+  //background-color: #fca85b;
+  width: 100%;
+  height: 100%;
+}
+
+
+.cardBodyContainer {
+  display: flex;
+  justify-content: space-between; /* 아이콘과 텍스트 사이의 간격을 최대화하기 위해 공간을 만듭니다 */
+  align-items: center; /* 수직으로 가운데 정렬 */
+
+  //.downPartContainer {
+  //  background-color: pink;
+  //  height: 100vh;
+  //}
+}
+
+.managementCard {
+  //width: 18rem;
+  padding: 0;
+  height: 100%;
+}
+
+.managementCardTitle {
+  font-size: 1.2rem; /* 예시에 맞게 폰트 크기 설정 */
+}
+
+.managementCardIcon {
+  margin-left: auto; /* 아이콘을 오른쪽으로 이동 */
+}
+.topPartRow {
+  height: 10%;
+  //margin-bottom: 5%;
+  // 화면 너비가 850px 이하일 때 적용할 스타일
+  @media (max-width: 768px) {
+    //margin-top: 15%;
+    //margin-bottom:15%;
+  }
+}
+
+.downPartRow {
+  height: 80vh;
+
+  // 화면 너비가 850px 이하일 때 적용할 스타일
+  //@media (max-width: 850px) {
+  //  //margin-top: 0vh;
+  //  height: 70vh;
+  //}
+}
+.downPartCol {
+  //background-color: #fca85b;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  //padding: 20px; // 네 면에 여유 공간을 줍니다.
+  //background-color: #f8f9fa; // 배경색을 추가하여 스타일을 조금 더 돋보이게 합니다.
+
+  & > div {
+    padding: 10px;
+    background-color: #f2f5fa; // 내부 박스 배경색
+    //background-color: pink;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
+    height: 90%;
+    .downPartCard{
+      //height: 80%;
+      height: 50%;
+    }
+  }
+}

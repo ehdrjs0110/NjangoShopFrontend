@@ -24,7 +24,8 @@ import LikeList from './pages/Like/LikeList';
 import LikeDetail from './pages/Like/LikeDetail';
 import ManagementLogin from './pages/Management/ManagementLogin';
 import ManagementNav from "./pages/Management/ManagementNav";
-
+import ManagementDashboard from "./pages/Management/ManagementDashboard";
+import ManagementLayout from "./pages/Management/ManagementLayout";
 // import index from '../src/styles/index.css'
 
 
@@ -62,8 +63,7 @@ function App() {
 
           {/* Management Pages*/}
           <Route path="/Management" element={<ManagementLogin/>}/>
-          <Route path="/Management/Nav" element={<ManagementNav/>}/>
-
+         <Route path="/Management/Dashboard" element={<ManagementLayout><ManagementDashboard /></ManagementLayout>} />
 
           <Route path="/Demo" element={<Demo/>}/>
 
