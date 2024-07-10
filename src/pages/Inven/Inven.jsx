@@ -113,28 +113,35 @@ function Inven() {
       const params = { userId:userId};
 
       try{
-        const res = await axios.get("http://localhost:8080/testinven/manage", {
+        const res = await axios.get("http://localhost:8080/inven/manage", {
           params,
           headers: {
               "Authorization": `Bearer ${accessToken}`
           },
         });
-        console.log(res.data);
-        setData(res.data);
+
+        if(res!=null){
+          console.log(res.data);
+          setData(res.data);
+        }
+
 
       }catch(err){
         console.log("err message : " + err);
         // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
         checkAccessToken2();
         try{
-          const res = await axios.get("http://localhost:8080/testinven/manage", {
+          const res = await axios.get("http://localhost:8080/inven/manage", {
             params,
             headers: {
                 "Authorization": `Bearer ${accessToken}`
             },
           });
+
+          if(res!=null){
           console.log(res.data);
           setData(res.data);
+        }
   
         }catch(err){
           console.log("err message : " + err);
@@ -183,7 +190,7 @@ function Inven() {
 
     try{
       console.log(data);
-      const res = await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
+      const res = await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${accessToken}`
@@ -197,7 +204,7 @@ function Inven() {
       checkAccessToken2();
       try{
         console.log(data);
-        const res = await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
+        const res = await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}`
@@ -225,7 +232,7 @@ function Inven() {
     if(window.confirm(`정말 ${selectedItem.ingredientname}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete("http://localhost:8080/testinven/manage", {
+        await axios.delete("http://localhost:8080/inven/manage", {
           params,
           headers: {
             "Authorization": `Bearer ${accessToken}`
@@ -239,7 +246,7 @@ function Inven() {
         checkAccessToken2();
         try{ 
           console.log(params);
-          await axios.delete("http://localhost:8080/testinven/manage", {
+          await axios.delete("http://localhost:8080/inven/manage", {
             params,
             headers: {
               "Authorization": `Bearer ${accessToken}`
@@ -268,7 +275,7 @@ function Inven() {
 
     if(window.confirm(`수정내용 확인 \n ${showdata}`)){
       try{
-          await axios.patch(`http://localhost:8080/testinven/manage/update/${userId}`, data, {
+          await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data, {
             headers: {
               "Authorization": `Bearer ${accessToken}`
             }
@@ -280,7 +287,7 @@ function Inven() {
         // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
         checkAccessToken2();
         try{
-          await axios.put(`http://localhost:8080/testinven/manage/update/${userId}`, data, {
+          await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data, {
             headers: {
               "Authorization": `Bearer ${accessToken}`
             }
@@ -344,6 +351,7 @@ function Inven() {
     setNewData((isNewData) => ({
       ...isNewData,
       "status" : {
+        ...isNewData.status,
         "size" : e.target.value,
       }
     }));
@@ -355,6 +363,7 @@ function Inven() {
     setNewData((isNewData) => ({
       ...isNewData,
       "status" : {
+        ...isNewData.status,
         "count" : e.target.value,
       }
     }));
@@ -427,7 +436,8 @@ function Inven() {
           <Col md={{span: 10, offset: 1}} className={styles.content}>
           <Scrollbars className={styles.scroll}>
             <div className={styles.item}>
-            {isData.map((item, index) => {
+              
+            {isData && isData.map((item, index) => {
               // 클래스 네임 결합
               const combinedClassName = classNames(
                 styles.line,

@@ -133,7 +133,7 @@ function Excel() {
         const params = { userId:userId};
   
         try{
-          const res = await axios.get("http://localhost:8080/testinven/manage/all", {
+          const res = await axios.get("http://localhost:8080/inven/manage/all", {
             params,
             headers: {
                 "Authorization": `Bearer ${accessToken}`
@@ -151,7 +151,7 @@ function Excel() {
             checkAccessToken2();
             try {
 
-                const res = await axios.get("http://localhost:8080/testinven/manage/all", {
+                const res = await axios.get("http://localhost:8080/inven/manage/all", {
                   params,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -242,7 +242,7 @@ function Excel() {
   
       try{
         console.log(data);
-        await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
+        await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}`
@@ -256,7 +256,7 @@ function Excel() {
         checkAccessToken2();
         try {
 
-          await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
+          await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
             headers: {
               'Content-Type': 'application/json',
               "Authorization": `Bearer ${accessToken}`
@@ -303,7 +303,7 @@ function Excel() {
 
       if(window.confirm("수정 하시겠습니까?")){
         try{
-            await axios.patch(`http://localhost:8080/testinven/manage/update/${userId}`, data,
+            await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data,
               {
                 headers: {
                     "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -317,7 +317,7 @@ function Excel() {
            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
            checkAccessToken2();
            try{
-            await axios.patch(`http://localhost:8080/testinven/manage/update/${userId}`, data,
+            await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data,
               {
                 headers: {
                     "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -348,7 +348,7 @@ function Excel() {
     if(window.confirm(`정말 ${showdata}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete(`http://localhost:8080/testinven/manage/deleteAll/${userId}?${params}`, {
+        await axios.delete(`http://localhost:8080/inven/manage/deleteAll/${userId}?${params}`, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -362,7 +362,7 @@ function Excel() {
          checkAccessToken2();
         try{ 
           console.log(params);
-          await axios.delete(`http://localhost:8080/testinven/manage/deleteAll/${userId}?${params}`, {
+          await axios.delete(`http://localhost:8080/inven/manage/deleteAll/${userId}?${params}`, {
             headers: {
               'Content-Type': 'application/json',
               "Authorization": `Bearer ${accessToken}` // auth 설정
