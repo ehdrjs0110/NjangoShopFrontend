@@ -32,6 +32,8 @@ function Excel() {
     const [isChange, setChange] = useState(false);
     //재료 데이터
     const [isData, setData] = useState([]);
+     //재료 포맷 데이터
+     const [isRows, setRows] = useState([]);
     //추가 재료 데이터
     const [isNewData, setNewData] = useState([]);
     //select박스 체크
@@ -97,10 +99,12 @@ function Excel() {
       {
           checkAccessToken();
       }
-
+      
       setNewData({      
-        userid : userId,
-        size : "없음",
+        status : {
+          size : "없음",
+          count : 0,
+        }
       });
     },[]);
 
@@ -126,17 +130,20 @@ function Excel() {
 
       const fetchData = async () => {
   
-        const params = { userid:userId};
+        const params = { userId:userId};
   
         try{
-          const res = await axios.get("http://localhost:8080/inven/manage/all", {
+          const res = await axios.get("http://localhost:8080/testinven/manage/all", {
             params,
             headers: {
                 "Authorization": `Bearer ${accessToken}`
             },
           });
           console.log(res.data);
-          setData(res.data);        
+          setData(res.data); 
+          
+          // fetchData 성공적으로 완료 후 formatData 호출
+          formatData(res.data);
   
         }catch(err){
           console.log("err message : " + err);
@@ -144,7 +151,7 @@ function Excel() {
             checkAccessToken2();
             try {
 
-                const res = await axios.get("http://localhost:8080/inven/manage/all", {
+                const res = await axios.get("http://localhost:8080/testinven/manage/all", {
                   params,
                     headers: {
                         "Authorization": `Bearer ${accessToken}`
@@ -153,16 +160,30 @@ function Excel() {
                 console.log(res.data);
                 setData(res.data);
 
+                // 재시도 성공 후 formatData 호출
+                formatData(res.data);
+
             } catch (e) {
                 console.error(e);
             }
         }
       }
-  
-      fetchData();        
+
+      const formatData = (data) => {
+        setRows(data.map((item) => ({
+          ingredientname: item.ingredientname,
+          size: item.status.size,
+          count: item.status.count,
+          dateofuse: item.status.dateofuse,
+          lastuse: item.status.lastuse,
+          lastget: item.status.lastget,
+          memo: item.status.memo,
+        })));
+    };
+
+      fetchData();    
   
     }, [isChange]);
-
 
 
     async function checkAccessToken2() {
@@ -196,10 +217,21 @@ function Excel() {
 
     //재료 추가
     //재료명 입력
-    const setInsertData = (e) => {
+    const setIngredName = (e) => {
       setNewData((isNewData) => ({
         ...isNewData,
         [e.target.id] : e.target.value,
+      }));
+
+    };
+
+    const setInsertData = (e) => {
+      setNewData((isNewData) => ({
+        ...isNewData,
+        "status" : {
+          ...isNewData?.status,
+          [e.target.id] : e.target.value,
+        }
       }));
 
     };
@@ -210,7 +242,7 @@ function Excel() {
   
       try{
         console.log(data);
-        await axios.post("http://localhost:8080/inven/manage/add", data, {
+        await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}`
@@ -224,7 +256,7 @@ function Excel() {
         checkAccessToken2();
         try {
 
-          await axios.post("http://localhost:8080/inven/manage/add", data, {
+          await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
             headers: {
               'Content-Type': 'application/json',
               "Authorization": `Bearer ${accessToken}`
@@ -247,7 +279,20 @@ function Excel() {
 
     //입력 재료 업데이트
     const handleProcessRowUpdate = (newRow, oldRow) => {
-        setData((prevRows) => prevRows.map((row) => (row.ingredientname === newRow.ingredientname ? newRow : row)));
+
+        const updateRow = {
+            ingredientname: newRow.ingredientname,
+            status: {
+              size: newRow.size,
+              count: newRow.count,
+              dateofuse: newRow.dateofuse,
+              lastuse: newRow.lastuse,
+              lastget: newRow.lastget,
+              memo: newRow.memo,
+            }
+          };
+
+        setData((prevRows) => prevRows.map((row) => (row.ingredientname === newRow.ingredientname ? updateRow : row)));
         return newRow;
     };
 
@@ -258,7 +303,7 @@ function Excel() {
 
       if(window.confirm("수정 하시겠습니까?")){
         try{
-            await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data,
+            await axios.patch(`http://localhost:8080/testinven/manage/update/${userId}`, data,
               {
                 headers: {
                     "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -272,7 +317,7 @@ function Excel() {
            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
            checkAccessToken2();
            try{
-            await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data,
+            await axios.patch(`http://localhost:8080/testinven/manage/update/${userId}`, data,
               {
                 headers: {
                     "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -303,7 +348,7 @@ function Excel() {
     if(window.confirm(`정말 ${showdata}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete(`http://localhost:8080/inven/manage/delete/${userId}?${params}`, {
+        await axios.delete(`http://localhost:8080/testinven/manage/deleteAll/${userId}?${params}`, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -317,7 +362,7 @@ function Excel() {
          checkAccessToken2();
         try{ 
           console.log(params);
-          await axios.delete(`http://localhost:8080/inven/manage/delete/${userId}?${params}`, {
+          await axios.delete(`http://localhost:8080/testinven/manage/deleteAll/${userId}?${params}`, {
             headers: {
               'Content-Type': 'application/json',
               "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -363,7 +408,7 @@ function Excel() {
           <Col md={{span: 10, offset: 1}} className={styles.addContent}>
             <Row className={styles.addline}>
               <Col>
-              <Form.Control type="text" id='ingredientname' className={styles.ingredientname} onChange={setInsertData} placeholder="재료명"/>
+              <Form.Control type="text" id='ingredientname' className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
               </Col>
               <Col>
                 <Form.Select id='size' className={styles.selectSize} onChange={setInsertData}>
@@ -397,7 +442,7 @@ function Excel() {
                 <Col>
                   <div className={styles.excel}>
                     <DataGrid
-                        rows={isData}
+                        rows={isRows}
                         columns={columns}
                         getRowId={(row) => row.ingredientname}
                         processRowUpdate={handleProcessRowUpdate}

@@ -104,20 +104,16 @@ function Inven() {
         checkAccessToken();
     }
 
-    setNewData({      
-      userid : userId,
-    });
-
   },[]);
 
   useEffect(() => {
 
     const fetchData = async () => {
 
-      const params = { userid:userId};
+      const params = { userId:userId};
 
       try{
-        const res = await axios.get("http://localhost:8080/inven/manage", {
+        const res = await axios.get("http://localhost:8080/testinven/manage", {
           params,
           headers: {
               "Authorization": `Bearer ${accessToken}`
@@ -131,7 +127,7 @@ function Inven() {
         // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
         checkAccessToken2();
         try{
-          const res = await axios.get("http://localhost:8080/inven/manage", {
+          const res = await axios.get("http://localhost:8080/testinven/manage", {
             params,
             headers: {
                 "Authorization": `Bearer ${accessToken}`
@@ -180,14 +176,14 @@ function Inven() {
     }
   }
 
-
+  //재료 추가
   const addData = async () => {
 
     const data = isNewData;
 
     try{
       console.log(data);
-      const res = await axios.post("http://localhost:8080/inven/manage/add", data, {
+      const res = await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${accessToken}`
@@ -201,7 +197,7 @@ function Inven() {
       checkAccessToken2();
       try{
         console.log(data);
-        const res = await axios.post("http://localhost:8080/inven/manage/add", data, {
+        const res = await axios.patch(`http://localhost:8080/testinven/manage/add/${userId}`, data, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}`
@@ -222,14 +218,14 @@ function Inven() {
     const selectedItem = isData[selectIndex];
 
     const params = {
-      userid: userId,
+      userId: userId,
       ingredientname: selectedItem.ingredientname
     };
 
     if(window.confirm(`정말 ${selectedItem.ingredientname}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete("http://localhost:8080/inven/manage/delete", {
+        await axios.delete("http://localhost:8080/testinven/manage", {
           params,
           headers: {
             "Authorization": `Bearer ${accessToken}`
@@ -243,7 +239,7 @@ function Inven() {
         checkAccessToken2();
         try{ 
           console.log(params);
-          await axios.delete("http://localhost:8080/inven/manage/delete", {
+          await axios.delete("http://localhost:8080/testinven/manage", {
             params,
             headers: {
               "Authorization": `Bearer ${accessToken}`
@@ -267,12 +263,12 @@ function Inven() {
     const data = Object.values(isUpdateData);
     
     const showdata = data
-    .map(item => `${item.ingredientname} - ` + (item.size == null ? "" : `양 : ${item.size},`) + (item.count == null ? "" : ` 수량 : ${item.count} `))
+    .map(item => `${item.ingredientname} - ` + (item.status.size == null ? "" : `양 : ${item.status.size},`) + (item.status.count == null ? "" : ` 수량 : ${item.status.count} `))
     .join('\n ');
 
     if(window.confirm(`수정내용 확인 \n ${showdata}`)){
       try{
-          await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data, {
+          await axios.patch(`http://localhost:8080/testinven/manage/update/${userId}`, data, {
             headers: {
               "Authorization": `Bearer ${accessToken}`
             }
@@ -284,7 +280,7 @@ function Inven() {
         // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
         checkAccessToken2();
         try{
-          await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data, {
+          await axios.put(`http://localhost:8080/testinven/manage/update/${userId}`, data, {
             headers: {
               "Authorization": `Bearer ${accessToken}`
             }
@@ -308,7 +304,10 @@ function Inven() {
       [index] : {
         ...isUpdateData[index],
         "ingredientname" : isData[index].ingredientname,
-        "count" : e.target.value,
+        "status" : {
+          ...isUpdateData[index]?.status,
+          "count" : e.target.value,
+        }
       }
     }));
   };
@@ -322,7 +321,10 @@ function Inven() {
       [index] : {
         ...isUpdateData[index],
         "ingredientname" : isData[index].ingredientname,
-        "size" : e.target.value,
+        "status" : {
+          ...isUpdateData[index]?.status,
+          "size" : e.target.value,
+        }
       }
     }));
   };
@@ -341,7 +343,9 @@ function Inven() {
     setClickSize(e.target.value);
     setNewData((isNewData) => ({
       ...isNewData,
-      "size" : e.target.value,
+      "status" : {
+        "size" : e.target.value,
+      }
     }));
 
   };
@@ -350,7 +354,9 @@ function Inven() {
   const setCount = (e) => {
     setNewData((isNewData) => ({
       ...isNewData,
-      "count" : e.target.value,
+      "status" : {
+        "count" : e.target.value,
+      }
     }));
 
   };
@@ -437,16 +443,16 @@ function Inven() {
                       <h3 className={styles.title}>{item.ingredientname}</h3>
                     </Col>
                     <Col>
-                      <Button className={styles.btn} variant="none" value={"없음"} disabled={item.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
+                      <Button className={styles.btn} variant="none" value={"없음"} disabled={item.status.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
                     </Col>
                     <Col>
-                      <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
-                      <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
-                      <Button className={styles.btn} variant="none" value={"많음"} disabled={item.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
+                      <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.status.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
+                      <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.status.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
+                      <Button className={styles.btn} variant="none" value={"많음"} disabled={item.status.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
                     </Col>
                     <Col>
                       <p className={styles.text}>수량</p>
-                      <Form.Control type="number" className={styles.count} placeholder={item.count} onChange={(e) => updateCount(index, e)} />
+                      <Form.Control type="number" className={styles.count} placeholder={item.status.count} onChange={(e) => updateCount(index, e)} />
                     </Col>
                     <Col>
                       <Button className={styles.delBtn} onClick={() => deleteData(index)} variant="danger">삭제</Button>
