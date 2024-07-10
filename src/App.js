@@ -32,6 +32,8 @@ import ManagementLayout from "./pages/Management/ManagementLayout";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+  console.log("this is app");
+
 
 
   return (
