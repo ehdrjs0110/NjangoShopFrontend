@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 import Sign from './pages/Sign/Sign';
@@ -26,14 +26,16 @@ import ManagementLogin from './pages/Management/ManagementLogin';
 import ManagementNav from "./pages/Management/ManagementNav";
 import ManagementDashboard from "./pages/Management/ManagementDashboard";
 import ManagementLayout from "./pages/Management/ManagementLayout";
+import PrivateRouteAdmin from "./services/Management/PrivateRouteAdmin"
+import PrivateRoute  from "./services/PrivateRoute";
 // import index from '../src/styles/index.css'
 
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {useDispatch, useSelector} from "react-redux";
 
 function App() {
   console.log("this is app");
-
 
 
   return (
@@ -46,9 +48,11 @@ function App() {
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/Main" element={<Main />} />
+          {/*<Route path="/Main" element={<PrivateRoute component={<Main />}/>} />*/}
           <Route path="/Promotion" element={<Promotion />} />
           <Route path="/Logout" element={<Logout/>}/>
-          <Route path="/AiSearch" element={<AiSearch/>} />
+          {/*<Route path="/AiSearch" element={<AiSearch/>} />*/}
+          <Route path="/AiSearch" element={<PrivateRoute component={<AiSearch />}/>} />
           <Route path="/AiSimpleSearch" element={<AiSimpleSearch/>} />
           <Route path="/AiDetailSearch" element={<AiDetailSearch/>}/>
           <Route path="/FindId" element={<FindId />} />
@@ -65,7 +69,10 @@ function App() {
 
           {/* Management Pages*/}
           <Route path="/Management" element={<ManagementLogin/>}/>
-         <Route path="/Management/Dashboard" element={<ManagementLayout><ManagementDashboard /></ManagementLayout>} />
+         {/*<Route path="/Management/Dashboard" element={<ManagementLayout><ManagementDashboard /></ManagementLayout>} />*/}
+         <Route path="/Management/Dashboard" element={<PrivateRouteAdmin
+             component={<ManagementLayout><ManagementDashboard /></ManagementLayout>} />}
+         />
 
           <Route path="/Demo" element={<Demo/>}/>
 

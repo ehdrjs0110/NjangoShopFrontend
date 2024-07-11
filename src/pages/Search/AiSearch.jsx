@@ -106,10 +106,10 @@ const AiSearch = () => {
         // checkAccessToken();
 
         // checkAccessToken();
-        if(accessToken == null || accessToken == undefined)
-        {
-            checkAccessToken();
-        }
+        // if(accessToken == null || accessToken == undefined)
+        // {
+        //     checkAccessToken();
+        // }
 
         // --
     }, []);

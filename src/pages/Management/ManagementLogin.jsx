@@ -8,6 +8,7 @@ import {containToken} from "../../Store/tokenSlice";
 import {useCookies} from "react-cookie";
 import {useDispatch} from "react-redux";
 import {useNavigate} from "react-router-dom";
+import {containIsAdmin} from "../../Store/isAdminSlice";
 const ManagementLogin = () => {
     const navigate = useNavigate();
     const [id,setId] = useState(null);
@@ -53,6 +54,8 @@ const ManagementLogin = () => {
                     // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
                 }
             )
+
+            dispatch(containIsAdmin(true));
 
             await navigate('/management/dashboard');
 
