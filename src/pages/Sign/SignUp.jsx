@@ -150,7 +150,7 @@ const SignUp = () => {
   
     //axios 파일 전송
     axios
-      .post("http://localhost:8080/verify/code", data)
+      .post("http://localhost:8080/mail/verify/code", data)
       .then((res) => {
           if(res.data === true){
             alert("코드 확인!");
