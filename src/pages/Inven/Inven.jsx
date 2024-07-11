@@ -26,7 +26,7 @@ import {containEmail} from "../../Store/userEmailSlice";
 import {containNickName} from "../../Store/userNickName";
 
 function Inven() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
   //페이지 변화
   const [isChange, setChange] = useState(false);
@@ -49,51 +49,51 @@ function Inven() {
   let reduxNickname = useSelector( state => state.userNickName.value);
 
   // redux에서 가져오기
-  let accessToken = useSelector(state => state.token.value);
-  let userId = useSelector(state => state.userEmail.value);
-  const dispatch = useDispatch();
+    let accessToken = useSelector(state => state.token.value);
+    let userId = useSelector(state => state.userEmail.value);
+    const dispatch = useDispatch();
 
 
   useEffect(() => {
-
+    
     // access token의 유무에 따라 재발급
     let refreshToken = cookies.refreshToken;
     async function checkAccessToken() {
-      try {
-        // console.log("useEffect에서 실행")
+        try {
+            // console.log("useEffect에서 실행")
 
-        // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-        const result = await getNewToken(refreshToken);
-        refreshToken = result.newRefreshToken;
+            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+            const result = await getNewToken(refreshToken);
+            refreshToken = result.newRefreshToken;
 
-        // refresh token cookie에 재설정
-        setCookie(
-            'refreshToken',
-            refreshToken,
-            {
-              path:'/',
-              maxAge: 7 * 24 * 60 * 60, // 7일
-              // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-            }
-        )
+            // refresh token cookie에 재설정
+            setCookie(
+                'refreshToken',
+                refreshToken,
+                {
+                    path:'/',
+                    maxAge: 7 * 24 * 60 * 60, // 7일
+                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                }
+            )
 
-        // Redux access token 재설정
-        dispatch(containToken(result.newToken));
-        const decoded = jwtDecode(refreshToken);
+            // Redux access token 재설정
+            dispatch(containToken(result.newToken));
+            const decoded = jwtDecode(refreshToken);
 
-        // useremail
-        reduxEmail = decoded.sub;
-        reduxNickname = decoded.nickname;
+            // useremail
+            reduxEmail = decoded.sub;
+            reduxNickname = decoded.nickname;
 
-        dispatch(containEmail(reduxEmail));
-        dispatch(containNickName(reduxNickname));
-        setChange(true);
+            dispatch(containEmail(reduxEmail));
+            dispatch(containNickName(reduxNickname));
+            setChange(true);
 
 
-      } catch (error) {
-        console.log(error);
-        navigate('/Sign');
-      }
+        } catch (error) {
+            console.log(error);
+            navigate('/Sign');
+        }
     }
     // checkAccessToken();
     console.log("checking" + accessToken);
@@ -101,12 +101,8 @@ function Inven() {
     // checkAccessToken();
     if(accessToken == null || accessToken == undefined)
     {
-      checkAccessToken();
+        checkAccessToken();
     }
-
-    setNewData({
-      userid : userId,
-    });
 
   },[]);
 
@@ -114,17 +110,21 @@ function Inven() {
 
     const fetchData = async () => {
 
-      const params = { userid:userId};
+      const params = { userId:userId};
 
       try{
         const res = await axios.get("http://localhost:8080/inven/manage", {
           params,
           headers: {
-            "Authorization": `Bearer ${accessToken}`
+              "Authorization": `Bearer ${accessToken}`
           },
         });
-        console.log(res.data);
-        setData(res.data);
+
+        if(res!=null){
+          console.log(res.data);
+          setData(res.data);
+        }
+
 
       }catch(err){
         console.log("err message : " + err);
@@ -134,12 +134,15 @@ function Inven() {
           const res = await axios.get("http://localhost:8080/inven/manage", {
             params,
             headers: {
-              "Authorization": `Bearer ${accessToken}`
+                "Authorization": `Bearer ${accessToken}`
             },
           });
+
+          if(res!=null){
           console.log(res.data);
           setData(res.data);
-
+        }
+  
         }catch(err){
           console.log("err message : " + err);
         }
@@ -180,14 +183,14 @@ function Inven() {
     }
   }
 
-
+  //재료 추가
   const addData = async () => {
 
     const data = isNewData;
 
     try{
       console.log(data);
-      const res = await axios.post("http://localhost:8080/inven/manage/add", data, {
+      const res = await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${accessToken}`
@@ -201,14 +204,14 @@ function Inven() {
       checkAccessToken2();
       try{
         console.log(data);
-        const res = await axios.post("http://localhost:8080/inven/manage/add", data, {
+        const res = await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
           headers: {
             'Content-Type': 'application/json',
             "Authorization": `Bearer ${accessToken}`
           }
         });
         setChange(!isChange);
-
+  
       }catch(err){
         console.log("err message : " + err);
       }
@@ -222,14 +225,14 @@ function Inven() {
     const selectedItem = isData[selectIndex];
 
     const params = {
-      userid: userId,
+      userId: userId,
       ingredientname: selectedItem.ingredientname
     };
 
     if(window.confirm(`정말 ${selectedItem.ingredientname}를 삭제하시겠습니까?`)){
-      try{
+      try{ 
         console.log(params);
-        await axios.delete("http://localhost:8080/inven/manage/delete", {
+        await axios.delete("http://localhost:8080/inven/manage", {
           params,
           headers: {
             "Authorization": `Bearer ${accessToken}`
@@ -241,9 +244,9 @@ function Inven() {
         console.log("err message : " + err);
         // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
         checkAccessToken2();
-        try{
+        try{ 
           console.log(params);
-          await axios.delete("http://localhost:8080/inven/manage/delete", {
+          await axios.delete("http://localhost:8080/inven/manage", {
             params,
             headers: {
               "Authorization": `Bearer ${accessToken}`
@@ -258,25 +261,25 @@ function Inven() {
     }else {
       alert("취소 되었습니다.");
     }
-
+    
   };
 
   //재료 수정
   const updateData = async () => {
 
     const data = Object.values(isUpdateData);
-
+    
     const showdata = data
-        .map(item => `${item.ingredientname} - ` + (item.size == null ? "" : `양 : ${item.size},`) + (item.count == null ? "" : ` 수량 : ${item.count} `))
-        .join('\n ');
+    .map(item => `${item.ingredientname} - ` + (item.status.size == null ? "" : `양 : ${item.status.size},`) + (item.status.count == null ? "" : ` 수량 : ${item.status.count} `))
+    .join('\n ');
 
     if(window.confirm(`수정내용 확인 \n ${showdata}`)){
       try{
-        await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data, {
-          headers: {
-            "Authorization": `Bearer ${accessToken}`
-          }
-        });
+          await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data, {
+            headers: {
+              "Authorization": `Bearer ${accessToken}`
+            }
+          });
         alert("수정 되었습니다.");
         setChange(!isChange);
       }catch(err){
@@ -289,17 +292,17 @@ function Inven() {
               "Authorization": `Bearer ${accessToken}`
             }
           });
-          alert("수정 되었습니다.");
-          setChange(!isChange);
-        }catch(err){
-          console.log("err message : " + err);
-        }
+        alert("수정 되었습니다.");
+        setChange(!isChange);
+      }catch(err){
+        console.log("err message : " + err);
       }
-
+      }
+      
     }else {
       alert("취소 되었습니다.");
     }
-
+    
   };
 
   const updateCount = (index,e) => {
@@ -308,7 +311,10 @@ function Inven() {
       [index] : {
         ...isUpdateData[index],
         "ingredientname" : isData[index].ingredientname,
-        "count" : e.target.value,
+        "status" : {
+          ...isUpdateData[index]?.status,
+          "count" : e.target.value,
+        }
       }
     }));
   };
@@ -316,13 +322,16 @@ function Inven() {
   const updateSize = (index,e) => {
     isData[index].size = e.target.value;
     setData(isData);
-
+    
     setUpdateData((isUpdateData) => ({
       ...isUpdateData,
       [index] : {
         ...isUpdateData[index],
         "ingredientname" : isData[index].ingredientname,
-        "size" : e.target.value,
+        "status" : {
+          ...isUpdateData[index]?.status,
+          "size" : e.target.value,
+        }
       }
     }));
   };
@@ -341,16 +350,22 @@ function Inven() {
     setClickSize(e.target.value);
     setNewData((isNewData) => ({
       ...isNewData,
-      "size" : e.target.value,
+      "status" : {
+        ...isNewData.status,
+        "size" : e.target.value,
+      }
     }));
 
   };
-
+  
   //재료수량 입력
   const setCount = (e) => {
     setNewData((isNewData) => ({
       ...isNewData,
-      "count" : e.target.value,
+      "status" : {
+        ...isNewData.status,
+        "count" : e.target.value,
+      }
     }));
 
   };
@@ -372,96 +387,97 @@ function Inven() {
   const cookmode = () => {
     navigate('/AiSimpleSearch', {state:isIngred});
   };
-
+  
   return (
-      <>
-        <Navigation></Navigation>
-        <Container fluid className={styles.container}>
-          <div className={styles.main}>
+    <>
+      <Navigation></Navigation>
+      <Container fluid className={styles.container}>
+        <div className={styles.main}>
+        <Row className={styles.controllerRow}>
+          <Col md={{span: 10, offset: 1}} className={styles.controller}>
             <Row className={styles.controllerRow}>
-              <Col md={{span: 10, offset: 1}} className={styles.controller}>
-                <Row className={styles.controllerRow}>
-                  <Col className={styles.controlform}>
-                    <div className={styles.serch}>
-                      <Form.Control type="text" placeholder="재료검색" />
-                    </div>
-                    <Button className={styles.serchbtn} variant="primary">검색</Button>
-                    <Button className={styles.btn} onClick={excelmode} variant="none">전문가 모드</Button>
-                    <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
-                    <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
-                  </Col>
-                </Row>
+              <Col className={styles.controlform}>
+                <div className={styles.serch}>
+                  <Form.Control type="text" placeholder="재료검색" />
+                </div>
+                <Button className={styles.serchbtn} variant="primary">검색</Button>
+                <Button className={styles.btn} onClick={excelmode} variant="none">전문가 모드</Button>
+                <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
+                <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
               </Col>
             </Row>
-            <Row className={styles.addContentRow}>
-              <Col md={{span: 10, offset: 1}} className={styles.addContent}>
-                <Row className={styles.addline}>
-                  <Col>
-                    <Form.Control type="text" className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
-                  </Col>
-                  <Col>
-                    <Button className={styles.btn} variant="none" onClick={setSize} value={"없음"} disabled={isClickSize==="없음"} >없음</Button>
-                  </Col>
-                  <Col>
-                    <Button className={styles.btn} variant="none" onClick={setSize} value={"적음"} disabled={isClickSize==="적음"} >적음</Button>
-                    <Button className={styles.btn} variant="none" onClick={setSize} value={"적당함"} disabled={isClickSize==="적당함"} >적당함</Button>
-                    <Button className={styles.btn} variant="none" onClick={setSize} value={"많음"} disabled={isClickSize==="많음"} >많음</Button>
-                  </Col>
-                  <Col>
-                    <p className={styles.text}>수량</p>
-                    <Form.Control type="number" className={styles.count} onChange={setCount} placeholder="0"/>
-                  </Col>
-                  <Col>
-                    <Button className={styles.addBtn} variant="none" onClick={addData}>추가</Button>
-                  </Col>
-                </Row>
+          </Col>
+        </Row>
+        <Row className={styles.addContentRow}>
+          <Col md={{span: 10, offset: 1}} className={styles.addContent}>
+            <Row className={styles.addline}>
+              <Col>
+              <Form.Control type="text" className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
+              </Col>
+              <Col>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"없음"} disabled={isClickSize==="없음"} >없음</Button>
+              </Col>
+              <Col>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"적음"} disabled={isClickSize==="적음"} >적음</Button>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"적당함"} disabled={isClickSize==="적당함"} >적당함</Button>
+                <Button className={styles.btn} variant="none" onClick={setSize} value={"많음"} disabled={isClickSize==="많음"} >많음</Button>
+              </Col>
+              <Col>
+                <p className={styles.text}>수량</p>
+                <Form.Control type="number" className={styles.count} onChange={setCount} placeholder="0"/>
+              </Col>
+              <Col>
+              <Button className={styles.addBtn} variant="none" onClick={addData}>추가</Button>
               </Col>
             </Row>
-            <Row className={styles.contentRow}>
-              <Col md={{span: 10, offset: 1}} className={styles.content}>
-                <Scrollbars className={styles.scroll}>
-                  <div className={styles.item}>
-                    {isData.map((item, index) => {
-                      // 클래스 네임 결합
-                      const combinedClassName = classNames(
-                          styles.line,
-                          {
-                            [styles.select]: Object.values(isIngred).includes(item.ingredientname),
-                          }
-                      );
+          </Col>
+        </Row>
+        <Row className={styles.contentRow}>
+          <Col md={{span: 10, offset: 1}} className={styles.content}>
+          <Scrollbars className={styles.scroll}>
+            <div className={styles.item}>
+              
+            {isData && isData.map((item, index) => {
+              // 클래스 네임 결합
+              const combinedClassName = classNames(
+                styles.line,
+                {
+                  [styles.select]: Object.values(isIngred).includes(item.ingredientname),
+                }
+              );
 
-                      return (
-                          <div key={index} className="item">
-                            <Row className={combinedClassName} onClick={(e) => selectIngred(item.ingredientname)}>
-                              <Col>
-                                <h3 className={styles.title}>{item.ingredientname}</h3>
-                              </Col>
-                              <Col>
-                                <Button className={styles.btn} variant="none" value={"없음"} disabled={item.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
-                              </Col>
-                              <Col>
-                                <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
-                                <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
-                                <Button className={styles.btn} variant="none" value={"많음"} disabled={item.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
-                              </Col>
-                              <Col>
-                                <p className={styles.text}>수량</p>
-                                <Form.Control type="number" className={styles.count} placeholder={item.count} onChange={(e) => updateCount(index, e)} />
-                              </Col>
-                              <Col>
-                                <Button className={styles.delBtn} onClick={() => deleteData(index)} variant="danger">삭제</Button>
-                              </Col>
-                            </Row>
-                          </div>
-                      );
-                    })}
-                  </div>
-                </Scrollbars>
-              </Col>
-            </Row>
-          </div>
-        </Container>
-      </>
+              return (
+                <div key={index} className="item">
+                  <Row className={combinedClassName} onClick={(e) => selectIngred(item.ingredientname)}>
+                    <Col>
+                      <h3 className={styles.title}>{item.ingredientname}</h3>
+                    </Col>
+                    <Col>
+                      <Button className={styles.btn} variant="none" value={"없음"} disabled={item.status.size==="없음"} onClick={(e) => updateSize(index,e)}>없음</Button>
+                    </Col>
+                    <Col>
+                      <Button className={styles.btn}  variant="none" value={"적음"} disabled={item.status.size==="적음"} onClick={(e) => updateSize(index,e)}>적음</Button>
+                      <Button className={styles.btn} variant="none" value={"적당함"} disabled={item.status.size==="적당함"} onClick={(e) => updateSize(index,e)}>적당함</Button>
+                      <Button className={styles.btn} variant="none" value={"많음"} disabled={item.status.size==="많음"} onClick={(e) => updateSize(index,e)}>많음</Button>
+                    </Col>
+                    <Col>
+                      <p className={styles.text}>수량</p>
+                      <Form.Control type="number" className={styles.count} placeholder={item.status.count} onChange={(e) => updateCount(index, e)} />
+                    </Col>
+                    <Col>
+                      <Button className={styles.delBtn} onClick={() => deleteData(index)} variant="danger">삭제</Button>
+                    </Col>
+                  </Row>
+                </div>
+              );
+            })}   
+            </div>
+            </Scrollbars>
+          </Col>
+        </Row>
+        </div>
+      </Container>
+    </>
   );
 }
 

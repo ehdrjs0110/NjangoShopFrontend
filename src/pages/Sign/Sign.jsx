@@ -67,31 +67,26 @@ const Sign = () => {
       if(res.data!=null){
         //alert("카카오 계정으로 회원가입 성공!");
         console.log(res.data);
-        console.log("여기" + res);
-        if(res.data!=null){
-          console.log("여기" + res.data);
 
-          accessToken = res.data.accessToken;
-          refreshToken = res.data.refreshToken;
+        accessToken = res.data.accessToken;
+        refreshToken = res.data.refreshToken;
 
+        console.log("accesstoken "+ accessToken);
 
-          console.log("accesstoken "+ accessToken);
-
-          // redux 변수에 access token 넣는 부분
-          dispatch(containToken(accessToken));
-          // refresh token cookie에 넣는 부분
-          refreshToken = JSON.stringify(refreshToken);
-          setCookie(
-              'refreshToken',
-              refreshToken,
-              {
-                path:'/',
-                maxAge: 7 * 24 * 60 * 60, // 7일
-                // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-              }
-          )
-
-        }
+        // redux 변수에 access token 넣는 부분
+        dispatch(containToken(accessToken));
+        // refresh token cookie에 넣는 부분
+        refreshToken = JSON.stringify(refreshToken);
+        setCookie(
+            'refreshToken',
+            refreshToken,
+            {
+              path:'/',
+              maxAge: 7 * 24 * 60 * 60, // 7일
+              // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+            }
+        )
+      
         navigate('/Main');
       }
     });
