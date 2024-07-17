@@ -33,7 +33,14 @@ function Inven() {
   //재료 데이터
   const [isData, setData] = useState([]);
   //추가 재료 데이터
-  const [isNewData, setNewData] = useState([]);
+  const [isNewData, setNewData] = useState({
+    ingredientname: "",
+    status: {
+      size: "",
+      count: "",
+    }
+  });
+  
   //수정 재료 데이터
   const [isUpdateData, setUpdateData] = useState([]);
   //추가 사이즈 선택 버튼
@@ -190,7 +197,24 @@ function Inven() {
 
     try{
       console.log(data);
-      const res = await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
+
+      if (!data || !data.ingredientname) {
+        alert("재료명을 입력해주세요.");
+        return;
+      }
+      
+      if (!data.status || !data.status.size) {
+        alert("재료의 양을 선택해주세요.");
+        return;
+      }
+      
+      if (!data.status || !data.status.count) {
+        alert("재료의 수량을 입력해주세요.");
+        return;
+      }
+
+      
+      await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
         headers: {
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${accessToken}`
@@ -216,6 +240,15 @@ function Inven() {
         console.log("err message : " + err);
       }
     }
+
+    setClickSize("");
+    setNewData((isNewData) => ({
+      "ingredientname" : "",
+      "status" : {
+        "size" : "",
+        "count" : "",
+      }
+    }));
 
   };
 
@@ -412,7 +445,7 @@ function Inven() {
           <Col md={{span: 10, offset: 1}} className={styles.addContent}>
             <Row className={styles.addline}>
               <Col>
-              <Form.Control type="text" className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
+              <Form.Control type="text" className={styles.ingredientname} onChange={setIngredName} value={isNewData.ingredientname} placeholder="재료명"/>
               </Col>
               <Col>
                 <Button className={styles.btn} variant="none" onClick={setSize} value={"없음"} disabled={isClickSize==="없음"} >없음</Button>
@@ -424,7 +457,7 @@ function Inven() {
               </Col>
               <Col>
                 <p className={styles.text}>수량</p>
-                <Form.Control type="number" className={styles.count} onChange={setCount} placeholder="0"/>
+                <Form.Control type="number" className={styles.count} onChange={setCount} value={isNewData.status.count} placeholder="0"/>
               </Col>
               <Col>
               <Button className={styles.addBtn} variant="none" onClick={addData}>추가</Button>

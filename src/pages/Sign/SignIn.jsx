@@ -108,7 +108,7 @@ const SignIn = () => {
 
   //카카오톡 로그인
   const CLIENT_ID = '7a2afab08fdef9ddd3b09ac451ca30b9';
-  const REDIRECT_URI = 'http://localhost:3000/Sign';
+  const REDIRECT_URI = 'http://localhost:3000/Loading';
   const kakaoSignUp = () => {
     const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
     window.location.href = kakaoUrl;
@@ -123,24 +123,12 @@ const SignIn = () => {
   }, [code]);
 
   async function sendCode() {
-
-
     const body = {
       code: code,
     };
 
-
-
     await axios
     .post("http://localhost:8080/login/kakaoCode", body)
-    .then((res) => {
-
-      navigate('/Main');
-    }).catch(console.error)
-
-
-
-
   }
 
   const findid = () => {
