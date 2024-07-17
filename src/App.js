@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Sign from './pages/Sign/Sign';
 import SignIn from './pages/Sign/SignIn';
 import SignUp from './pages/Sign/SignUp';
+import Loading from './pages/Sign/Loading';
 import Main from './pages/Main/Main';
 import Promotion from './pages/Promotion/Promotion';
 import Logout from "./pages/Logout/Logout";
@@ -47,6 +48,7 @@ function App() {
           <Route path="/Sign" element={<Sign />} />
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/SignUp" element={<SignUp />} />
+          <Route path="/Loading" element={<Loading />} />
           <Route path="/Main" element={<Main />} />
           {/*<Route path="/Main" element={<PrivateRoute component={<Main />}/>} />*/}
           <Route path="/Promotion" element={<Promotion />} />

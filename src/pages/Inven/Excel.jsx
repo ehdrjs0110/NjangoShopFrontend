@@ -35,7 +35,13 @@ function Excel() {
      //재료 포맷 데이터
      const [isRows, setRows] = useState([]);
     //추가 재료 데이터
-    const [isNewData, setNewData] = useState([]);
+    const [isNewData, setNewData] = useState({
+      ingredientname: "",
+      status: {
+        size: "없음",
+        count: "",
+      }
+    });
     //select박스 체크
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -100,12 +106,6 @@ function Excel() {
           checkAccessToken();
       }
       
-      setNewData({      
-        status : {
-          size : "없음",
-          count : 0,
-        }
-      });
     },[]);
 
     //columns 변수에는 테이블의 제목에 들어갈 내용을 배열에 객체 요소로 담는다.
@@ -242,6 +242,17 @@ function Excel() {
   
       try{
         console.log(data);
+
+      if (!data || !data.ingredientname) {
+        alert("재료명을 입력해주세요.");
+        return;
+      }
+      
+      if (!data.status || !data.status.count) {
+        alert("재료의 수량을 입력해주세요.");
+        return;
+      }
+
         await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
           headers: {
             'Content-Type': 'application/json',
@@ -269,6 +280,13 @@ function Excel() {
         }
       }
   
+      setNewData((isNewData) => ({
+        "ingredientname" : "",
+        "status" : {
+          "count" : "",
+        }
+      }));
+
     };
 
     //재료 선택 삭제
@@ -408,11 +426,11 @@ function Excel() {
           <Col md={{span: 10, offset: 1}} className={styles.addContent}>
             <Row className={styles.addline}>
               <Col>
-              <Form.Control type="text" id='ingredientname' className={styles.ingredientname} onChange={setIngredName} placeholder="재료명"/>
+              <Form.Control type="text" id='ingredientname' className={styles.ingredientname} onChange={setIngredName} value={isNewData.ingredientname} placeholder="재료명"/>
               </Col>
               <Col>
-                <Form.Select id='size' className={styles.selectSize} onChange={setInsertData}>
-                  <option value={"없음"}>없음</option>
+                <Form.Select id='size' className={styles.selectSize} onChange={setInsertData} defaultValue={"없음"}>
+                  <option  value={"없음"}>없음</option>
                   <option value={"적음"}>적음</option>
                   <option value={"적당함"}>적당함</option>
                   <option value={"많음"}>많음</option>
@@ -420,7 +438,7 @@ function Excel() {
               </Col>
               <Col>
                 <p className={styles.text}>수량</p>
-                <Form.Control type="number" id='count' className={styles.count} onChange={setInsertData} placeholder="0"/>
+                <Form.Control type="number" id='count' className={styles.count} onChange={setInsertData} value={isNewData.status.count} placeholder="0"/>
               </Col>
               <Col>
                 <p className={styles.text}>사용기한</p>
