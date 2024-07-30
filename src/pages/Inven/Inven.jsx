@@ -120,6 +120,7 @@ function Inven() {
       const params = { userId:userId};
 
       try{
+
         const res = await axios.get("http://localhost:8080/inven/manage", {
           params,
           headers: {
@@ -207,12 +208,6 @@ function Inven() {
         alert("재료의 양을 선택해주세요.");
         return;
       }
-      
-      if (!data.status || !data.status.count) {
-        alert("재료의 수량을 입력해주세요.");
-        return;
-      }
-
       
       await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
         headers: {
@@ -406,11 +401,19 @@ function Inven() {
   //재료 선택
 
   const selectIngred = (ingred) => {
-    setIngred((isIngred) => ({
-      ...isIngred,
-      [isIndex] : ingred,
-    }));
-    setIndex(isIndex+1);
+    if(Object.values(isIngred).includes(ingred)){
+      // Remove the ingredient if it already exists
+      const newIsIngred = { ...isIngred };
+      const keyToDelete = Object.keys(newIsIngred).find(key => newIsIngred[key] === ingred);
+      delete newIsIngred[keyToDelete];
+      setIngred(newIsIngred);
+    }else{
+      setIngred((isIngred) => ({
+        ...isIngred,
+        [isIndex] : ingred,
+      }));
+      setIndex(isIndex+1);
+    }
   };
 
   const excelmode = () => {
@@ -457,7 +460,7 @@ function Inven() {
               </Col>
               <Col>
                 <p className={styles.text}>수량</p>
-                <Form.Control type="number" className={styles.count} onChange={setCount} value={isNewData.status.count} placeholder="0"/>
+                <Form.Control type="number" className={styles.count} onChange={setCount} value={(isNewData.status.count===null)?0:isNewData.status.count} placeholder="0"/>
               </Col>
               <Col>
               <Button className={styles.addBtn} variant="none" onClick={addData}>추가</Button>

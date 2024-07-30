@@ -1,5 +1,3 @@
-
-
 import Navigation from '../../components/Nav/Navigation'
 import Container from "react-bootstrap/Container";
 import styles from "../../styles/Search/AiSearch.module.scss";
@@ -9,7 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import { useLocation } from 'react-router-dom';
 
 import aiSimpleCss from '../../styles/Search/AiSimpleSearch.module.scss';
@@ -38,7 +36,12 @@ const AiSimpleSearch = () => {
     // const [myIngredientList, setMyIngredientList] = useState(null);
     //페이지 변화
     const [isChange, setChange] = useState(false);
-    var myIngredientList = ["미나리", "참기름","파슬리","대파","돼지고기","갸지","오이","양파","마늘","당근","양배추"];
+    //사용자 재료
+    const [isIngredients, setIngredients] = useState([]);
+
+    //modal 창 띄우기
+    const [modalOpen, setModalOpen] = useState(false);
+    const modalBackground = useRef();
 
 
     // refresh token 가져오기
@@ -48,7 +51,7 @@ const AiSimpleSearch = () => {
 
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
-    let  id = useSelector(state=> state.userEmail.value);
+    let  userId = useSelector(state=> state.userEmail.value);
     const dispatch = useDispatch();
 
 
@@ -56,23 +59,9 @@ const AiSimpleSearch = () => {
     const state = useLocation();
     console.table(state);
 
-
-
     useEffect(() => {
-        if(state)
-        {
-            var list = Object.values(state.state);
-            // console.log("test:"+ test)
-            // setMyIngredientList(list);
-            setSelectedIngredientList(list);
-        }
-        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
-        if (storedRecipe) {
-            console.log("있다고 인식됨")
-            setRecipe(JSON.parse(storedRecipe));
-        }
 
-        const params = {};
+         //const params = {};
 
         // access token의 유무에 따라
         let refreshToken = cookies.refreshToken;
@@ -110,10 +99,95 @@ const AiSimpleSearch = () => {
             checkAccessToken();
         }
 
-
-
+        if(state)
+        {
+            var list = Object.values(state.state);
+            // console.log("test:"+ test)
+            // setMyIngredientList(list);
+            setSelectedIngredientList(list);
+        }
+        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
+        if (storedRecipe) {
+            console.log("있다고 인식됨")
+            setRecipe(JSON.parse(storedRecipe));
+        }
 
     }, []);
+
+    useEffect(() => {
+        //재료 가져오기
+        const fetchData = async () => {
+
+            const params = {userId:userId};
+
+            try{
+            const res = await axios.get("http://localhost:8080/inven/manage/name", {
+                params,
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                },
+            });
+
+            if(res!=null){
+                console.log(res.data);
+            }
+
+            setIngredients(res.data);
+
+            }catch(err){
+            console.log("err message : " + err);
+            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
+            checkAccessToken2();
+            try{
+                const res = await axios.get("http://localhost:8080/inven/manage/name", {
+                params,
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                });
+                if(res!=null){
+                    console.log(res.data);
+                }
+                setIngredients(res.data);
+
+            }catch(err){
+                console.log("err message : " + err);
+            }
+            }
+        }
+
+        fetchData();
+    }, [accessToken]);
+
+    async function checkAccessToken2() {
+
+        let refreshToken = cookies.refreshToken;
+        try {
+    
+          // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+          const result = await getNewToken(refreshToken);
+          refreshToken = result.newRefreshToken;
+    
+          // refresh token cookie에 재설정
+          setCookie(
+              'refreshToken',
+              refreshToken,
+              {
+                path:'/',
+                maxAge: 7 * 24 * 60 * 60, // 7일
+                // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+              }
+          )
+    
+          // Redux access token 재설정
+          dispatch(containToken(result.newToken));
+    
+        } catch (error) {
+          console.log(error);
+          navigate('/Sign');
+        }
+      }
+
     // 레시피 갯수 입력받기
     const recipeHendler = (event) => {
         const {value} = event.target;
@@ -132,9 +206,9 @@ const AiSimpleSearch = () => {
 
     // UI = 냉장고 속 재료 보여주기
     const  makeMyIngredientList = () => {
-        if(myIngredientList)
+        if(isIngredients)
         {
-            const checkLsit = myIngredientList.map((ingredient, index) =>
+            const checkLsit = isIngredients.map((item, index) =>
                 <Form.Check
                     key={index}
                     inline
@@ -142,9 +216,9 @@ const AiSimpleSearch = () => {
                     name="group1"
                     id={`inline-checkbox-${index}`}
                     className={aiSimpleCss.check}
-                    label={ingredient}
-                    onChange={() => selectIngredient(ingredient)}
-                    checked={selectedIngredientList.includes(ingredient)}
+                    label={item.ingredientname}
+                    onChange={() => selectIngredient(item.ingredientname)}
+                    checked={selectedIngredientList.includes(item.ingredientname)}
 
                 />)
             return checkLsit;
@@ -179,6 +253,7 @@ const AiSimpleSearch = () => {
 
     // prompt 요청
     async function aiSearchRequest () {
+        setModalOpen(true);
         console.log("selectedMyIngredientList" + selectedIngredientList);
         // console.log();
         console.log(recipeCount);
@@ -190,8 +265,12 @@ const AiSimpleSearch = () => {
 
 
         console.log("요청 중");
+
+        const ingredientNames = isIngredients.map(ingredient => ingredient.ingredientname);
+        console.log(ingredientNames);
+
         const requestBody = {"userContent" : ` ${selectedIngredientList}를 이용한 레시피를 ${recipeCount}개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
-                `대해서는 130글자 내로 간략하게 알려줘  ${myIngredientList}가 있어 형태는 title,재료,과정으로 알려줘` +
+                `대해서는 130글자 내로 간략하게 알려줘 ${ingredientNames}가 있어 형태는 title,재료,과정으로 알려줘` +
                 `그리고 json 객체로 {0:[요리 1], ...} 형태로 ${recipeCount}갯수로 참고로 키는 무조건 숫자여야해 보내줘`};
         let searchResponse;
         try {
@@ -227,6 +306,7 @@ const AiSimpleSearch = () => {
         console.log(recipesList);
         setRecipe(recipesList);
         sessionStorage.setItem("recipeSimpleSearchList",JSON.stringify(recipesList));
+        setModalOpen(false);
     }
 
 
@@ -346,6 +426,20 @@ const AiSimpleSearch = () => {
 
                     </Col>
                 </Row>
+                    {
+                        modalOpen &&
+                        <div className={styles.modal_container} ref={modalBackground} onClick={e => {
+                        }}>
+                            <div className={styles.loader}>
+                                <div className={styles.character}></div>
+                                {/* <img src={char} className={styles.character}></img> */}
+                                
+                            </div>
+                            <div className={styles.loading}>
+                                <h2 className={styles.text}>Loading...</h2>
+                            </div>
+                        </div>
+                    }
             </Container>
         </div>
     )

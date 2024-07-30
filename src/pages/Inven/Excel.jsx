@@ -283,6 +283,7 @@ function Excel() {
       setNewData((isNewData) => ({
         "ingredientname" : "",
         "status" : {
+          "size" : isNewData.status.size,
           "count" : "",
         }
       }));
@@ -402,6 +403,11 @@ function Excel() {
         navigate('/Inven');
     };
   
+    const cookmode = () => {
+      const selectRow = selectedRows.map(item => item);
+      navigate('/AiSimpleSearch', {state:selectRow});
+    };
+
     return (
     <>
         <Navigation></Navigation>
@@ -415,7 +421,7 @@ function Excel() {
                   </div>
                   <Button className={styles.serchbtn} variant="none">검색</Button>
                   <Button className={styles.btn} onClick={normalmode} variant="none">일반 모드</Button>
-                  <Button className={styles.btn} variant="none">나의 재료로 요리하기</Button>
+                  <Button className={styles.btn} onClick={cookmode} variant="none">나의 재료로 요리하기</Button>
                   <Button className={styles.btn} onClick={updateData} variant="none">일괄 저장</Button>
                   <Button className={styles.btn} onClick={deleteData} variant="none">선택 삭제</Button>
                 </Col>
@@ -429,7 +435,7 @@ function Excel() {
               <Form.Control type="text" id='ingredientname' className={styles.ingredientname} onChange={setIngredName} value={isNewData.ingredientname} placeholder="재료명"/>
               </Col>
               <Col>
-                <Form.Select id='size' className={styles.selectSize} onChange={setInsertData} defaultValue={"없음"}>
+                <Form.Select id='size' className={styles.selectSize} onChange={setInsertData} defaultValue={isNewData.status.size}>
                   <option  value={"없음"}>없음</option>
                   <option value={"적음"}>적음</option>
                   <option value={"적당함"}>적당함</option>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -48,6 +48,10 @@ const AiDetaileSearch = () => {
     const [time,setTime] = useState(0);
     const [serve,setServe] = useState(0);
 
+    //modal 창 띄우기
+    const [modalOpen, setModalOpen] = useState(false);
+    const modalBackground = useRef();
+
     const navigate = useNavigate();
     // const [recipyTitle, setRecipyTitle] = useState(recipe.요리제목);
 
@@ -73,6 +77,7 @@ const AiDetaileSearch = () => {
 
 
     useEffect(() => {
+        setModalOpen(true);
 
 
         // access token의 유무에 따라
@@ -310,6 +315,7 @@ const AiDetaileSearch = () => {
         // console.log("JavaScript 객체를 콘솔에 출력");
         // console.log(recipes);
         setDetailRecipe(recipesList);
+        setModalOpen(false);
     }
 
 
@@ -606,6 +612,21 @@ const AiDetaileSearch = () => {
                             </Col>
                         </Col>
                     </Row>
+
+                    {
+                        modalOpen &&
+                        <div className={styles.modal_container} ref={modalBackground} onClick={e => {
+                        }}>
+                            <div className={styles.loader}>
+                                <div className={styles.character}></div>
+                                {/* <img src={char} className={styles.character}></img> */}
+                                
+                            </div>
+                            <div className={styles.loading}>
+                                <h2 className={styles.text}>Loading...</h2>
+                            </div>
+                        </div>
+                    }
                 </Container>
             </div>
         </>

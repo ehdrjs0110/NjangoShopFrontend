@@ -237,3 +237,64 @@
   }
 
 }
+
+.modal_container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.loader {
+  width: 700px;
+  height: 700px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin .6s linear infinite reverse;
+
+    .character {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 100%;
+      animation: spin 1s infinite ease-in-out;
+    }
+
+    .character::after {
+      background-image: url('../../assets/Character/char.png');
+      background-size: cover;
+      position: absolute;
+      content: '';
+      width: 250px;
+      height: 250px;
+      top: 0;
+    }
+}
+
+.loading {
+  position: absolute;
+  z-index: 1;
+  
+  .text {
+    font-size: 50px;
+    font-weight: bold;
+    color: #fff;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}

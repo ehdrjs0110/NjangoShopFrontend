@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -23,11 +23,7 @@ import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 //--
 
-
-
 function CustomToggle({ children, eventKey }) {
-
-
 
     const decoratedOnClick = useAccordionButton(eventKey, () =>
         console.log('totally custom!'),
@@ -56,13 +52,20 @@ const AiSearch = () => {
     const [selectedMyIngredientList, setSelectedMyIngredientList] = useState([]);
     // const [allergyFood, setAllergyFood] = useState([])
 
+    //사용자 재료
+    const [isIngredients, setIngredients] = useState([]);
 
     // auth 관련 --
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
+    let  userId = useSelector(state=> state.userEmail.value);
     const dispatch = useDispatch();
     // --
+
+    //modal 창 띄우기
+    const [modalOpen, setModalOpen] = useState(false);
+    const modalBackground = useRef();
 
     useEffect(() => {
         console.log("accesstoken" + accessToken);
@@ -114,6 +117,51 @@ const AiSearch = () => {
         // --
     }, []);
 
+    useEffect(() => {
+        //재료 가져오기
+        const fetchData = async () => {
+
+            const params = {userId:userId};
+
+            try{
+            const res = await axios.get("http://localhost:8080/inven/manage/name", {
+                params,
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                },
+            });
+
+            if(res!=null){
+                console.log(res.data);
+            }
+
+            setIngredients(res.data);
+
+            }catch(err){
+            console.log("err message : " + err);
+            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
+            checkAccessToken2();
+            try{
+                const res = await axios.get("http://localhost:8080/inven/manage/name", {
+                params,
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                });
+                if(res!=null){
+                    console.log(res.data);
+                }
+                setIngredients(res.data);
+
+            }catch(err){
+                console.log("err message : " + err);
+            }
+            }
+        }
+
+        fetchData();
+    }, [accessToken]);
+
 
 
 
@@ -157,15 +205,15 @@ const AiSearch = () => {
 
     //  재료선택
     function makeIngredientList() {
-        const IngredientList = myIngredientList.map((ingredient,index) =>
+        const IngredientList = isIngredients.map((item,index) =>
 
             <Form.Check
                 inline
                 type="checkbox"
                 name="group3"
-                id={ingredient}
+                id={item.ingredientname}
                 className={styles.check}
-                label={ingredient}
+                label={item.ingredientname}
                 onChange={myIngredientHandler}
             />)
         return IngredientList;
@@ -334,16 +382,14 @@ const AiSearch = () => {
 
     // prompt 요청
     async function aiSearchRequest () {
+        setModalOpen(true);
+
         console.log("selectedKindOfFood: " + selectedKindOfFood );
         console.log("accesstoken" + accessToken);
         console.log("searchValue" + searchValue);
         console.log("allergyFood" + allergyFood);
         console.log("selectedMyIngredientList" + selectedMyIngredientList);
         // console.log();\
-
-
-        
-
 
         // await getNewToken();
 
@@ -414,6 +460,8 @@ const AiSearch = () => {
         console.log(recipesList);
         setRecipe(recipesList);
         sessionStorage.setItem("recipeList",JSON.stringify(recipesList));
+
+        setModalOpen(false);
     }
 
 
@@ -569,7 +617,20 @@ const AiSearch = () => {
                         {/*    3 of 3*/}
                         {/*</Col>*/}
                     </Row>
-
+                    {
+                        modalOpen &&
+                        <div className={styles.modal_container} ref={modalBackground} onClick={e => {
+                        }}>
+                            <div className={styles.loader}>
+                                <div className={styles.character}></div>
+                                {/* <img src={char} className={styles.character}></img> */}
+                                
+                            </div>
+                            <div className={styles.loading}>
+                                <h2 className={styles.text}>Loading...</h2>
+                            </div>
+                        </div>
+                    }
                 </div>
             </Container>
         </>
