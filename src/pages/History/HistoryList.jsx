@@ -76,35 +76,6 @@ const HistoryList = () => {
 
         // --
 
-        async function checkAccessToken2() {
-
-            let refreshToken = cookies.refreshToken;
-            try {
-    
-                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-                const result = await getNewToken(refreshToken);
-                refreshToken = result.newRefreshToken;
-    
-                // refresh token cookie에 재설정
-                setCookie(
-                    'refreshToken',
-                    refreshToken,
-                    {
-                        path:'/',
-                        maxAge: 7 * 24 * 60 * 60, // 7일
-                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                    }
-                )
-    
-                // Redux access token 재설정
-                dispatch(containToken(result.newToken));
-    
-            } catch (error) {
-                console.log(error);
-                navigate('/Sign');
-            }
-        }
-
         const fetchData = async () => {
       
             try{
@@ -119,7 +90,14 @@ const HistoryList = () => {
                 console.log(storedRecipe);
 
                 if(storedRecipe) {
-                    setRecipe(storedRecipe);
+                    // JSON 문자열을 파싱하여 불필요한 이스케이프 문자를 제거
+                    const recipes = storedRecipe.map(item => ({
+                        ...item,
+                        ingredients: JSON.parse(item.ingredients)
+                    }));
+
+                    console.log(recipes);
+                    setRecipe(recipes);
                 }
       
             }catch(err){
@@ -139,6 +117,13 @@ const HistoryList = () => {
                 console.log(storedRecipe);
 
                 if(storedRecipe) {
+                    // JSON 문자열을 파싱하여 불필요한 이스케이프 문자를 제거
+                    const recipes = storedRecipe.map(item => ({
+                        ...item,
+                        ingredients: JSON.parse(item.ingredients)
+                    }));
+
+                    console.log(recipes);
                     setRecipe(storedRecipe);
                 }
 
@@ -146,32 +131,86 @@ const HistoryList = () => {
                 console.error(e);
                 // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
                 checkAccessToken2();
-                try {
+                }
+            }
+        }
+      
+          fetchData();
 
-                    const res = await axios.get(`http://localhost:8080/history/${userId}`,
+    }, []);
+
+    async function checkAccessToken2() {
+
+        let refreshToken = cookies.refreshToken;
+        try {
+
+            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+            const result = await getNewToken(refreshToken);
+            refreshToken = result.newRefreshToken;
+
+            // refresh token cookie에 재설정
+            setCookie(
+                'refreshToken',
+                refreshToken,
+                {
+                    path:'/',
+                    maxAge: 7 * 24 * 60 * 60, // 7일
+                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                }
+            )
+
+            // Redux access token 재설정
+            dispatch(containToken(result.newToken));
+
+        } catch (error) {
+            console.log(error);
+            navigate('/Sign');
+        }
+    }
+
+    const deleteRecipe = async (recipeId) => {
+
+        if(window.confirm("정말 삭제 하시겠습니까?")){
+
+            try{
+                const res = await axios.delete(`http://localhost:8080/recipe/${recipeId}`,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    }
+                );
+
+                if(res){
+                    alert("삭제되었습니다.");
+                }else {
+                    alert("실패했습니다.");
+                }
+
+            }catch(e) {
+                console.error(e);
+                checkAccessToken2();
+    
+                try{
+                    await axios.delete(`http://localhost:8080/recipe/${userId}`,
                         {
                             headers: {
                                 "Authorization": `Bearer ${accessToken}` // auth 설정
                             },
                         }
-                    );
-                    const storedRecipe = res.data;
-                    console.log(storedRecipe);
-    
-                    if(storedRecipe) {
-                        setRecipe(storedRecipe);
-                    }
-    
-                } catch (e) {
+                    )
+                }catch(e) {
                     console.error(e);
+                    checkAccessToken2();
                 }
             }
-            }
-          }
-      
-          fetchData();
+        }else {
+            alert("취소 되었습니다.");
+        }
 
-    }, []);
+        
+    };
+
 
     // recipe UI
     function recipeResponce()
@@ -183,10 +222,10 @@ const HistoryList = () => {
                     <Card.Header  className={styles.hearder}>
                         <Row xs={1} md={2}>
                             <Col className={styles.recipeTitleCol}>
-                                {JSON.stringify(recipe.title)}
+                                {JSON.stringify(recipe.title).replace(/\"/gi, "")}
                             </Col>
                             <Col className={styles.recipeDetailSearchCol}>
-                                <Button className={styles.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe.recipeId)}>
+                                <Button className={styles.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe)}>
                                         상세보기
                                 </Button>
                             </Col>
@@ -194,7 +233,8 @@ const HistoryList = () => {
                     </Card.Header>
                     <Card.Body>
                         <Card.Text>
-                            <strong>재료:</strong> {JSON.stringify(recipe.ingredients)}
+                            <strong>재료:</strong> {formatIngredients(recipe.ingredients)}
+                            <Button className={styles.deleteBtn} onClick={() => deleteRecipe(recipe.recipeId)}>삭제</Button>
                         </Card.Text>
                     </Card.Body>
                 </Card>
@@ -211,6 +251,13 @@ const HistoryList = () => {
         navigate('/HistoryDetail', { state: { recipe } }); // 레시피 전달
 
     }
+
+    // ingredients 객체를 문자열로 변환하여 사람이 읽기 쉽게 포맷팅하는 함수
+    const formatIngredients = (ingredients) => {
+        return Object.entries(ingredients)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+    };
 
     return (
         <>

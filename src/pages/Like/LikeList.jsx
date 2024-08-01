@@ -10,7 +10,7 @@ import Card from 'react-bootstrap/Card';
 
 import Navigation from '../../components/Nav/Navigation'
 
-import styles from '../../styles/Search/AiSearch.module.scss';
+import styles from '../../styles/Like/LikeList.module.scss';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 // auth 관련 --
@@ -81,7 +81,13 @@ const LikeList = () => {
                 console.log(storedRecipe);
 
                 if(storedRecipe) {
-                    setRecipe(storedRecipe);
+                    // JSON 문자열을 파싱하여 불필요한 이스케이프 문자를 제거
+                    const recipes = storedRecipe.map(item => ({
+                        ...item,
+                        ingredients: JSON.parse(item.ingredients)
+                    }));
+
+                    setRecipe(recipes);
                 }
       
             }catch(err){
@@ -101,7 +107,13 @@ const LikeList = () => {
                 console.log(storedRecipe);
 
                 if(storedRecipe) {
-                    setRecipe(storedRecipe);
+                    // JSON 문자열을 파싱하여 불필요한 이스케이프 문자를 제거
+                    const recipes = storedRecipe.map(item => ({
+                        ...item,
+                        ingredients: JSON.parse(item.ingredients)
+                    }));
+
+                    setRecipe(recipes);
                 }
 
             } catch (e) {
@@ -153,7 +165,7 @@ const LikeList = () => {
                     <Card.Header  className={styles.hearder}>
                         <Row xs={1} md={2}>
                             <Col className={styles.recipeTitleCol}>
-                                {JSON.stringify(recipe.title)}
+                                {JSON.stringify(recipe.title).replace(/\"/gi, "")}
                             </Col>
                             <Col className={styles.recipeDetailSearchCol}>
                                 <Button className={styles.recipeDetailSearchButton}  variant="outline-secondary" onClick={() =>startDetailAiSearch(recipe)}>
@@ -164,7 +176,7 @@ const LikeList = () => {
                     </Card.Header>
                     <Card.Body>
                         <Card.Text>
-                            <strong>재료:</strong> {JSON.stringify(recipe.ingredients)}
+                            <strong>재료:</strong> {formatIngredients(recipe.ingredients)}
                         </Card.Text>
                     </Card.Body>
                 </Card>
@@ -179,8 +191,14 @@ const LikeList = () => {
     const startDetailAiSearch = (recipe) =>
     {
         navigate('/HistoryDetail', { state: { recipe } }); // 레시피 전달
-
     }
+
+    // ingredients 객체를 문자열로 변환하여 사람이 읽기 쉽게 포맷팅하는 함수
+    const formatIngredients = (ingredients) => {
+        return Object.entries(ingredients)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+    };
 
     return (
         <>

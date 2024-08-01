@@ -198,11 +198,6 @@ const AiSearch = () => {
     // 테스트 데이터
     let allergyFood = ["새우,오징어"];
 
-
-
-    // 테스트 데이터
-    var myIngredientList = ["양파", "당근","마늘","파","옥수수"];
-
     //  재료선택
     function makeIngredientList() {
         const IngredientList = isIngredients.map((item,index) =>

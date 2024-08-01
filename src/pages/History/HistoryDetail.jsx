@@ -21,14 +21,18 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {useLocation} from "react-router-dom";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
+// auth 관련 --
+import {useCookies} from "react-cookie";
+import {getNewToken} from "../../services/auth2";
+import {containToken} from "../../Store/tokenSlice";
+import {useDispatch, useSelector} from "react-redux";
+//--
 
-import styles from '../../styles/Search/AiDetailSearch.module.scss';
-
-//임시 아이디
-const id = "ehdrjs0110@gmail.com";
-
+import styles from '../../styles/History/HistoryDetail.module.scss';
 
 const AiDetaileSearch = () => {
+    const navigate = useNavigate();
     const location = useLocation(); // 현재 위치 객체를 가져옴
     const { recipe } = location.state || {}; // 전달된 상태에서 recipe 추출, 없을 경우 빈 객체로 대체
     const [detailRecipe, setDetailRecipe] = useState(null);
@@ -37,9 +41,143 @@ const AiDetaileSearch = () => {
     const [time,setTime] = useState(0);
     const [serve,setServe] = useState(0);
 
+    // auth 관련 --
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+    // redux에서 가져오기
+    let accessToken = useSelector(state => state.token.value);
+    let  userId = useSelector(state=> state.userEmail.value);
+    const dispatch = useDispatch();
+    // --
 
     console.log(recipe);
 
+    useEffect(() => {
+
+        // access token의 유무에 따라 재발급 --
+        let refreshToken = cookies.refreshToken;
+        async function checkAccessToken() {
+            try {
+                // console.log("useEffect에서 실행")
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/SignIn');
+            }
+        }
+        // checkAccessToken();
+
+        // checkAccessToken();
+        if(accessToken == null || accessToken == undefined)
+        {
+            checkAccessToken();
+        }
+
+        // --
+
+        async function checkAccessToken2() {
+
+            let refreshToken = cookies.refreshToken;
+            try {
+    
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+    
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+    
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+    
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
+            }
+        }
+
+        const fetchData = async () => {
+      
+            try{
+                const res = await axios.get(`http://localhost:8080/recipe/${recipe.recipeId}`,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    },
+                    
+                );
+                const storedRecipe = res.data;
+                console.log(storedRecipe);
+
+                if(storedRecipe) {
+                    const srecipe = JSON.parse(storedRecipe);
+                    setDetailRecipe(srecipe.progress);
+                    setLevel(srecipe.level);
+                }
+      
+            }catch(err){
+              console.log("err message : " + err);
+              checkAccessToken2();
+
+              try{
+                const res = await axios.get(`http://localhost:8080/recipe/${recipe.recipeId}`,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${accessToken}` // auth 설정
+                        },
+                    },
+                    
+                );
+                const storedRecipe = res.data;
+
+
+                if(storedRecipe) {
+                    console.log(storedRecipe);
+
+                    const detailRecipeArray = JSON.parse(storedRecipe[0].progress);
+                    console.log(detailRecipeArray);
+
+                    setDetailRecipe(detailRecipeArray);
+                    setLevel(storedRecipe[0].level);
+                    setServe(storedRecipe[0].servings);
+                    setTime(storedRecipe[0].time);
+                }
+      
+            }catch(err){
+              console.log("err message : " + err);
+              checkAccessToken2();
+            }
+            }
+          }
+      
+          fetchData();
+    }, [recipe]);
 
     function makeLeve ()
     {
@@ -59,7 +197,7 @@ const AiDetaileSearch = () => {
                 </div>
             )
         }
-        else {
+        else if(level == 3){
             return (
                 <div>
                     <FontAwesomeIcon icon={faStar} className={styles.levelIcon}/>
@@ -69,6 +207,13 @@ const AiDetaileSearch = () => {
             )
         }
     }
+
+    // ingredients 객체를 문자열로 변환하여 사람이 읽기 쉽게 포맷팅하는 함수
+    const formatIngredients = (ingredients) => {
+        return Object.entries(ingredients)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+    };
 
     // 레시피 자세히 보기 ui
     function makeDetailRecipe()
@@ -90,9 +235,9 @@ const AiDetaileSearch = () => {
                         <Col className={styles.recipeCol} xs={11}>
                             <Card className={styles.card}>
                                 <Card.Body className={styles.body}>
-                                    <Card.Title>{recipe.title}</Card.Title>
+                                    <Card.Title>{recipe[0].과정제목}</Card.Title>
                                     <Card.Text>
-                                        {recipe.progress}
+                                        {recipe[0].process || recipe[1].process}
                                     </Card.Text>
                                 </Card.Body>
                             </Card>
@@ -103,37 +248,6 @@ const AiDetaileSearch = () => {
         }
         return null;
     }
-
-    useEffect(() => {
-
-        const fetchData = async () => {
-
-            const recipeId = recipe;
-      
-            try{
-                const res = await axios.get(`http://localhost:8080/recipe/${recipeId}`);
-                const storedRecipe = res.data;
-                console.log(storedRecipe);
-                console.log(storedRecipe.progress);
-                console.log(storedRecipe.title);
-
-                if(storedRecipe) {
-                    setDetailRecipe(storedRecipe.progress);
-                    setLevel(storedRecipe.level);
-                }
-      
-            }catch(err){
-              console.log("err message : " + err);
-            }
-          }
-      
-          fetchData();
-
-
-    }, []);
-
-
-
 
     return (
         <>
@@ -148,7 +262,7 @@ const AiDetaileSearch = () => {
                                         <Card.Title className={styles.upperHalfContain}>
                                             <Row xs={2} md={2} lg={2}>
                                                 <Col className={styles.titleCol}>
-                                                    
+                                                    {recipe.title}
                                                     <div  className={styles.bottomLine}></div>
                                                 </Col>
                                                 <Col className={styles.iconCol}>
@@ -220,7 +334,7 @@ const AiDetaileSearch = () => {
                                                 <Card.Body>
                                                     <Card.Title className={styles.ingredientTitle}>재료</Card.Title>
                                                     <div className={styles.ingredientList}>
-                                                        
+                                                        {formatIngredients(recipe.ingredients).replace(/\"/gi, "")}
                                                     </div>
                                                 </Card.Body>
                                             </Card>
