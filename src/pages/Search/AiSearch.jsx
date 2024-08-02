@@ -18,10 +18,13 @@ import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 // auth 관련 --
 import {useCookies} from "react-cookie";
-import {getNewToken} from "../../services/auth2";
+import {expired, getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 //--
+
+import axiosInstance from "../../middleware/customAxios";
+import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 function CustomToggle({ children, eventKey }) {
 
@@ -57,9 +60,13 @@ const AiSearch = () => {
 
     // auth 관련 --
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+    // const { handleTokenRefresh } = useSetNewAuth();
+
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
+
     let  userId = useSelector(state=> state.userEmail.value);
+
     const dispatch = useDispatch();
     // --
 
@@ -68,20 +75,31 @@ const AiSearch = () => {
     const modalBackground = useRef();
 
     useEffect(() => {
-        console.log("accesstoken" + accessToken);
+        // console.log("accesstoken" + accessToken);
 
         const storedRecipe = sessionStorage.getItem("recipeList");
         if (storedRecipe) {
-            setRecipe(JSON.parse(storedRecipe));
+            console.log(storedRecipe);
+            console.log(typeof storedRecipe);
+            // sessionStorage.setItem("recipeList");
+
+            // setRecipe(JSON.parse(storedRecipe));
         }
 
 
+    }, []);
 
-        // access token의 유무에 따라 재발급 --
-        let refreshToken = cookies.refreshToken;
-        async function checkAccessToken() {
+
+
+
+    async function tokenHandler() {
+
+
+        const isExpired = expired();
+        if(isExpired){
+
+            let refreshToken = cookies.refreshToken;
             try {
-                // console.log("useEffect에서 실행")
 
                 // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
                 const result = await getNewToken(refreshToken);
@@ -103,96 +121,14 @@ const AiSearch = () => {
 
             } catch (error) {
                 console.log(error);
-                navigate('/SignIn');
-            }
-        }
-        // checkAccessToken();
-
-        // checkAccessToken();
-        // if(accessToken == null || accessToken == undefined)
-        // {
-        //     checkAccessToken();
-        // }
-
-        // --
-    }, []);
-
-    useEffect(() => {
-        //재료 가져오기
-        const fetchData = async () => {
-
-            const params = {userId:userId};
-
-            try{
-            const res = await axios.get("http://localhost:8080/inven/manage/name", {
-                params,
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`
-                },
-            });
-
-            if(res!=null){
-                console.log(res.data);
-            }
-
-            setIngredients(res.data);
-
-            }catch(err){
-            console.log("err message : " + err);
-            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-            checkAccessToken2();
-            try{
-                const res = await axios.get("http://localhost:8080/inven/manage/name", {
-                params,
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`
-                },
-                });
-                if(res!=null){
-                    console.log(res.data);
-                }
-                setIngredients(res.data);
-
-            }catch(err){
-                console.log("err message : " + err);
-            }
+                navigate('/Sign');
             }
         }
 
-        fetchData();
-    }, [accessToken]);
-
-
-
-
-    async function checkAccessToken2() {
-
-        let refreshToken = cookies.refreshToken;
-        try {
-
-            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-            const result = await getNewToken(refreshToken);
-            refreshToken = result.newRefreshToken;
-
-            // refresh token cookie에 재설정
-            setCookie(
-                'refreshToken',
-                refreshToken,
-                {
-                    path:'/',
-                    maxAge: 7 * 24 * 60 * 60, // 7일
-                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                }
-            )
-
-            // Redux access token 재설정
-            dispatch(containToken(result.newToken));
-
-        } catch (error) {
-            console.log(error);
-            navigate('/Sign');
-        }
     }
+
+
+
 
 
     // 테스트 데이터
@@ -323,57 +259,6 @@ const AiSearch = () => {
 
 
 
-    // 보안관련 너무 길어서 수정해야함
-
-
-
-
-    //
-    // async function getNewToken() {
-    //     console.log("refresh token cookie" +cookies.refreshToken);
-    //     const refreshToken = cookies.refreshToken;
-    //
-    //     let response;
-    //     try {
-    //         response = await axios.post(
-    //             "http://localhost:8080/api/v1/auth/refreshToken",{},
-    //             {
-    //                 headers: {
-    //                     "Authorization": `Bearer ${refreshToken}`
-    //                 }
-    //             }
-    //         );
-    //     }
-    //     catch (e) {
-    //         console.log(e);
-    //         navigate('/Sign');
-    //     }
-    //     // response.data;
-    //     console.log(response.data);
-    //     // console.log(res.data);
-    //     newAccessToken = response.data.accessToken;
-    //     newRefreshToken = response.data.refreshToken;
-    //
-    //     newRefreshToken = JSON.stringify(refreshToken);
-    //
-    //
-    //
-    //     setCookie(
-    //         'refreshToken',
-    //         refreshToken,
-    //         {
-    //             path:'/',
-    //             maxAge: 7 * 24 * 60 * 60, // 7일
-    //             // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-    //         }
-    //     )
-    //
-    // }
-
-
-
-
-
 
     // prompt 요청
     async function aiSearchRequest () {
@@ -384,74 +269,58 @@ const AiSearch = () => {
         console.log("searchValue" + searchValue);
         console.log("allergyFood" + allergyFood);
         console.log("selectedMyIngredientList" + selectedMyIngredientList);
-        // console.log();\
 
-        // await getNewToken();
-
-        // console.log(newAccessToken);
+        const searchWordBody = {"userId" : userId, "searchWord" : searchValue};
 
         console.log("요청 중");
         const requestBody = {"userContent" : `${selectedKindOfFood} 종류의 ${searchValue} 레시피를 5개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
-                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 title,재료,과정으로 알려줘 그리고 재료는 리스트 형태는 싫고 객체 형태로 재료, 양의 쌍으로 알려줘` +
+                `대해서는 130글자 내로 간략하게 알려줘 ${allergyFood}는 들어가면 안돼 ${selectedMyIngredientList}가 있어 형태는 title,ingredients,process으로 알려줘 그리고 재료는 리스트 형태는 싫고 객체 형태로 재료, 양의 쌍으로 알려줘` +
                 "그리고 json 객체로 {0:[요리 1], 1: [요리2], 2: [요리3}, 3:[요리], 4:[요리]} 형태로만 참고로 키는 무조건 숫자여야해 보내줘"};
         let searchResponse;
+        const requestBundle = {"promptEntity" : requestBody, "requestWordEntity" : searchWordBody};
         try {
-
-            searchResponse = await axios.post(
-                "http://localhost:8080/api/v1/chat-gpt",
-                requestBody,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}` // auth 설정
-                    },
-                }
-            )
+            console.log('Request Bundle:', requestBundle);
+            await tokenHandler();
+            searchResponse = await axiosInstance.post("api/v1/chat-gpt/word",requestBundle);
 
         } catch (e) {
             console.error(e);
-            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-            checkAccessToken2();
-            try {
-
-                searchResponse = await axios.post(
-                    "http://localhost:8080/api/v1/chat-gpt",
-                    requestBody,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}`
-                        },
-                    }
-                )
-
-            } catch (e) {
-                console.error(e);
-            }
-
 
         }
-
-        // let response = searchResponse.data.choices[0].message.content;
         let response = searchResponse.data;
+        console.log(response);
 
+        // 원래코드
         let jsonString = JSON.stringify(response);
 
+        console.log("not clean: " + jsonString);
+
+
+        // 추가
+        // const cleanedJsonString = jsonString.replace(/\\n/g, '').replace(/^\s+|\s+$/g, '');
+
+        const cleanedJsonString = jsonString
+            .replace(/\\n/g, '') // 줄바꿈 문자 제거
+            .replace(/\\ /g, '') // 이스케이프된 공백 제거
+            .replace(/  +/g, ' ') // 연속된 공백을 하나의 공백으로 변환
+            .replace(/\"\s*:\s*\"/g, '": "') // 이스케이프된 공백 제거
+            .trim(); // 문자열의 시작과 끝의 공백 제거
+
+
         console.log("최종 응답");
-        // console.log(response);
         console.log(jsonString);
-
-        // ```json과 ```를 제거하는 코드
-        // const cleanString = response.replace(/```json|```/g, '').trim();
-
-        // JSON 문자열을 JavaScript 객체로 변환
-        // const recipes = JSON.parse(cleanString);
-        const recipes = JSON.parse(jsonString);
+        console.log("clean : " + cleanedJsonString);
+        const recipes = JSON.parse(cleanedJsonString);
 
         console.log("JavaScript 객체를 콘솔에 출력");
         console.log(recipes);
-        const recipesList =  Object.values(recipes);
+        let recipesList =  Object.values(response);
 
+
+
+        if(arrayNestedArray(recipesList)){
+            recipesList = makeFlatArray(recipesList);
+        }
         console.log(recipesList);
         setRecipe(recipesList);
         sessionStorage.setItem("recipeList",JSON.stringify(recipesList));
@@ -465,7 +334,7 @@ const AiSearch = () => {
         // console.log(ingredientObject);
         let ingredientList = '';
         Object.entries(ingredientObject).forEach(([key, value]) => {
-            ingredientList += `${key}: ${value}, `;;
+            ingredientList += `${key}: ${value}, `;
         });
         return (
             ingredientList
@@ -495,10 +364,12 @@ const AiSearch = () => {
                     <Card.Body>
                         <Card.Text>
                             {/*<strong>재료:</strong> {JSON.stringify(recipe.재료)}*/}
-                            <strong>재료:</strong> {makeIngredient(recipe.재료)}
+                            {/*<strong>재료:</strong> {makeIngredient(recipe.재료) }*/}
+                            <strong>재료:</strong> { makeIngredient(recipe.ingredients)}
                         </Card.Text>
                         <Card.Text>
-                            <strong>과정:</strong> {JSON.stringify(recipe.과정)}
+                            {/*<strong>과정:</strong> {JSON.stringify(recipe.과정)}*/}
+                            <strong>과정:</strong> { JSON.stringify(recipe.process)}
                         </Card.Text>
                     </Card.Body>
                 </Card>

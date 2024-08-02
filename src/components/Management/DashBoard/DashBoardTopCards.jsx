@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faUserPlus, faChartLine, faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import styles from '../../styles/Management/ManagementDashboard.module.scss';
+import styles from '../../../styles/Management/ManagementDashboard.module.scss';
 import axios from "axios";
 import {useSelector} from "react-redux";
 

@@ -15,7 +15,8 @@ import Row from "react-bootstrap/Row";
 import Chart from 'chart.js/auto';
 import {useEffect, useRef} from "react";
 import {Stack} from "react-bootstrap";
-import { NewMembersCard, TotalMembersCard, RecipeSearchCard, MonthlyRevenueCard } from "../../components/Management/DashBoardTopCards";
+import { NewMembersCard, TotalMembersCard, RecipeSearchCard, MonthlyRevenueCard } from "../../components/Management/DashBoard/DashBoardTopCards";
+import Visit from "../../components/Management/DashBoard/DashBoardVisit";
 const ManagementDashboard = () => {
     const chartRef = useRef(null);
 
@@ -61,14 +62,15 @@ const ManagementDashboard = () => {
                 <Row className={style.downPartRow} xs={1} md={2}>
                     <Col className={style.downPartCol}>
                         {/*Card == div*/}
-                        <Card border="light">
-                            <Card.Title>
-                               주간 방문자
-                            </Card.Title>
-                            <Card.Body>
+                        {/*<Card border="light">*/}
+                        {/*    <Card.Title>*/}
+                        {/*       주간 방문자*/}
+                        {/*    </Card.Title>*/}
+                        {/*    <Card.Body>*/}
 
-                            </Card.Body>
-                        </Card>
+                        {/*    </Card.Body>*/}
+                        {/*</Card>*/}
+                        <Visit/>
                         {/*<div>*/}
                         {/*    /!*<canvas ref={chartRef}></canvas>*!/*/}
                         {/*</div>*/}
