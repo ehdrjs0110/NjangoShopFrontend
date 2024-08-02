@@ -59,14 +59,14 @@ function App() {
           <Route path="/AiDetailSearch" element={<AiDetailSearch/>}/>
           <Route path="/FindId" element={<FindId />} />
           <Route path="/FindPw" element={<FindPw />} />
-          <Route path="/Inven" element={<Inven />} />
-          <Route path="/Excel" element={<Excel />} />
+          <Route path="/Inven" element={<PrivateRoute component={<Inven />}/>} />
+          <Route path="/Excel" element={<PrivateRoute component={<Excel />}/>} />
           <Route path="/ProFile" element={<Profile/>}/>
           <Route path="/MyPage" element={<MyPage/>}/>
-          <Route path="/HistoryList" element={<HistoryList/>}/>
-          <Route path="/HistoryDetail" element={<HistoryDetail/>}/>
-          <Route path="/LikeList" element={<LikeList/>}/>
-          <Route path="/LikeDetail" element={<LikeDetail/>}/>
+          <Route path="/HistoryList" element={<PrivateRoute component={<HistoryList />}/>}/>
+          <Route path="/HistoryDetail" element={<PrivateRoute component={<HistoryDetail />}/>}/>
+          <Route path="/LikeList" element={<PrivateRoute component={<LikeList />}/>}/>
+          <Route path="/LikeDetail" element={<PrivateRoute component={<LikeDetail />}/>}/>
 
 
           {/* Management Pages*/}

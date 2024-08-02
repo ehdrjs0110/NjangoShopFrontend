@@ -91,7 +91,7 @@ const AiSearch = () => {
 
 
 
-
+// accesstoken2 대체
     async function tokenHandler() {
 
 
@@ -282,6 +282,7 @@ const AiSearch = () => {
             console.log('Request Bundle:', requestBundle);
             await tokenHandler();
             searchResponse = await axiosInstance.post("api/v1/chat-gpt/word",requestBundle);
+            
 
         } catch (e) {
             console.error(e);

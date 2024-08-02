@@ -24,10 +24,13 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 // auth 관련 --
 import {useCookies} from "react-cookie";
-import {getNewToken} from "../../services/auth2";
+import {expired, getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 //--
+
+import axiosInstance from "../../middleware/customAxios";
+import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 import styles from '../../styles/Like/LikeDetail.module.scss';
 
@@ -53,47 +56,37 @@ const AiDetaileSearch = () => {
 
     useEffect(() => {
 
-        // access token의 유무에 따라 재발급 --
-        let refreshToken = cookies.refreshToken;
-        async function checkAccessToken() {
-            try {
-                // console.log("useEffect에서 실행")
+    const fetchData = async () => {
+    
+        try{
+            await tokenHandler();
+            const res = await axiosInstance.get(`recipe/${recipe.recipeId}`);
+            const storedRecipe = res.data;
+            console.log(storedRecipe);
 
-                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-                const result = await getNewToken(refreshToken);
-                refreshToken = result.newRefreshToken;
+            if(storedRecipe) {
+                const detailRecipeArray = JSON.parse(storedRecipe[0].progress);
+                console.log(detailRecipeArray);
 
-                // refresh token cookie에 재설정
-                setCookie(
-                    'refreshToken',
-                    refreshToken,
-                    {
-                        path:'/',
-                        maxAge: 7 * 24 * 60 * 60, // 7일
-                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                    }
-                )
-
-                // Redux access token 재설정
-                dispatch(containToken(result.newToken));
-
-            } catch (error) {
-                console.log(error);
-                navigate('/SignIn');
+                setDetailRecipe(detailRecipeArray);
+                setLevel(storedRecipe[0].level);
+                setServe(storedRecipe[0].servings);
+                setTime(storedRecipe[0].time);
             }
+    
+        }catch(err){
+            console.log("err message : " + err);
         }
-        // checkAccessToken();
+    }
+    
+    fetchData();
+    }, [recipe]);
 
-        // checkAccessToken();
-        if(accessToken == null || accessToken == undefined)
-        {
-            checkAccessToken();
-        }
+    async function tokenHandler() {
 
-        // --
-
-        async function checkAccessToken2() {
-
+        const isExpired = expired();
+        if(isExpired){
+    
             let refreshToken = cookies.refreshToken;
             try {
     
@@ -120,64 +113,7 @@ const AiDetaileSearch = () => {
                 navigate('/Sign');
             }
         }
-
-        const fetchData = async () => {
-      
-            try{
-                const res = await axios.get(`http://localhost:8080/recipe/${recipe.recipeId}`,
-                    {
-                        headers: {
-                            "Authorization": `Bearer ${accessToken}` // auth 설정
-                        },
-                    },
-                    
-                );
-                const storedRecipe = res.data;
-                console.log(storedRecipe);
-
-                if(storedRecipe) {
-                    const srecipe = JSON.parse(storedRecipe);
-                    setDetailRecipe(srecipe.progress);
-                    setLevel(srecipe.level);
-                }
-      
-            }catch(err){
-              console.log("err message : " + err);
-              checkAccessToken2();
-
-              try{
-                const res = await axios.get(`http://localhost:8080/recipe/${recipe.recipeId}`,
-                    {
-                        headers: {
-                            "Authorization": `Bearer ${accessToken}` // auth 설정
-                        },
-                    },
-                    
-                );
-                const storedRecipe = res.data;
-
-
-                if(storedRecipe) {
-                    console.log(storedRecipe);
-
-                    const detailRecipeArray = JSON.parse(storedRecipe[0].progress);
-                    console.log(detailRecipeArray);
-
-                    setDetailRecipe(detailRecipeArray);
-                    setLevel(storedRecipe[0].level);
-                    setServe(storedRecipe[0].servings);
-                    setTime(storedRecipe[0].time);
-                }
-      
-            }catch(err){
-              console.log("err message : " + err);
-              checkAccessToken2();
-            }
-            }
-          }
-      
-          fetchData();
-    }, [recipe]);
+    }
 
     function makeLeve ()
     {

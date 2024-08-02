@@ -17,13 +17,16 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 
 import {useCookies} from "react-cookie";
-import {getNewToken} from "../../services/auth2";
+import {expired, getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 
 import {jwtDecode} from "jwt-decode";
 import {containEmail} from "../../Store/userEmailSlice";
 import {containNickName} from "../../Store/userNickName";
+
+import axiosInstance from "../../middleware/customAxios";
+import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 function Inven() {
     const navigate = useNavigate();
@@ -60,14 +63,36 @@ function Inven() {
     let userId = useSelector(state => state.userEmail.value);
     const dispatch = useDispatch();
 
-
   useEffect(() => {
-    
-    // access token의 유무에 따라 재발급
-    let refreshToken = cookies.refreshToken;
-    async function checkAccessToken() {
+
+    const fetchData = async () => {
+
+      const params = { userId:userId};
+
+      try{
+
+        await tokenHandler();
+        const res = await axiosInstance.get("inven/manage", {params});
+
+        if(res!=null){
+          console.log(res.data);
+          setData(res.data);
+        }
+      }catch(err){
+        console.log("err message : " + err);
+      }
+    }
+
+    fetchData();
+  }, [isChange]);
+
+  async function tokenHandler() {
+
+    const isExpired = expired();
+    if(isExpired){
+
+        let refreshToken = cookies.refreshToken;
         try {
-            // console.log("useEffect에서 실행")
 
             // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
             const result = await getNewToken(refreshToken);
@@ -86,109 +111,13 @@ function Inven() {
 
             // Redux access token 재설정
             dispatch(containToken(result.newToken));
-            const decoded = jwtDecode(refreshToken);
-
-            // useremail
-            reduxEmail = decoded.sub;
-            reduxNickname = decoded.nickname;
-
-            dispatch(containEmail(reduxEmail));
-            dispatch(containNickName(reduxNickname));
-            setChange(true);
-
 
         } catch (error) {
             console.log(error);
             navigate('/Sign');
         }
     }
-    // checkAccessToken();
-    console.log("checking" + accessToken);
 
-    // checkAccessToken();
-    if(accessToken == null || accessToken == undefined)
-    {
-        checkAccessToken();
-    }
-
-  },[]);
-
-  useEffect(() => {
-
-    const fetchData = async () => {
-
-      const params = { userId:userId};
-
-      try{
-
-        const res = await axios.get("http://localhost:8080/inven/manage", {
-          params,
-          headers: {
-              "Authorization": `Bearer ${accessToken}`
-          },
-        });
-
-        if(res!=null){
-          console.log(res.data);
-          setData(res.data);
-        }
-
-
-      }catch(err){
-        console.log("err message : " + err);
-        // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-        checkAccessToken2();
-        try{
-          const res = await axios.get("http://localhost:8080/inven/manage", {
-            params,
-            headers: {
-                "Authorization": `Bearer ${accessToken}`
-            },
-          });
-
-          if(res!=null){
-          console.log(res.data);
-          setData(res.data);
-        }
-  
-        }catch(err){
-          console.log("err message : " + err);
-        }
-      }
-    }
-
-    fetchData();
-
-
-  }, [isChange]);
-
-  async function checkAccessToken2() {
-
-    let refreshToken = cookies.refreshToken;
-    try {
-
-      // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-      const result = await getNewToken(refreshToken);
-      refreshToken = result.newRefreshToken;
-
-      // refresh token cookie에 재설정
-      setCookie(
-          'refreshToken',
-          refreshToken,
-          {
-            path:'/',
-            maxAge: 7 * 24 * 60 * 60, // 7일
-            // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-          }
-      )
-
-      // Redux access token 재설정
-      dispatch(containToken(result.newToken));
-
-    } catch (error) {
-      console.log(error);
-      navigate('/Sign');
-    }
   }
 
   //재료 추가
@@ -208,32 +137,13 @@ function Inven() {
         alert("재료의 양을 선택해주세요.");
         return;
       }
-      
-      await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          "Authorization": `Bearer ${accessToken}`
-        }
-      });
+
+      await tokenHandler();
+      await axiosInstance.patch(`inven/manage/add/${userId}`, data);
       setChange(!isChange);
 
     }catch(err){
       console.log("err message : " + err);
-      // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-      checkAccessToken2();
-      try{
-        console.log(data);
-        const res = await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
-          headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${accessToken}`
-          }
-        });
-        setChange(!isChange);
-  
-      }catch(err){
-        console.log("err message : " + err);
-      }
     }
 
     setClickSize("");
@@ -260,31 +170,12 @@ function Inven() {
     if(window.confirm(`정말 ${selectedItem.ingredientname}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete("http://localhost:8080/inven/manage", {
-          params,
-          headers: {
-            "Authorization": `Bearer ${accessToken}`
-          },
-        });
+        await tokenHandler();
+        await axiosInstance.delete("inven/manage", {params});
         alert("삭제 되었습니다.");
         setChange(!isChange);
       }catch(err){
         console.log("err message : " + err);
-        // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-        checkAccessToken2();
-        try{ 
-          console.log(params);
-          await axios.delete("http://localhost:8080/inven/manage", {
-            params,
-            headers: {
-              "Authorization": `Bearer ${accessToken}`
-            },
-          });
-          alert("삭제 되었습니다.");
-          setChange(!isChange);
-        }catch(err){
-          console.log("err message : " + err);
-        }
       }
     }else {
       alert("취소 되었습니다.");
@@ -303,34 +194,16 @@ function Inven() {
 
     if(window.confirm(`수정내용 확인 \n ${showdata}`)){
       try{
-          await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data, {
-            headers: {
-              "Authorization": `Bearer ${accessToken}`
-            }
-          });
-        alert("수정 되었습니다.");
-        setChange(!isChange);
-      }catch(err){
-        console.log("err message : " + err);
-        // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-        checkAccessToken2();
-        try{
-          await axios.put(`http://localhost:8080/inven/manage/update/${userId}`, data, {
-            headers: {
-              "Authorization": `Bearer ${accessToken}`
-            }
-          });
+          await tokenHandler();
+          await axiosInstance.patch(`inven/manage/update/${userId}`, data);
         alert("수정 되었습니다.");
         setChange(!isChange);
       }catch(err){
         console.log("err message : " + err);
       }
-      }
-      
     }else {
       alert("취소 되었습니다.");
     }
-    
   };
 
   const updateCount = (index,e) => {

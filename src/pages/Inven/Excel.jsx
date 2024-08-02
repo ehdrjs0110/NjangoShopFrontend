@@ -16,13 +16,16 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import {useCookies} from "react-cookie";
-import {getNewToken} from "../../services/auth2";
+import {expired, getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 
 import {jwtDecode} from "jwt-decode";
 import {containEmail} from "../../Store/userEmailSlice";
 import {containNickName} from "../../Store/userNickName";
+
+import axiosInstance from "../../middleware/customAxios";
+import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 function Excel() {
     
@@ -56,58 +59,6 @@ function Excel() {
     let userId = useSelector(state => state.userEmail.value);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-
-      // access token의 유무에 따라 재발급
-      let refreshToken = cookies.refreshToken;
-      async function checkAccessToken() {
-          try {
-              // console.log("useEffect에서 실행")
-
-              // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-              const result = await getNewToken(refreshToken);
-              refreshToken = result.newRefreshToken;
-
-              // refresh token cookie에 재설정
-              setCookie(
-                  'refreshToken',
-                  refreshToken,
-                  {
-                      path:'/',
-                      maxAge: 7 * 24 * 60 * 60, // 7일
-                      // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                  }
-              )
-
-              // Redux access token 재설정
-              dispatch(containToken(result.newToken));
-              const decoded = jwtDecode(refreshToken);
-
-              // useremail
-              reduxEmail = decoded.sub;
-              reduxNickname = decoded.nickname;
-
-              dispatch(containEmail(reduxEmail));
-              dispatch(containNickName(reduxNickname));
-              setChange(true);
-
-
-          } catch (error) {
-              console.log(error);
-              navigate('/Sign');
-          }
-      }
-      // checkAccessToken();
-      console.log("checking" + accessToken);
-
-      // checkAccessToken();
-      if(accessToken == null || accessToken == undefined)
-      {
-          checkAccessToken();
-      }
-      
-    },[]);
-
     //columns 변수에는 테이블의 제목에 들어갈 내용을 배열에 객체 요소로 담는다.
     const columns = [
         { field: "ingredientname", headerName: "재료명", width: 150},
@@ -133,12 +84,9 @@ function Excel() {
         const params = { userId:userId};
   
         try{
-          const res = await axios.get("http://localhost:8080/inven/manage/all", {
-            params,
-            headers: {
-                "Authorization": `Bearer ${accessToken}`
-            },
-          });
+
+          await tokenHandler();
+          const res = await axiosInstance.get("inven/manage/all", {params});
           console.log(res.data);
           setData(res.data); 
           
@@ -147,25 +95,6 @@ function Excel() {
   
         }catch(err){
           console.log("err message : " + err);
-            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-            checkAccessToken2();
-            try {
-
-                const res = await axios.get("http://localhost:8080/inven/manage/all", {
-                  params,
-                    headers: {
-                        "Authorization": `Bearer ${accessToken}`
-                    },
-                  });
-                console.log(res.data);
-                setData(res.data);
-
-                // 재시도 성공 후 formatData 호출
-                formatData(res.data);
-
-            } catch (e) {
-                console.error(e);
-            }
         }
       }
 
@@ -186,34 +115,38 @@ function Excel() {
     }, [isChange]);
 
 
-    async function checkAccessToken2() {
+    async function tokenHandler() {
 
-        let refreshToken = cookies.refreshToken;
-        try {
-
-            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-            const result = await getNewToken(refreshToken);
-            refreshToken = result.newRefreshToken;
-
-            // refresh token cookie에 재설정
-            setCookie(
-                'refreshToken',
-                refreshToken,
-                {
-                    path:'/',
-                    maxAge: 7 * 24 * 60 * 60, // 7일
-                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                }
-            )
-
-            // Redux access token 재설정
-            dispatch(containToken(result.newToken));
-
-        } catch (error) {
-            console.log(error);
-            navigate('/Sign');
-        }
-    }
+      const isExpired = expired();
+      if(isExpired){
+  
+          let refreshToken = cookies.refreshToken;
+          try {
+  
+              // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+              const result = await getNewToken(refreshToken);
+              refreshToken = result.newRefreshToken;
+  
+              // refresh token cookie에 재설정
+              setCookie(
+                  'refreshToken',
+                  refreshToken,
+                  {
+                      path:'/',
+                      maxAge: 7 * 24 * 60 * 60, // 7일
+                      // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                  }
+              )
+  
+              // Redux access token 재설정
+              dispatch(containToken(result.newToken));
+  
+          } catch (error) {
+              console.log(error);
+              navigate('/Sign');
+          }
+      }
+  }
 
     //재료 추가
     //재료명 입력
@@ -252,32 +185,12 @@ function Excel() {
         alert("재료의 수량을 입력해주세요.");
         return;
       }
-
-        await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
-          headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${accessToken}`
-          }
-        });
+        await tokenHandler();
+        await axiosInstance.patch(`inven/manage/add/${userId}`, data);
         setChange(!isChange);
   
       }catch(err){
         console.log("err message : " + err);
-        // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-        checkAccessToken2();
-        try {
-
-          await axios.patch(`http://localhost:8080/inven/manage/add/${userId}`, data, {
-            headers: {
-              'Content-Type': 'application/json',
-              "Authorization": `Bearer ${accessToken}`
-            }
-          });
-          setChange(!isChange);
-
-        } catch (e) {
-            console.error(e);
-        }
       }
   
       setNewData((isNewData) => ({
@@ -322,38 +235,17 @@ function Excel() {
 
       if(window.confirm("수정 하시겠습니까?")){
         try{
-            await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data,
-              {
-                headers: {
-                    "Authorization": `Bearer ${accessToken}` // auth 설정
-                },
-            }
-            );
+            await tokenHandler();
+            await axiosInstance.patch(`inven/manage/update/${userId}`, data);
           alert("수정 되었습니다.");
           setChange(!isChange);
         }catch(err){
           console.log("err message : " + err);
-           // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-           checkAccessToken2();
-           try{
-            await axios.patch(`http://localhost:8080/inven/manage/update/${userId}`, data,
-              {
-                headers: {
-                    "Authorization": `Bearer ${accessToken}` // auth 설정
-                },
-            }
-            );
-          alert("수정 되었습니다.");
-          setChange(!isChange);
-        }catch(err){
-          console.log("err message : " + err);           
-        }
         }
         
       }else {
         alert("취소 되었습니다.");
       }
-      
     };
 
     //재료 삭제
@@ -367,36 +259,16 @@ function Excel() {
     if(window.confirm(`정말 ${showdata}를 삭제하시겠습니까?`)){
       try{ 
         console.log(params);
-        await axios.delete(`http://localhost:8080/inven/manage/deleteAll/${userId}?${params}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Bearer ${accessToken}` // auth 설정
-        }
-        });
+        await tokenHandler();
+        await axiosInstance.delete(`inven/manage/deleteAll/${userId}?${params}`);
         alert("삭제 되었습니다.");
         setChange(!isChange);
       }catch(err){
         console.log("err message : " + err);
-         // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-         checkAccessToken2();
-        try{ 
-          console.log(params);
-          await axios.delete(`http://localhost:8080/inven/manage/deleteAll/${userId}?${params}`, {
-            headers: {
-              'Content-Type': 'application/json',
-              "Authorization": `Bearer ${accessToken}` // auth 설정
-          }
-          });
-          alert("삭제 되었습니다.");
-          setChange(!isChange);
-        }catch(err){
-          console.log("err message : " + err);
-        }
       }
     }else {
       alert("취소 되었습니다.");
     }
-    
   };
 
     const normalmode = () => {
