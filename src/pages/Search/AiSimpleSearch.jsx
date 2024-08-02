@@ -48,7 +48,7 @@ const AiSimpleSearch = () => {
 
     // redux에서 가져오기
     let accessToken = useSelector(state => state.token.value);
-    let  id = useSelector(state=> state.userEmail.value);
+    let  userId = useSelector(state=> state.userEmail.value);
     const dispatch = useDispatch();
 
 
@@ -196,7 +196,7 @@ const AiSimpleSearch = () => {
         let searchResponse;
         try {
             searchResponse = await axios.post(
-                "http://localhost:8080/api/v1/chat-gpt",
+                `http://localhost:8080/api/v1/chat-gpt/simple/${userId}`,
                 requestBody,
                 {
                     headers: {
