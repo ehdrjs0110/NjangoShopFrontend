@@ -168,12 +168,12 @@ const HistoryList = () => {
         }
     }
 
-    const deleteRecipe = async (recipeId) => {
+    const deleteRecipe = async (historyId) => {
 
         if(window.confirm("정말 삭제 하시겠습니까?")){
 
             try{
-                const res = await axios.delete(`http://localhost:8080/recipe/${recipeId}`,
+                const res = await axios.delete(`http://localhost:8080/history/${historyId}`,
                     {
                         headers: {
                             "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -192,7 +192,7 @@ const HistoryList = () => {
                 checkAccessToken2();
     
                 try{
-                    await axios.delete(`http://localhost:8080/recipe/${userId}`,
+                    await axios.delete(`http://localhost:8080/history/${historyId}`,
                         {
                             headers: {
                                 "Authorization": `Bearer ${accessToken}` // auth 설정
@@ -234,7 +234,7 @@ const HistoryList = () => {
                     <Card.Body>
                         <Card.Text>
                             <strong>재료:</strong> {formatIngredients(recipe.ingredients)}
-                            <Button className={styles.deleteBtn} onClick={() => deleteRecipe(recipe.recipeId)}>삭제</Button>
+                            <Button className={styles.deleteBtn} onClick={() => deleteRecipe(recipe.historyId)}>삭제</Button>
                         </Card.Text>
                     </Card.Body>
                 </Card>
