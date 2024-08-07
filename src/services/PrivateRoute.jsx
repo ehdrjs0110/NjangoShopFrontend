@@ -118,7 +118,7 @@ const PrivateRoute = ({component: Component}) => {
         if(accessToken === null && refreshToken !== null)
         {
             // accessToken이 없고 refreshToken이 존재할 때
-            // checkAccessToken();
+            checkAccessToken();
         }else {
             //refreshToken이 없거나 만료일 때
             // dispatch(containToken(false));
