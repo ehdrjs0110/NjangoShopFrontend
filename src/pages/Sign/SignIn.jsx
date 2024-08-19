@@ -84,26 +84,7 @@ const SignIn = () => {
         })
         .catch(console.log)
 
-    // // axios 파일 전송
-    //  axios
-    //   .post("http:localhost:8080/api/v1/auth/authenticate", formData, {
-    //     headers: {
-    //       "Content-type": "multipart/form-data",
-    //     },
-    //   })
 
-      //   if(res.data==true){
-      //     alert("로그인 성공 하셨습니다!");
-      //     //페이지 이동
-      //     navigate('/Main');
-      //   }else{
-      //     alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-      //   }
-      // })
-      // .catch((err) => {
-      //   console.log("err message : " + err);
-      //   alert("로그인 실패 하셨습니다!" + "\n" + "아이디와 비밀번호를 확인해주세요!");
-      // });
   };
 
   //카카오톡 로그인
