@@ -21,26 +21,24 @@ const PrivateRouteAdmin = ({component: Component}) => {
     useEffect(() => {
         async function checkAccessToken() {
             try {
-                console.log("admin false라서 다시 실행")
-
                 // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
                 const result = await getNewTokenAdmin(refreshToken);
-                refreshToken = result.newRefreshToken;
 
-                // refresh token cookie에 재설정
-                setCookie(
-                    'refreshToken',
-                    refreshToken,
-                    {
-                        path: '/',
-                        maxAge: 7 * 24 * 60 * 60, // 7일
-                    }
-                )
+                if(result.ok){
+                    refreshToken = result.newRefreshToken;
 
-                // Redux access token 재설정
-                dispatch(containToken(result.newToken));
-                dispatch(containIsAdmin(true));
-
+                    // refresh token cookie에 재설정
+                    setCookie(
+                        'refreshToken',
+                        refreshToken,
+                        {
+                            path: '/',
+                            maxAge: 7 * 24 * 60 * 60, // 7일
+                        }
+                    )
+                    dispatch(containToken(result.newToken));
+                    dispatch(containIsAdmin(true));
+                }
 
             } catch (error) {
                 console.log(error);
@@ -54,6 +52,8 @@ const PrivateRouteAdmin = ({component: Component}) => {
         }else {
             setLoading(false);
         }
+
+        console.log(isAdmin);
     }, [isAdmin, accessToken, refreshToken, dispatch, setCookie]);
     if (loading) {
         return null; // 로딩 중일 때는 아무 것도 렌더링하지 않음

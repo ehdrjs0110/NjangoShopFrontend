@@ -20,7 +20,7 @@ import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 //--
 
-import axiosInstance from "../../middleware/customAxios";
+import {axiosInstance} from "../../middleware/customAxios";
 import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 const HistoryList = () => {

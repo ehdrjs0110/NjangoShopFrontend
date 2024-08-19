@@ -25,7 +25,7 @@ import {jwtDecode} from "jwt-decode";
 import {containEmail} from "../../Store/userEmailSlice";
 import {containNickName} from "../../Store/userNickName";
 
-import axiosInstance from "../../middleware/customAxios";
+import {axiosInstance} from "../../middleware/customAxios";
 import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 function Inven() {
@@ -64,14 +64,16 @@ function Inven() {
     const dispatch = useDispatch();
 
   useEffect(() => {
+    // setChange(true);
 
     const fetchData = async () => {
 
       const params = { userId:userId};
 
       try{
+        console.log("출력");
 
-        await tokenHandler();
+        // await tokenHandler();
         const res = await axiosInstance.get("inven/manage", {params});
 
         if(res!=null){
