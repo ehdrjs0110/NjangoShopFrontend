@@ -1,0 +1,42 @@
+
+.container{
+    display: flex;
+    justify-content: center;
+    justify-content: space-around;
+    text-align: center;
+
+    .signup{
+        width: 500px;
+        height: 800px;
+        margin-top: 80px;
+
+        div{
+            margin-top: 20px;
+        }
+
+        .logoimg{
+            height: 250px;
+            width: 300px;
+        }
+
+        .inputbox{
+            height: 50px;
+            width: 350px;
+            border: none;
+            border-radius: 15px;
+            background-color: lightgray;
+        }
+
+        .emailbtn{
+            
+        }
+
+        .submitbtn{
+            height: 50px;
+            width: 350px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+    }   
+
+}

@@ -1,0 +1,65 @@
+
+.container{
+    display: flex;
+    justify-content: center;
+    justify-content: space-around;
+    text-align: center;
+
+    .login{
+        width: 500px;
+        height: 800px;
+        margin-top: 80px;
+
+        div{
+            margin-top: 30px;
+        }
+
+        .logoimg{
+            height: 250px;
+            width: 300px;
+        }
+
+        .inputbox{
+            height: 50px;
+            width: 350px;
+            border-radius: 15px;
+        }
+
+        .submitbtn{
+            height: 50px;
+            width: 350px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        .account{
+            a{
+                cursor: pointer;
+                text-decoration-line: none;
+
+                &:link{
+                    color: black;
+                }
+                &:visited{
+                    color: black;
+                }
+                &:hover{
+                    color: black;
+                }
+                &:active{
+                    color: black;
+                }
+            }
+        }
+
+        .kakaobtn{
+            border: none;
+            background: url('../../assets/Logo/kakaologo.webp') no-repeat;
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+        }
+
+
+    }  
+}

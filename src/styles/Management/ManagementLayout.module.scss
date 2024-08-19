@@ -1,0 +1,13 @@
+@import '../index.scss';
+
+.managementLayout {
+  display: flex;
+}
+
+
+.managementContent {
+  //background-color: #fca85b;
+  flex: 1; /* 나머지 공간 차지 */
+  padding: 20px;
+  /* 추가적인 스타일 */
+}

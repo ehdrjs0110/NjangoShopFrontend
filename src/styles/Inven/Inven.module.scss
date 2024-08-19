@@ -1,0 +1,184 @@
+@import '../index.scss';
+
+.container{
+    background-color: $bg-color;
+    height: calc(100vh - 91px);
+
+    .main{
+        height: 100%;
+
+        .controllerRow{
+            height: 15%;
+            margin-bottom: 10px;
+        }
+
+        .addContentRow{
+            height: 10%;
+            margin-bottom: 10px;
+        }
+
+        .contentRow{
+            height: 70%;
+        }
+    }
+}
+
+.controller {
+    background-color: $white-color;
+    height: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .controllerRow{
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    .controlform {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+
+        .serch {
+            width: 20%;
+            display: inline-block;
+        }
+    
+        .serchbtn{
+            margin-left: 10px;
+        }
+
+        .btn {
+            margin-left: 50px;
+            background-color: $p-color;
+            font-weight: bold;
+        }
+    }
+    
+}
+
+.content {
+    background-color: $white-color;
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    
+    .scroll {
+        position: absolute;
+    }
+
+    .item{
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .line {
+        margin: 0 auto;
+        width: 95%;
+        display: flex;
+        padding: 5px;
+        margin-bottom: 5px;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+
+        .title {
+            font-weight: bold;
+            color: $p-font-color;
+        }
+
+        .text {
+            display: inline-block;
+            margin: 0;
+        }
+    
+        .btn {
+            margin: 5px;
+            background-color: $p-color;
+            color : $white-color;
+            font-weight: bold;
+        }
+
+        .delBtn {
+            margin: 5px;
+            background-color: $danger-color;
+            color : $white-color;
+            font-weight: bold;
+        }
+    
+        .count {
+            margin-left: 10px;
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+        }
+    }
+
+    .select {
+        border: 3px solid $p-color;
+    }
+
+    .line:hover {
+        transform: translateY(-2px);
+        /* 떠오르는 효과 */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        /* 그림자 효과 */
+    }    
+
+}
+
+.addContent {
+    background-color: $accent-color;
+    height: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .addline {
+        margin: 0 auto;
+        width: 95%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        
+        .text {
+            color: $white-color;
+            display: inline-block;
+            margin: 0;
+        }
+    
+        .btn {
+            margin: 5px;
+            background-color: $p-color;
+            color : $white-color;
+            font-weight: bold;
+        }
+
+        .addBtn {
+            margin: 5px;
+            background-color: $primary-color;
+            color : $white-color;
+            font-weight: bold;
+        }
+    
+        .count {
+            margin-left: 10px;
+            display: inline-block;
+            width: 30%;
+            text-align: right;
+        }
+    }
+    
+
+}
