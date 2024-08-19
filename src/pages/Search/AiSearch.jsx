@@ -23,7 +23,7 @@ import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
 //--
 
-import {axiosInstance} from "../../middleware/customAxios";
+import axiosInstance from "../../middleware/customAxios";
 import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 function CustomToggle({ children, eventKey }) {
@@ -83,7 +83,7 @@ const AiSearch = () => {
             console.log(typeof storedRecipe);
             // sessionStorage.setItem("recipeList");
 
-            setRecipe(JSON.parse(storedRecipe));
+            // setRecipe(JSON.parse(storedRecipe));
         }
 
 
@@ -91,6 +91,7 @@ const AiSearch = () => {
 
 
 
+// accesstoken2 대체
     async function tokenHandler() {
 
 
