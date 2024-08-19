@@ -23,10 +23,11 @@ import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import styles from '../../styles/Search/AiDetailSearch.module.scss';
-import {getNewToken} from "../../services/auth2";
+import {expired, getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useCookies} from "react-cookie";
 import {useDispatch, useSelector} from "react-redux";
+import  {axiosInstance,axiosInstance2} from "../../middleware/customAxios";
 
 
 const AiDetaileSearch = () => {
@@ -70,9 +71,9 @@ const AiDetaileSearch = () => {
 
     let recipyTitle = recipe.title;
     // setRecipyTitle(recipe.요리제목);z
-    const ingredientObject = recipe.재료;
+    const ingredientObject = recipe.ingredients;
     const recipyIndigredient = JSON.stringify(ingredientObject);
-    let recipyProgress = recipe.과정;
+    let recipyProgress = recipe.process;
 
 
 
@@ -80,44 +81,69 @@ const AiDetaileSearch = () => {
         setModalOpen(true);
 
 
-        // access token의 유무에 따라
-        let refreshToken = cookies.refreshToken;
-        async function checkAccessToken() {
-            try {
 
-                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-                const result = await getNewToken(refreshToken);
-                refreshToken = result.newRefreshToken;
 
-                // refresh token cookie에 재설정
-                setCookie(
-                    'refreshToken',
-                    refreshToken,
-                    {
-                        path:'/',
-                        maxAge: 7 * 24 * 60 * 60, // 7일
-                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                    }
-                )
 
-                // Redux access token 재설정
-                dispatch(containToken(result.newToken));
+        axios.all([aiSearchRequest(),aiSearchEtcRequest()])
+            .then(axios.spread((aiSearchResponse, aiEtcResponce) =>
+            {
 
-            } catch (error) {
-                console.log(error);
-                navigate('/Sign');
-            }
-        }
-        // checkAccessToken();
 
-        // checkAccessToken();
-        if(accessToken == null || accessToken == undefined)
-        {
-            checkAccessToken();
-        }
 
-        aiSearchRequest()
-        aiSearchEtcRequest()
+                let response1 = aiSearchResponse.data;
+                console.log("최종 응답");
+
+                // console.log(response);
+
+                let jsonString1 = JSON.stringify(response1);
+                // ```json과 ```를 제거하는 코드
+                // const cleanString = response.replace(/```json|```/g, '').trim();
+
+                // JSON 문자열을 JavaScript 객체로 변환
+                const recipes = JSON.parse(jsonString1);
+                const recipesList =  Object.values(recipes);
+
+                console.log(recipesList);
+                setDetailRecipe(recipesList);
+
+
+
+
+                let response = aiEtcResponce.data;
+
+                let jsonString = JSON.stringify(response);
+
+
+
+
+
+                // JSON 문자열을 JavaScript 객체로 변환
+                const etc = JSON.parse(jsonString);
+                const etcList =  Object.values(etc);
+                console.log(etcList);
+
+                console.log(etcList[0]);
+
+                setEtc(etcList);
+                // 난이도
+                setLevel(etcList[0].난이도);
+                setServe(etcList[1].인분);
+                // setTime(etcList[2].소요시간);
+                // etcList[2].소요시간이 존재하고 문자열이라면 '분'을 제거한 후 setTime에 설정
+                if (etcList[2] && typeof etcList[2].소요시간 === 'string') {
+                    setTime(etcList[2].소요시간.replace('분', ''));
+                } else {
+                    // 소요시간이 정의되어 있지 않거나 문자열이 아닌 경우
+                    setTime(etcList[2].소요시간);
+                }
+
+
+                setModalOpen(false);
+
+            }))
+
+        // aiSearchRequest()
+        // aiSearchEtcRequest()
         // setRecipyTitle(recipe.요리제목);
     }, []);
 
@@ -125,6 +151,8 @@ const AiDetaileSearch = () => {
     //Recipe ID 생성
     const recipeId = id + nowTime;
     console.log(recipeId);
+
+
 
     function makeString () {
         let string;
@@ -190,62 +218,45 @@ const AiDetaileSearch = () => {
             "userContent": level
         };
 
-        try {
-            ectResponse = await axios.post(
-                "http://localhost:8080/api/v1/chat-gpt",
-                requestBody,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}` // auth 설정
-                    },
-                }
-            )
-        } catch (e) {
-            console.error(e);
-            checkAccessToken2();
-            try {
-                ectResponse = await axios.post(
-                    "http://localhost:8080/api/v1/chat-gpt",
-                    requestBody,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}` // auth 설정
-                        },
-                    }
-                )
-            } catch (e) {
-                console.error(e);
-            }
-        }
+        await tokenHandler();
+        return await axiosInstance.post("api/v1/chat-gpt", requestBody);
 
+        // try {
+        //
+        //     await tokenHandler();
+        //     ectResponse = await axiosInstance.post("api/v1/chat-gpt", requestBody);
+        // } catch (e) {
+        //     console.error(e);
+        //
+        // }
+        //
+        //
+        // let response = ectResponse.data;
+        // console.log(response);
+        // let jsonString = JSON.stringify(response);
+        //
+        //
+        //
+        // // JSON 문자열을 JavaScript 객체로 변환
+        // const etc = JSON.parse(jsonString);
+        // const etcList =  Object.values(etc);
+        // console.log(etcList);
+        //
+        // console.log(etcList[0]);
+        //
+        // setEtc(etcList);
+        // // 난이도
+        // setLevel(etcList[0].난이도);
+        // setServe(etcList[1].인분);
+        // // setTime(etcList[2].소요시간);
+        // // etcList[2].소요시간이 존재하고 문자열이라면 '분'을 제거한 후 setTime에 설정
+        // if (etcList[2] && typeof etcList[2].소요시간 === 'string') {
+        //     setTime(etcList[2].소요시간.replace('분', ''));
+        // } else {
+        //     // 소요시간이 정의되어 있지 않거나 문자열이 아닌 경우
+        //     setTime(etcList[2].소요시간);
+        // }
 
-        let response = ectResponse.data;
-        console.log(response);
-        let jsonString = JSON.stringify(response);
-
-
-
-        // JSON 문자열을 JavaScript 객체로 변환
-        const etc = JSON.parse(jsonString);
-        const etcList =  Object.values(etc);
-        console.log(etcList);
-
-        console.log(etcList[0]);
-
-        setEtc(etcList);
-        // 난이도
-        setLevel(etcList[0].난이도);
-        setServe(etcList[1].인분);
-        // setTime(etcList[2].소요시간);
-        // etcList[2].소요시간이 존재하고 문자열이라면 '분'을 제거한 후 setTime에 설정
-        if (etcList[2] && typeof etcList[2].소요시간 === 'string') {
-            setTime(etcList[2].소요시간.replace('분', ''));
-        } else {
-            // 소요시간이 정의되어 있지 않거나 문자열이 아닌 경우
-            setTime(etcList[2].소요시간);
-        }
 
     }
 
@@ -264,90 +275,103 @@ const AiDetaileSearch = () => {
         };
 
         let searchResponse;
-        try {
-            searchResponse = await axios.post(
-                "http://localhost:8080/api/v1/chat-gpt",
-                requestBody,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}` // auth 설정
-                    },
-                }
-            )
-        } catch (e) {
-            console.error(e);
-            checkAccessToken2();
+        await tokenHandler();
+        return axiosInstance2.post("api/v1/chat-gpt",requestBody);
+        // try {
+        //     // searchResponse = await axios.post(
+        //     //     "http://localhost:8080/api/v1/chat-gpt",
+        //     //     requestBody,
+        //     //     {
+        //     //         headers: {
+        //     //             "Content-Type": "application/json",
+        //     //             "Authorization": `Bearer ${accessToken}` // auth 설정
+        //     //         },
+        //     //     }
+        //     // )
+        //     await tokenHandler();
+        //     searchResponse = axiosInstance2.post("api/v1/chat-gpt",requestBody);
+        // } catch (e) {
+        //     console.error(e);
+        //     // checkAccessToken2();
+        //     // try {
+        //     //     searchResponse = await axios.post(
+        //     //         "http://localhost:8080/api/v1/chat-gpt",
+        //     //         requestBody,
+        //     //         {
+        //     //             headers: {
+        //     //                 "Content-Type": "application/json",
+        //     //                 "Authorization": `Bearer ${accessToken}` // auth 설정
+        //     //             },
+        //     //         }
+        //     //     )
+        //     // } catch (e) {
+        //     //     console.error(e);
+        //     //
+        //     // }
+        //
+        // }
+        //
+        // console.log(searchResponse);
+        //
+        // let response = searchResponse.data;
+        // console.log("최종 응답");
+        //
+        // // console.log(response);
+        //
+        // let jsonString = JSON.stringify(response);
+        // // ```json과 ```를 제거하는 코드
+        // // const cleanString = response.replace(/```json|```/g, '').trim();
+        //
+        // // JSON 문자열을 JavaScript 객체로 변환
+        // const recipes = JSON.parse(jsonString);
+        // const recipesList =  Object.values(recipes);
+        //
+        // console.log(recipesList);
+        // // console.log("JavaScript 객체를 콘솔에 출력");
+        // // console.log(recipes);
+        // setDetailRecipe(recipesList);
+        // setModalOpen(false);
+
+    }
+
+
+    async function tokenHandler() {
+
+
+        const isExpired = expired();
+        if(isExpired){
+
+            let refreshToken = cookies.refreshToken;
             try {
-                searchResponse = await axios.post(
-                    "http://localhost:8080/api/v1/chat-gpt",
-                    requestBody,
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
                     {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}` // auth 설정
-                        },
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
                     }
                 )
-            } catch (e) {
-                console.error(e);
 
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Sign');
             }
-
         }
 
-        console.log(searchResponse);
-
-        let response = searchResponse.data;
-        console.log("최종 응답");
-
-        // console.log(response);
-
-        let jsonString = JSON.stringify(response);
-        // ```json과 ```를 제거하는 코드
-        // const cleanString = response.replace(/```json|```/g, '').trim();
-
-        // JSON 문자열을 JavaScript 객체로 변환
-        const recipes = JSON.parse(jsonString);
-        const recipesList =  Object.values(recipes);
-
-        console.log(recipesList);
-        // console.log("JavaScript 객체를 콘솔에 출력");
-        // console.log(recipes);
-        setDetailRecipe(recipesList);
-        setModalOpen(false);
     }
 
 
-    // accesstoken 재요청 함수
-    async function checkAccessToken2() {
 
-        let refreshToken = cookies.refreshToken;
-        try {
-
-            // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-            const result = await getNewToken(refreshToken);
-            refreshToken = result.newRefreshToken;
-
-            // refresh token cookie에 재설정
-            setCookie(
-                'refreshToken',
-                refreshToken,
-                {
-                    path:'/',
-                    maxAge: 7 * 24 * 60 * 60, // 7일
-                    // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                }
-            )
-
-            // Redux access token 재설정
-            dispatch(containToken(result.newToken));
-
-        } catch (error) {
-            console.log(error);
-            navigate('/Sign');
-        }
-    }
 
     //요리종료
     const finishCook = async () => {
@@ -371,32 +395,11 @@ const AiDetaileSearch = () => {
             };
 
             try{
-                await axios.post(
-                    `http://localhost:8080/history/finish/${userId}`,
-                    requestBody,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}`
-                        },
-                    });
+                await tokenHandler();
+                await axiosInstance.post(`history/finish/${userId}`,requestBody);
+
             }catch(err){
                 console.log("err message : " + err);
-                // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-                checkAccessToken2();
-                try{
-                    await axios.post(
-                        `http://localhost:8080/history/finish/${userId}`,
-                        requestBody,
-                        {
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${accessToken}`
-                            },
-                        });
-                }catch(err){
-                    console.log("err message : " + err);
-                }
             }
             
             alert("요리 종료");
@@ -426,32 +429,11 @@ const AiDetaileSearch = () => {
         };
 
         try{
-            await axios.post(
-                `http://localhost:8080/like/likeAdd/${userId}`,
-                requestBody,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}`
-                    },
-                });
+            await tokenHandler();
+            await axiosInstance.post(`like/likeAdd/${userId}`,requestBody);
         }catch(err){
             console.log("err message : " + err);
             // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-            checkAccessToken2();
-            try{
-                await axios.post(
-                    `http://localhost:8080/like/likeAdd/${userId}`,
-                    requestBody,
-                    {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}`
-                        },
-                    });
-            }catch(err){
-                console.log("err message : " + err);
-            }
         }
         
 

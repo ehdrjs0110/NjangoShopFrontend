@@ -68,6 +68,7 @@ const PrivateRoute = ({component: Component}) => {
                 const formattedToday = time.toLocaleDateString('ko-KR'); // 현재 로컬 시간대에 맞춰서
 
 
+
                 if (todayCheck === formattedToday )
                 {
                     console.log("이미 방문했습니다.")
@@ -104,6 +105,7 @@ const PrivateRoute = ({component: Component}) => {
                 // 새로 발급받은 accessToken을 Redux 스토어에 저장합니다.
                 dispatch(containToken(result.newToken));
                 token = result.newToken;
+                console.log("new token: " + token);
 
             } catch (error) {
                 console.log(error);

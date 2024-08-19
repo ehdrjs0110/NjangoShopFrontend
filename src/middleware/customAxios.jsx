@@ -9,6 +9,13 @@ const axiosInstance = axios.create({
     },
 });
 
+const axiosInstance2 = axios.create({
+    baseURL:`http://localhost:8080/`,
+    headers: {
+        'Content-Type': 'application/json'
+    },
+});
+
 axiosInstance.interceptors.request.use(
      (config) => {
          const accessToken = getToken();
@@ -26,5 +33,21 @@ axiosInstance.interceptors.request.use(
     }
 )
 
+axiosInstance2.interceptors.request.use(
+    (config) => {
+        const accessToken = getToken();
 
-export default axiosInstance
+        if (accessToken) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        return config;
+    },
+    (error) => {
+        console.log("위치: interceptors")
+        console.log(error);
+        return Promise.reject(error);
+    }
+)
+
+export {axiosInstance, axiosInstance2}

@@ -49,20 +49,19 @@ function App() {
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/SignUp" element={<SignUp />} />
           <Route path="/Loading" element={<Loading />} />
-          <Route path="/Main" element={<Main />} />
-          {/*<Route path="/Main" element={<PrivateRoute component={<Main />}/>} />*/}
+          <Route path="/Main" element={<PrivateRoute component={<Main />} />} />
           <Route path="/Promotion" element={<Promotion />} />
           <Route path="/Logout" element={<Logout/>}/>
-          {/*<Route path="/AiSearch" element={<AiSearch/>} />*/}
           <Route path="/AiSearch" element={<PrivateRoute component={<AiSearch />}/>} />
-          <Route path="/AiSimpleSearch" element={<AiSimpleSearch/>} />
-          <Route path="/AiDetailSearch" element={<AiDetailSearch/>}/>
+          <Route path="/AiSimpleSearch" element={<PrivateRoute component={<AiSimpleSearch />} />} />
+          <Route path="/AiDetailSearch" element={<PrivateRoute component={<AiDetailSearch />} />} />
           <Route path="/FindId" element={<FindId />} />
           <Route path="/FindPw" element={<FindPw />} />
           <Route path="/Inven" element={<PrivateRoute component={<Inven />}/>} />
           <Route path="/Excel" element={<PrivateRoute component={<Excel />}/>} />
-          <Route path="/ProFile" element={<Profile/>}/>
-          <Route path="/MyPage" element={<MyPage/>}/>
+          <Route path="/ProFile" element={<PrivateRoute component={<Profile/>} />} />
+          <Route path="/MyPage" element={<PrivateRoute component={<MyPage/>}/>}/>
+          {/*<Route path="/MyPage" element={<MyPage/>}/>*/}
           <Route path="/HistoryList" element={<PrivateRoute component={<HistoryList />}/>}/>
           <Route path="/HistoryDetail" element={<PrivateRoute component={<HistoryDetail />}/>}/>
           <Route path="/LikeList" element={<PrivateRoute component={<LikeList />}/>}/>

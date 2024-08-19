@@ -42,68 +42,69 @@ const MyPage = () => {
 
 
 
-    useEffect(() => {
-        // access token의 유무에 따라 재발급 --
-
-        async function checkAccessToken() {
-            try {
-                // console.log("useEffect에서 실행")
-
-                console.log("원래 refresh token" + refreshToken);
-
-                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-                const result = await getNewToken(refreshToken);
-                console.log("result" + result);
-                refreshToken = result.newRefreshToken;
-
-                console.log("refreshToken : " + refreshToken);
-                console.log("newToken: " + result.newToken);
-
-
-                newAccessToken = result.newToken;
-
-                // refresh token cookie에 재설정
-                setCookie(
-                    'refreshToken',
-                    refreshToken,
-                    {
-                        path:'/',
-                        maxAge: 7 * 24 * 60 * 60, // 7일
-                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-                    }
-                )
-
-                // Redux access token 재설정
-                dispatch(containToken(result.newToken));
-
-            } catch (error) {
-                console.log(error);
-                navigate('/SignIn');
-            }
-        }
-        // checkAccessToken();
-
-        // checkAccessToken();
-        if(accessToken == null || accessToken == undefined)
-        {
-            console.log("없어서 다시 가져오기");
-           
-            checkAccessToken();
-            setIschange(true);
-
-
-
-        }else {
-            fetchDate();
-        }
-
-
-
-        // --
-    }, []);
+    // useEffect(() => {
+    //     // access token의 유무에 따라 재발급 --
+    //
+    //     async function checkAccessToken() {
+    //         try {
+    //             // console.log("useEffect에서 실행")
+    //
+    //             console.log("원래 refresh token" + refreshToken);
+    //
+    //             // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+    //             const result = await getNewToken(refreshToken);
+    //             console.log("result" + result);
+    //             refreshToken = result.newRefreshToken;
+    //
+    //             console.log("refreshToken : " + refreshToken);
+    //             console.log("newToken: " + result.newToken);
+    //
+    //
+    //             newAccessToken = result.newToken;
+    //
+    //             // refresh token cookie에 재설정
+    //             setCookie(
+    //                 'refreshToken',
+    //                 refreshToken,
+    //                 {
+    //                     path:'/',
+    //                     maxAge: 7 * 24 * 60 * 60, // 7일
+    //                     // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+    //                 }
+    //             )
+    //
+    //             // Redux access token 재설정
+    //             dispatch(containToken(result.newToken));
+    //
+    //         } catch (error) {
+    //             console.log(error);
+    //             navigate('/SignIn');
+    //         }
+    //     }
+    //     // checkAccessToken();
+    //
+    //     // checkAccessToken();
+    //     if(accessToken == null || accessToken == undefined)
+    //     {
+    //         console.log("없어서 다시 가져오기");
+    //
+    //         checkAccessToken();
+    //         setIschange(true);
+    //
+    //
+    //
+    //     }else {
+    //         fetchDate();
+    //     }
+    //
+    //
+    //
+    //     // --
+    // }, []);
     
     
     useEffect(() => {
+        setIschange(true);
         console.log("isChange 난 후에 실행" + accessToken)
         fetchDate();
     },[isChange, accessToken])

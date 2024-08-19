@@ -22,57 +22,6 @@ import {containToken} from "../../Store/tokenSlice";
 
 function Main() {
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
-
-
-
- // redux에서 가져오기
-  let accessToken = useSelector(state => state.token.value);
-  const dispatch = useDispatch();
-
-
-  useEffect(() => {
-
-    let refreshToken = cookies.refreshToken;
-    async function checkAccessToken() {
-      try {
-
-        // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-        const result = await getNewToken(refreshToken);
-        refreshToken = result.newRefreshToken;
-
-        // refresh token cookie에 재설정
-        setCookie(
-            'refreshToken',
-            refreshToken,
-            {
-              path:'/',
-              maxAge: 7 * 24 * 60 * 60, // 7일
-              // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-            }
-        )
-
-        // Redux access token 재설정
-        dispatch(containToken(result.newToken));
-
-      } catch (error) {
-        console.log(error);
-        navigate('/Sign');
-      }
-    }
-
-    if(accessToken == null || accessToken == undefined)
-    {
-      checkAccessToken();
-    }
-
-    },[])
-
-
-
-
-
-
 
   const AiSearch = () => {
     navigate('/AiSearch');

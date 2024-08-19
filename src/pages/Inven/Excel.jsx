@@ -24,7 +24,7 @@ import {jwtDecode} from "jwt-decode";
 import {containEmail} from "../../Store/userEmailSlice";
 import {containNickName} from "../../Store/userNickName";
 
-import axiosInstance from "../../middleware/customAxios";
+import {axiosInstance} from "../../middleware/customAxios";
 import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 function Excel() {

@@ -17,9 +17,10 @@ import {css} from "@emotion/react";
 
 
 import {useCookies} from "react-cookie";
-import {getNewToken} from "../../services/auth2";
+import {expired, getNewToken} from "../../services/auth2";
 import {containToken} from "../../Store/tokenSlice";
 import {useDispatch, useSelector} from "react-redux";
+import {axiosInstance, axiosInstance2} from "../../middleware/customAxios";
 
 
 
@@ -61,11 +62,55 @@ const AiSimpleSearch = () => {
 
     useEffect(() => {
 
-         //const params = {};
+        if(state)
+        {
+            var list = Object.values(state.state);
+            // console.log("test:"+ test)
+            // setMyIngredientList(list);
+            setSelectedIngredientList(list);
+        }
+        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
+        if (storedRecipe) {
+            console.log("있다고 인식됨")
+            setRecipe(JSON.parse(storedRecipe));
+        }
 
-        // access token의 유무에 따라
-        let refreshToken = cookies.refreshToken;
-        async function checkAccessToken() {
+    }, []);
+
+    useEffect(() => {
+        //재료 가져오기
+        const fetchData = async () => {
+
+            const params = {userId:userId};
+
+            try{
+
+                await tokenHandler();
+                const res = await axiosInstance.get("inven/manage/name",{params});
+
+
+            if(res!=null){
+                console.log(res.data);
+            }
+
+            setIngredients(res.data);
+
+            }catch(err){
+            console.log("err message : " + err);
+
+            }
+        }
+
+        fetchData();
+    }, [accessToken]);
+
+    async function tokenHandler() {
+
+
+        const isExpired = expired();
+        if(isExpired){
+
+            let refreshToken = cookies.refreshToken;
             try {
 
                 // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
@@ -91,102 +136,10 @@ const AiSimpleSearch = () => {
                 navigate('/Sign');
             }
         }
-        // checkAccessToken();
 
-        // checkAccessToken();
-        if(accessToken == null || accessToken == undefined)
-        {
-            checkAccessToken();
-        }
+    }
 
-        if(state)
-        {
-            var list = Object.values(state.state);
-            // console.log("test:"+ test)
-            // setMyIngredientList(list);
-            setSelectedIngredientList(list);
-        }
-        const storedRecipe = sessionStorage.getItem("recipeSimpleSearchList");
-        if (storedRecipe) {
-            console.log("있다고 인식됨")
-            setRecipe(JSON.parse(storedRecipe));
-        }
 
-    }, []);
-
-    useEffect(() => {
-        //재료 가져오기
-        const fetchData = async () => {
-
-            const params = {userId:userId};
-
-            try{
-            const res = await axios.get("http://localhost:8080/inven/manage/name", {
-                params,
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`
-                },
-            });
-
-            if(res!=null){
-                console.log(res.data);
-            }
-
-            setIngredients(res.data);
-
-            }catch(err){
-            console.log("err message : " + err);
-            // 첫 랜더링 시에 받아온 토큰이 기간이 만료했을 경우 다시 받아오기 위함
-            checkAccessToken2();
-            try{
-                const res = await axios.get("http://localhost:8080/inven/manage/name", {
-                params,
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`
-                },
-                });
-                if(res!=null){
-                    console.log(res.data);
-                }
-                setIngredients(res.data);
-
-            }catch(err){
-                console.log("err message : " + err);
-            }
-            }
-        }
-
-        fetchData();
-    }, [accessToken]);
-
-    async function checkAccessToken2() {
-
-        let refreshToken = cookies.refreshToken;
-        try {
-    
-          // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
-          const result = await getNewToken(refreshToken);
-          refreshToken = result.newRefreshToken;
-    
-          // refresh token cookie에 재설정
-          setCookie(
-              'refreshToken',
-              refreshToken,
-              {
-                path:'/',
-                maxAge: 7 * 24 * 60 * 60, // 7일
-                // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
-              }
-          )
-    
-          // Redux access token 재설정
-          dispatch(containToken(result.newToken));
-    
-        } catch (error) {
-          console.log(error);
-          navigate('/Sign');
-        }
-      }
 
     // 레시피 갯수 입력받기
     const recipeHendler = (event) => {
@@ -205,10 +158,9 @@ const AiSimpleSearch = () => {
     }
 
     // UI = 냉장고 속 재료 보여주기
-    const  makeMyIngredientList = () => {
-        if(isIngredients)
-        {
-            const checkLsit = isIngredients.map((item, index) =>
+    const makeMyIngredientList = () => {
+        if (isIngredients && Array.isArray(isIngredients)) {
+            const checkList = isIngredients.map((item, index) =>
                 <Form.Check
                     key={index}
                     inline
@@ -219,12 +171,12 @@ const AiSimpleSearch = () => {
                     label={item.ingredientname}
                     onChange={() => selectIngredient(item.ingredientname)}
                     checked={selectedIngredientList.includes(item.ingredientname)}
-
-                />)
-            return checkLsit;
+                />
+            );
+            return checkList;
         }
-
-    }
+        return null; // 기본값을 반환
+    };
 
 
 
@@ -270,20 +222,15 @@ const AiSimpleSearch = () => {
         console.log(ingredientNames);
 
         const requestBody = {"userContent" : ` ${selectedIngredientList}를 이용한 레시피를 ${recipeCount}개를 알려주는데 재료는 자세하게 알려주고 만드는 과정에 ` +
-                `대해서는 130글자 내로 간략하게 알려줘 ${ingredientNames}가 있어 형태는 title,재료,과정으로 알려줘` +
+                `대해서는 130글자 내로 간략하게 알려줘 ${ingredientNames}가 있어 형태는 title,ingredients,process 으로 알려줘` +
                 `그리고 json 객체로 {0:[요리 1], ...} 형태로 ${recipeCount}갯수로 참고로 키는 무조건 숫자여야해 보내줘`};
         let searchResponse;
         try {
-            searchResponse = await axios.post(
-                `http://localhost:8080/api/v1/chat-gpt/simple/${userId}`,
-                requestBody,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}` // auth 설정
-                    },
-                }
-            )
+            await tokenHandler();
+            searchResponse = await axiosInstance2.post(`api/v1/chat-gpt/simple/${userId}`,requestBody);
+
+
+
 
         } catch (e) {
             console.error(e);
@@ -340,10 +287,10 @@ const AiSimpleSearch = () => {
                     </Card.Header>
                     <Card.Body className={aiSimpleCss.recipeText}>
                         <Card.Text>
-                            <strong>재료:</strong> {JSON.stringify(recipe.재료)}
+                            <strong>재료:</strong> {JSON.stringify(recipe.ingredients)}
                         </Card.Text>
                         <Card.Text>
-                            <strong>과정:</strong> {JSON.stringify(recipe.과정)}
+                            <strong>과정:</strong> {JSON.stringify(recipe.process)}
                         </Card.Text>
                     </Card.Body>
                 </Card>
