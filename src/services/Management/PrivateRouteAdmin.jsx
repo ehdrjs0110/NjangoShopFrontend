@@ -21,16 +21,14 @@ const PrivateRouteAdmin = ({component: Component}) => {
     useEffect(() => {
         async function checkAccessToken() {
             try {
+                console.log("여기실행 checkAccessToken")
                 // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
                 const result = await getNewTokenAdmin(refreshToken);
-
-                if(result.ok){
-                    refreshToken = result.newRefreshToken;
-
+                refreshToken = result.newRefreshToken;
                     // refresh token cookie에 재설정
-                    setCookie(
-                        'refreshToken',
-                        refreshToken,
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
                         {
                             path: '/',
                             maxAge: 7 * 24 * 60 * 60, // 7일
@@ -38,8 +36,7 @@ const PrivateRouteAdmin = ({component: Component}) => {
                     )
                     dispatch(containToken(result.newToken));
                     dispatch(containIsAdmin(true));
-                }
-
+                    console.log(isAdmin)
             } catch (error) {
                 console.log(error);
             }finally {
@@ -48,10 +45,13 @@ const PrivateRouteAdmin = ({component: Component}) => {
         }
         if(isAdmin === false)
         {
+            console.log("여기실행")
             checkAccessToken();
         }else {
             setLoading(false);
         }
+
+        console.log(isAdmin)
 
         console.log(isAdmin);
     }, [isAdmin, accessToken, refreshToken, dispatch, setCookie]);
