@@ -24,6 +24,9 @@ const PrivateRouteAdmin = ({component: Component}) => {
                 console.log("여기실행 checkAccessToken")
                 // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
                 const result = await getNewTokenAdmin(refreshToken);
+                if (result instanceof Error) {
+                    throw result;
+                }
                 refreshToken = result.newRefreshToken;
                     // refresh token cookie에 재설정
                 setCookie(
@@ -36,8 +39,8 @@ const PrivateRouteAdmin = ({component: Component}) => {
                     )
                     dispatch(containToken(result.newToken));
                     dispatch(containIsAdmin(true));
-                    console.log(isAdmin)
             } catch (error) {
+                setLoading(false);
                 console.log(error);
             }finally {
                 setLoading(false); // 비동기 작업 완료 후 로딩 상태 변경
@@ -45,7 +48,6 @@ const PrivateRouteAdmin = ({component: Component}) => {
         }
         if(isAdmin === false)
         {
-            console.log("여기실행")
             checkAccessToken();
         }else {
             setLoading(false);
