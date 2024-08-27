@@ -1,34 +1,46 @@
 import Card from "react-bootstrap/Card";
 import useChart from "../../../services/Management/useChart";
-import {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 const Visit = () => {
-
-    const [visitList,setVisitList] = useState([0,0,0,0,0,0,0]);
+    const [visitList, setVisitList] = useState([0, 0, 0, 0, 0, 0, 0]);
     let accessToken = useSelector(state => state.token.value);
+
     useEffect(() => {
         axios.get(
-            "http://localhost:8080/management/visit/week", {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${accessToken}` // auth 설정
-                },
-            }
+            // "http://localhost:8080/management/visit/week", {
+            "http://localhost:8080/management/visit/lastSevenDays", {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}` // auth 설정
+            },
+        }
         ).then(res => {
             console.log(res.data)
             setVisitList(res.data);
-
+        }).catch(err => {
+            console.error(err);
+            console.error("something wrong happened during visit request")
+            setVisitList([0, 0, 0, 0, 0, 0, 0]); // 에러시 0으로 초기화
         })
-            .catch(console.error)
-
-
-
     }, []);
 
+    // 오늘부터 7일 전까지의 날짜 배열 생성
+    const labels = [];
+    const today = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(today.getDate() - i);
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        labels.push(`${month}-${day}`);
+    }
+
     const data = {
-        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        labels: labels, // 생성한 날짜 배열로 대체
         datasets: [
             {
                 label: 'Dataset',
@@ -54,7 +66,7 @@ const Visit = () => {
         scales: {
             y: {
                 ticks: {
-                    callback: function(value) {
+                    callback: function (value) {
                         return Number(value).toFixed(0); // 소수점 제거
                     }
                 }
@@ -63,7 +75,7 @@ const Visit = () => {
     };
 
     const canvasRef = useChart(data, options);
-    return(
+    return (
         <Card border="light">
             {/*<Card.Title>*/}
             {/*    주간 방문자*/}
