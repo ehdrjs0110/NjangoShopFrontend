@@ -17,37 +17,10 @@ import {useEffect, useRef} from "react";
 import {Stack} from "react-bootstrap";
 import { NewMembersCard, TotalMembersCard, RecipeSearchCard, MonthlyRevenueCard } from "../../components/Management/DashBoard/DashBoardTopCards";
 import Visit from "../../components/Management/DashBoard/DashBoardVisit";
+import DaySearch from "../../components/Management/DashBoard/DashBoardDaySearch";
 const ManagementDashboard = () => {
-    const chartRef = useRef(null);
 
-    useEffect(() => {
-        if (chartRef && chartRef.current) {
-            const ctx = chartRef.current.getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['월', '화', '수', '목', '금', '토', '일'],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [400, 350, 500, 450, 600, 550, 500],
-                        fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1 // 곡률 설정
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-    }, []);
     return(
-
-
         <div className={style.managementDashboardContainer} >
             <Stack >
                 {/* bashboard - 위쪽 파트 :전체 회원, 신규 회원, 레시피 검색량, gpt 월 주적 금액*/}
@@ -61,19 +34,7 @@ const ManagementDashboard = () => {
                 {/*dashboard 위쪽 파트를 제외한 나머지 : 주간 방문자, 미정, 회원 별 검색량, 신고*/}
                 <Row className={style.downPartRow} xs={1} md={2}>
                     <Col className={style.downPartCol}>
-                        {/*Card == div*/}
-                        {/*<Card border="light">*/}
-                        {/*    <Card.Title>*/}
-                        {/*       주간 방문자*/}
-                        {/*    </Card.Title>*/}
-                        {/*    <Card.Body>*/}
-
-                        {/*    </Card.Body>*/}
-                        {/*</Card>*/}
                         <Visit/>
-                        {/*<div>*/}
-                        {/*    /!*<canvas ref={chartRef}></canvas>*!/*/}
-                        {/*</div>*/}
                     </Col>
                     <Col className={style.downPartCol}>
                         <Card border="light">
@@ -88,7 +49,7 @@ const ManagementDashboard = () => {
                     <Col className={style.downPartCol}>
                         <Card border="light">
                             <Card.Title>
-                                회원 별 검색량
+                               <DaySearch/>
                             </Card.Title>
                             <Card.Body>
 
@@ -107,14 +68,6 @@ const ManagementDashboard = () => {
                     </Col>
                 </Row>
             </Stack>
-
-
-
-
-
-
-
-
         </div>
 
 

@@ -93,6 +93,8 @@ const PrivateRoute = ({component: Component}) => {
                 const result = await getNewToken(refreshToken);
                 refreshToken = result.newRefreshToken;
 
+                console.log("전에 가졌던 리프레시 토큰 : " + refreshToken);
+
                 // 새로 발급받은 refreshToken을 쿠키에 저장합니다.
                 setCookie(
                     'refreshToken',
@@ -109,24 +111,43 @@ const PrivateRoute = ({component: Component}) => {
 
             } catch (error) {
                 console.log(error);
-            }finally {
-                // 오늘 방문 기록을 확인하고 처리하는 로직
-                checkVisit();
             }
+            // }finally {
+            //     // 오늘 방문 기록을 확인하고 처리하는 로직
+            //     checkVisit();
+            // }
         }
 
         console.log("처음 access token : " + accessToken)
         // console.log("new access token : " + accessToken)
-        if(accessToken === null && refreshToken !== null)
-        {
-            // accessToken이 없고 refreshToken이 존재할 때
-            checkAccessToken();
-        }else {
-            //refreshToken이 없거나 만료일 때
-            // dispatch(containToken(false));
-            checkVisit();
+        // if(accessToken === null && refreshToken !== null)
+        // {
+        //     // accessToken이 없고 refreshToken이 존재할 때
+        //    await checkAccessToken();
+        //     // checkVisit();
+        // }
+        // // if(accessToken !== null)
+        // // {
+        // //
+        // // }
+        // checkVisit();
 
+        async function checkAccessTokenAndVisit() {
+            if (accessToken === null && refreshToken !== null) {
+                // accessToken이 없고 refreshToken이 존재할 때
+                await checkAccessToken(); // await으로 비동기 작업을 기다림
+            }
+            // accessToken이 있는 경우 바로 checkVisit 실행
+            checkVisit();
         }
+
+        checkAccessTokenAndVisit();
+
+        // else {
+        //     //refreshToken이 없거나 만료일 때
+        //     // dispatch(containToken(false));
+        //
+        // }
 
     }, [ accessToken, refreshToken, dispatch, setCookie]);
     if (loading) {
