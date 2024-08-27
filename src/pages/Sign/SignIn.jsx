@@ -55,12 +55,16 @@ const SignIn = () => {
         })
         .then((res) => {
 
+
+          let refreshToken = cookies.refreshToken;
+          // alert(refreshToken);
+          console.log("원래 refreshToken: " + refreshToken );
           console.log(res.data);
           accessToken = res.data.accessToken;
           refreshToken = res.data.refreshToken;
 
 
-          console.log("accesstoken "+ accessToken);
+          console.log("accesstoken22222 "+ accessToken);
 
           // redux 변수에 access token 넣는 부분
           dispatch(containToken(accessToken));
