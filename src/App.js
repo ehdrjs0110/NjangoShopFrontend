@@ -78,10 +78,7 @@ function App() {
           <Route path="/Management/User" element={<PrivateRouteAdmin
              component={<ManagementLayout><ManagementUser /></ManagementLayout>} />}
          />
-
-
           <Route path="/Demo" element={<Demo/>}/>
-
         </Routes>
       </Router>
       
