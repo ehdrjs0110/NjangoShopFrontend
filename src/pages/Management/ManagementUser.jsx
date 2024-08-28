@@ -10,7 +10,6 @@ const managementUser = () => {
 
         <div className={style.managementDashboardContainer} >
             <Stack >
-                {/*dashboard 위쪽 파트를 제외한 나머지 : 주간 방문자, 미정, 회원 별 검색량, 신고*/}
                 <Row className={style.downPartRow} xs={1} md={1}>
                     <Col className={style.downPartCol}>
                         <Card border="light">
