@@ -26,6 +26,7 @@ import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 const LikeList = () => {
     
     const [recipe, setRecipe] = useState(null);
+    const [isChange, setChange] = useState(false);
     const navigate = useNavigate();
 
      // auth 관련 --
@@ -39,7 +40,7 @@ const LikeList = () => {
     useEffect(() => {
 
         const fetchData = async () => {
-        
+
             try{
                 await tokenHandler();
                 const res = await axiosInstance.get(`like/${userId}`);
@@ -58,12 +59,13 @@ const LikeList = () => {
         
             }catch(err){
                 console.log("err message : " + err);
+                setChange(!isChange);
             }
-            }
+        }
         
-            fetchData();
+        fetchData();
 
-    }, []);
+    }, [isChange]);
 
     async function tokenHandler() {
 
@@ -98,6 +100,31 @@ const LikeList = () => {
         }
     }
 
+    const deleteRecipe = async (likeId) => {
+
+        if(window.confirm("정말 삭제 하시겠습니까?")){
+
+            try{
+                await tokenHandler();
+                const res = await axiosInstance.delete(`like/${likeId}`);
+
+                if(res){
+                    setChange(!isChange);
+                    alert("삭제되었습니다.");
+                }else {
+                    alert("실패했습니다.");
+                }
+
+            }catch(e) {
+                console.error(e);
+            }
+        }else {
+            alert("취소 되었습니다.");
+        }
+
+        
+    };
+    
     // recipe UI
     function recipeResponce()
     {
@@ -120,6 +147,9 @@ const LikeList = () => {
                     <Card.Body>
                         <Card.Text>
                             <strong>재료:</strong> {formatIngredients(recipe.ingredients)}
+                            <span className={styles.deleteBtn}>
+                                <Button onClick={() => deleteRecipe(recipe.likeId)}>삭제</Button>
+                            </span>
                         </Card.Text>
                     </Card.Body>
                 </Card>

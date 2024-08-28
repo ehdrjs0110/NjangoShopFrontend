@@ -10,7 +10,7 @@ import Card from 'react-bootstrap/Card';
 
 import Navigation from '../../components/Nav/Navigation'
 
-import styles from '../../styles/Search/AiSearch.module.scss';
+import styles from '../../styles/History/HistoryList.module.scss';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 // auth 관련 --
@@ -26,6 +26,7 @@ import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 const HistoryList = () => {
     
     const [recipe, setRecipe] = useState(null);
+    const [isChange, setChange] = useState(false);
     const navigate = useNavigate();
 
 
@@ -61,12 +62,13 @@ const HistoryList = () => {
     
         }catch(err){
             console.log("err message : " + err);
+            setChange(!isChange);
         }
     }
       
     fetchData();
 
-    }, []);
+    }, [isChange]);
 
     async function tokenHandler() {
 
@@ -110,6 +112,7 @@ const HistoryList = () => {
                 const res = await axiosInstance.delete(`history/${historyId}`);
 
                 if(res){
+                    setChange(!isChange);
                     alert("삭제되었습니다.");
                 }else {
                     alert("실패했습니다.");
@@ -148,7 +151,9 @@ const HistoryList = () => {
                     <Card.Body>
                         <Card.Text>
                             <strong>재료:</strong> {formatIngredients(recipe.ingredients)}
-                            <Button className={styles.deleteBtn} onClick={() => deleteRecipe(recipe.historyId)}>삭제</Button>
+                            <span className={styles.deleteBtn}>
+                                <Button onClick={() => deleteRecipe(recipe.historyId)}>삭제</Button>
+                            </span>
                         </Card.Text>
                     </Card.Body>
                 </Card>

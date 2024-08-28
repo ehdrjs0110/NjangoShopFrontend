@@ -83,7 +83,7 @@ const AiSearch = () => {
             console.log(typeof storedRecipe);
             // sessionStorage.setItem("recipeList");
 
-            setRecipe(JSON.parse(storedRecipe));
+            // setRecipe(JSON.parse(storedRecipe));
         }
 
 
@@ -91,6 +91,7 @@ const AiSearch = () => {
 
 
 
+// accesstoken2 대체
     async function tokenHandler() {
 
 
