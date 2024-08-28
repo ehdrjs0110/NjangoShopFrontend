@@ -41,13 +41,12 @@ const InquiryListTable = () => {
     };
 
     return (
-        <></>
-        // <TableWithPagination
-        //     apiEndpoint="management/user/getUserListbyIndex"
-        //     columns={columns}
-        //     renderRow={renderInquiryRow}
-        //     pageSize={5}
-        // />
+        <TableWithPagination
+            apiEndpoint="management/inquiry/getInquiryListbyIndex"
+            columns={columns}
+            renderRow={renderInquiryRow}
+            pageSize={5}
+        />
     );
 };
 
