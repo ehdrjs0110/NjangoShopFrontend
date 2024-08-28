@@ -27,6 +27,8 @@ import ManagementLogin from './pages/Management/ManagementLogin';
 import ManagementNav from "./pages/Management/ManagementNav";
 import ManagementDashboard from "./pages/Management/ManagementDashboard";
 import ManagementUser from "./pages/Management/ManagementUser";
+import ManagementInquiry from "./pages/Management/ManagementInquiry";
+import ManagementComunity from "./pages/Management/ManagementComunity";
 import ManagementLayout from "./pages/Management/ManagementLayout";
 import PrivateRouteAdmin from "./services/Management/PrivateRouteAdmin"
 import PrivateRoute  from "./services/PrivateRoute";
@@ -78,7 +80,15 @@ function App() {
           <Route path="/Management/User" element={<PrivateRouteAdmin
              component={<ManagementLayout><ManagementUser /></ManagementLayout>} />}
          />
+         <Route path="/Management/Inquiry" element={<PrivateRouteAdmin
+            component={<ManagementLayout><ManagementInquiry /></ManagementLayout>} />}
+         />
+        <Route path="/Management/Comunity" element={<PrivateRouteAdmin
+            component={<ManagementLayout><ManagementComunity /></ManagementLayout>} />}
+         />
+
           <Route path="/Demo" element={<Demo/>}/>
+
         </Routes>
       </Router>
       
