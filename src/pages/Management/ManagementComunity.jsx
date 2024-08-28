@@ -12,6 +12,7 @@ const ManagementComunity = () => {
     const [isAnimating, setIsAnimating] = useState(false);
     const startX = useRef(0);
     const diff = useRef(0);
+    const animationTimeoutRef = useRef(null);
 
     const cards = [{
         title: '레시피',
@@ -22,29 +23,43 @@ const ManagementComunity = () => {
     }];
 
     useEffect(() => {
-        setIsAnimating(true);
-        const timer = setTimeout(() => setIsAnimating(false), 500); // 애니메이션 지속 시간 설정
-        return () => clearTimeout(timer);
-    }, [current]);
+        if (isAnimating) {
+            animationTimeoutRef.current = setTimeout(() => {
+                setIsAnimating(false);
+            }, 500); // 애니메이션 지속 시간과 일치시킴
+        }
+
+        return () => {
+            if (animationTimeoutRef.current) {
+                clearTimeout(animationTimeoutRef.current);
+            }
+        };
+    }, [isAnimating]);
 
     const handleMouseDown = (e) => {
+        if (isAnimating) return; // 애니메이션 중에는 드래그를 무시
         startX.current = e.clientX;
     };
 
     const handleMouseMove = (e) => {
-        if (startX.current !== 0) {
-            diff.current = e.clientX - startX.current;
-        }
+        if (isAnimating || startX.current === 0) return; // 애니메이션 중이거나 드래그 시작하지 않았을 때 무시
+        diff.current = e.clientX - startX.current;
     };
 
     const handleMouseUp = () => {
-        if (Math.abs(diff.current) > 50) {
-            if (diff.current > 0) {
-                setCurrent((prev) => (prev === 0 ? cards.length - 1 : prev - 1));
-            } else {
-                setCurrent((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
-            }
+        if (isAnimating || Math.abs(diff.current) <= 50) { // 애니메이션 중이거나 드래그 거리가 짧을 때 무시
+            startX.current = 0;
+            diff.current = 0;
+            return;
         }
+
+        if (diff.current > 0) {
+            setCurrent((prev) => (prev === 0 ? cards.length - 1 : prev - 1));
+        } else {
+            setCurrent((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
+        }
+
+        setIsAnimating(true);
         startX.current = 0;
         diff.current = 0;
     };
