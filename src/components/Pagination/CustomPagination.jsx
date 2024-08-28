@@ -5,6 +5,10 @@ const CustomPagination = (props) => {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
+        /**
+         * data 는 jpa pageable 리턴 객체
+         * current 는 현재 페이지
+         */
         if (props.data) initPage(props.data, props.current);
     }, [props.data, props.current]);
 
