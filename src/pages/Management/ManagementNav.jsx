@@ -22,6 +22,9 @@ const ManagementNav = () => {
     const Inquiry = () => {
         navigate('/Management/Inquiry');
     };
+    const Comunity = () => {
+        navigate('/Management/Comunity');
+    };
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -39,6 +42,7 @@ const ManagementNav = () => {
                 <button onClick={Dashboard}>Dashboard</button>
                 <button onClick={User}>유저관리</button>
                 <button onClick={Inquiry}>문의사항</button>
+                <button onClick={Comunity}>커뮤니티 관리</button>
                 {/*<a onClick={dashboard}>바로가기</a>*/}
             </div>
 
