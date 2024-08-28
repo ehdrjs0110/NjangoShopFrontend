@@ -9,7 +9,7 @@ import GalleryListTable from "../../components/Management/Comunity/GalleryListTa
 
 const ManagementComunity = () => {
     const [current, setCurrent] = useState(0);
-    const [card, setCard] = useState();
+    const [isAnimating, setIsAnimating] = useState(false);
     const startX = useRef(0);
     const diff = useRef(0);
 
@@ -22,7 +22,9 @@ const ManagementComunity = () => {
     }];
 
     useEffect(() => {
-        setCard(cards[current]);
+        setIsAnimating(true);
+        const timer = setTimeout(() => setIsAnimating(false), 500); // 애니메이션 지속 시간 설정
+        return () => clearTimeout(timer);
     }, [current]);
 
     const handleMouseDown = (e) => {
@@ -36,7 +38,7 @@ const ManagementComunity = () => {
     };
 
     const handleMouseUp = () => {
-        if (Math.abs(diff.current) > 50) { // 드래그 거리가 50px 이상일 때만
+        if (Math.abs(diff.current) > 50) {
             if (diff.current > 0) {
                 setCurrent((prev) => (prev === 0 ? cards.length - 1 : prev - 1));
             } else {
@@ -57,12 +59,15 @@ const ManagementComunity = () => {
             <Stack>
                 <Row className={style.downPartRow} xs={1} md={1}>
                     <Col className={style.downPartCol}>
-                        <Card border="light">
+                        <Card
+                            border="light"
+                            className={isAnimating ? style.fadeIn : ''}
+                        >
                             <Card.Title>
-                                {card?.title}
+                                {cards[current].title}
                             </Card.Title>
                             <Card.Body>
-                                {card?.component}
+                                {cards[current].component}
                             </Card.Body>
                         </Card>
                     </Col>
