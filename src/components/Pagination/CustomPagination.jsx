@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Pagination from 'react-bootstrap/Pagination';
 
-const CustomPagination = (props) => {
+const CustomPagination = ({ data, current, onPageChange, size }) => {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
@@ -9,8 +9,8 @@ const CustomPagination = (props) => {
          * data 는 jpa pageable 리턴 객체
          * current 는 현재 페이지
          */
-        if (props.data) initPage(props.data, props.current);
-    }, [props.data, props.current]);
+        if (data) initPage(data, current);
+    }, [data, current]);
 
     const initPage = (data, current) => {
         const { totalPages, last, first, empty } = data;
@@ -18,13 +18,13 @@ const CustomPagination = (props) => {
 
         if (empty) return;
 
-        paginationItems.push(<Pagination.First key="first" onClick={() => props.onPageChange(1)} />);
+        paginationItems.push(<Pagination.First key="first" onClick={() => onPageChange(1)} />);
         if (!first) {
-            paginationItems.push(<Pagination.Prev key="prev" onClick={() => props.onPageChange(current - 1)} />);
+            paginationItems.push(<Pagination.Prev key="prev" onClick={() => onPageChange(current - 1)} />);
         }
 
         if (current > 3) {
-            paginationItems.push(<Pagination.Item key={1} onClick={() => props.onPageChange(1)}>{1}</Pagination.Item>);
+            paginationItems.push(<Pagination.Item key={1} onClick={() => onPageChange(1)}>{1}</Pagination.Item>);
             if (current > 4) {
                 paginationItems.push(<Pagination.Ellipsis key="ellipsis-prev" />);
             }
@@ -35,7 +35,7 @@ const CustomPagination = (props) => {
                 <Pagination.Item
                     key={i}
                     active={i === current}
-                    onClick={() => props.onPageChange(i)}
+                    onClick={() => onPageChange(i)}
                 >
                     {i}
                 </Pagination.Item>
@@ -49,7 +49,7 @@ const CustomPagination = (props) => {
             paginationItems.push(
                 <Pagination.Item
                     key={totalPages}
-                    onClick={() => props.onPageChange(totalPages)}
+                    onClick={() => onPageChange(totalPages)}
                 >
                     {totalPages}
                 </Pagination.Item>
@@ -57,18 +57,18 @@ const CustomPagination = (props) => {
         }
 
         if (!last) {
-            paginationItems.push(<Pagination.Next key="next" onClick={() => props.onPageChange(current + 1)} />);
+            paginationItems.push(<Pagination.Next key="next" onClick={() => onPageChange(current + 1)} />);
         }
-        paginationItems.push(<Pagination.Last key="last" onClick={() => props.onPageChange(totalPages)} />);
+        paginationItems.push(<Pagination.Last key="last" onClick={() => onPageChange(totalPages)} />);
 
         setItems(paginationItems);
     };
 
     return (
-        <Pagination size={props.size}>
+        <Pagination size={size}>
             {items}
         </Pagination>
     );
 }
 
-export default CustomPagination
+export default CustomPagination;
