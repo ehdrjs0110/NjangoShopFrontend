@@ -27,7 +27,8 @@ const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5 }) 
                     </tr>
                 </thead>
                 <tbody>
-                    {data ? data.content.map((item, index) => renderRow(item, index)) : <tr><td colSpan={columns.length + 1}>Loading...</td></tr>}
+                    {/*content없앰*/}
+                    {data ? data.map((item, index) => renderRow(item, index)) : <tr><td colSpan={columns.length + 1}>Loading...</td></tr>}
                 </tbody>
             </Table>
             {data && (

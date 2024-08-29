@@ -8,13 +8,13 @@ const InquiryListTable = () => {
     };
 
     const columns = [
-        { header: 'inquiry_id' },
-        { header: 'question_id' },
-        { header: 'answer_id' },
-        { header: 'question_type' },
+        { header: 'inquiryId' },
+        { header: 'questionerName' },
+        { header: 'responderName' },
+        { header: 'questionType' },
         { header: 'question' },
         { header: 'answer' },
-        { header: 'create_at' },
+        { header: 'createAt' },
         { header: 'actions' }
     ];
 
@@ -24,10 +24,10 @@ const InquiryListTable = () => {
 
         return (
             <tr key={index} className={rowClass}>
-                <td>{inquiry.inquiry_id}</td>
-                <td>{inquiry.question_id}</td>
-                <td>{inquiry.answer_id}</td>
-                <td>{inquiry.question_type}</td>
+                <td>{inquiry.inquiryId}</td>
+                <td>{inquiry.questionerName}</td>
+                <td>{inquiry.responderName}</td>
+                <td>{inquiry.questionType}</td>
                 <td>{inquiry.question}</td>
                 <td>{inquiry.answer}</td>
                 <td>{new Date(inquiry.createAt).toLocaleString()}</td>

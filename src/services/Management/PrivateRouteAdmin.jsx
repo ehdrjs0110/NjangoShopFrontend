@@ -27,6 +27,7 @@ const PrivateRouteAdmin = ({component: Component}) => {
                 if (result instanceof Error) {
                     throw result;
                 }
+
                 refreshToken = result.newRefreshToken;
                     // refresh token cookie에 재설정
                 setCookie(
@@ -53,9 +54,7 @@ const PrivateRouteAdmin = ({component: Component}) => {
             setLoading(false);
         }
 
-        console.log(isAdmin)
-
-        console.log(isAdmin);
+        console.log(accessToken)
     }, [isAdmin, accessToken, refreshToken, dispatch, setCookie]);
     if (loading) {
         return null; // 로딩 중일 때는 아무 것도 렌더링하지 않음
