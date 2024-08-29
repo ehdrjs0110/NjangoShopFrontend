@@ -12,6 +12,8 @@ const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5 }) 
         axiosInstance.get(`${apiEndpoint}/${pageCount}/${pageSize}`)
             .then(response => {
                 setData(response.data);
+                console.log(response.data);
+                console.log()
             });
     }, [pageCount, apiEndpoint, pageSize]);
 
@@ -27,8 +29,7 @@ const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5 }) 
                     </tr>
                 </thead>
                 <tbody>
-                    {/*content없앰*/}
-                    {data ? data.map((item, index) => renderRow(item, index)) : <tr><td colSpan={columns.length + 1}>Loading...</td></tr>}
+                    {data ? data.content.map((item, index) => renderRow(item, index)) : <tr><td colSpan={columns.length + 1}>Loading...</td></tr>}
                 </tbody>
             </Table>
             {data && (
