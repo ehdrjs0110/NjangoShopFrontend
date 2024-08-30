@@ -34,22 +34,16 @@ import {arrayNestedArray, makeFlatArray} from "../../services/arrayChecker";
 
 import styles from '../../styles/History/HistoryDetail.module.scss';
 
-const HistoryDetail = () => {
+const RecipeShareDetail = () => {
     const navigate = useNavigate();
     const location = useLocation(); // 현재 위치 객체를 가져옴
-    const { recipe } = location.state || {}; // 전달된 상태에서 recipe 추출, 없을 경우 빈 객체로 대체
+    const { recipeId } = location.state || {}; // 전달된 상태에서 recipe 추출, 없을 경우 빈 객체로 대체
     const [detailRecipe, setDetailRecipe] = useState(null);
     const [title, setTitle] = useState(null);
     const [ingredient, setIngredient] = useState(null);
     const [level,setLevel] = useState(0);
     const [time,setTime] = useState(0);
     const [serve,setServe] = useState(0);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isKakaoToken, setKakaoToken] = useState(null);
-    const [isRecipeId, setRecipeId] = useState(null);
-
-    //recipeId 저장 쿠키
-    const [isRecipeCookies, setRecipeCookie, removeRecipeCookie] = useCookies(null);
 
     // auth 관련 --
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
@@ -59,141 +53,17 @@ const HistoryDetail = () => {
     const dispatch = useDispatch();
     // --
 
-    console.log(recipe);
-
-    //카카오톡 로그인
-    const CLIENT_ID = '7a2afab08fdef9ddd3b09ac451ca30b9';
-    const REDIRECT_URI = 'http://localhost:3000/HistoryDetail';
-    const JavaScript_KEY = '88fa71808a81095402801be7c2034792';
-
-    const code = new URL(window.location.href).searchParams.get("code");
-  
-    useEffect(() => {
-      if (code) {
-        sendCode();
-      }
-    }, [code]);
-    
-    async function sendCode() {
-
-        const body = {
-          code: code,
-        };
-    
-        await axios
-        .post("http://localhost:8080/kakaoMessage/kakaoCode", body)
-        .then((res) => {
-          if(res.data!=null){
-            console.log(res.data);
-    
-            const kakaotoken = res.data;
-    
-            console.log("kakaotoken "+ kakaotoken);
-            setKakaoToken(kakaotoken);
-          }
-        });
-    
-      }
-
-    useEffect(() => {
-        // Kakao SDK 초기화
-        const kakaoScript = document.createElement('script');
-        kakaoScript.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js';
-        kakaoScript.integrity = 'sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4';
-        kakaoScript.crossOrigin = 'anonymous';
-        kakaoScript.onload = () => {
-          window.Kakao.init(JavaScript_KEY); // JavaScript 키 입력
-          displayToken(); // 토큰이 있는지 확인
-        };
-        document.head.appendChild(kakaoScript);
-      }, [isKakaoToken]);
-    
-      const sendToFriends = () => {
-        if (!window.confirm('메시지를 전송하시겠습니까?')) return;
-    
-        window.Kakao.Picker.selectFriends({
-          showMyProfile: false,
-          maxPickableCount: 10,
-          minPickableCount: 1,
-        })
-          .then(res => {
-            const uuids = res.users.map(e => e.uuid);
-    
-            return window.Kakao.API.request({
-              url: '/v1/api/talk/friends/message/default/send',
-              data: {
-                receiver_uuids: uuids,
-                template_object: {
-                  object_type: 'text',
-                  text:
-                    '테스트 동건 테스트 은희',
-                  link: {
-                    mobile_web_url: 'http://localhost:3000',
-                    web_url: 'http://localhost:3000',
-                  },
-                },
-              },
-            });
-          })
-          .then(res => {
-            alert('success: ' + JSON.stringify(res));
-          })
-          .catch(err => {
-            alert('error: ' + JSON.stringify(err));
-          });
-      };
-    
-      const displayToken = () => {
-        const kakaotoken = isKakaoToken;
-
-        if (kakaotoken && Object.values(kakaotoken) == '') {
-          window.Kakao.Auth.setAccessToken(kakaotoken);
-          setIsLoggedIn(true);
-        }
-      };
-
-    const kakaoShare = async() => {
-
-        //recipeId 쿠키에 저장
-        setRecipeCookie(
-            'recipeId',
-            recipe.recipeId
-        )
-
-        const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=talk_message,friends`;
-        window.location.href = kakaoUrl;
-
-        if(isLoggedIn){
-            sendToFriends();
-        }
-    };
+    console.log(recipeId);  
 
     useEffect(() => {
 
     const fetchData = async () => {
 
-        let currentRecipeId;
+        console.log(recipeId);
         
-        if(currentRecipeId && currentRecipeId.length > 0){
-            currentRecipeId = recipe.recipeId;
-        }
-            
-        currentRecipeId = isRecipeCookies.recipeId;
-
-
-        if (!currentRecipeId) {
-            console.log("recipeId가 정의되지 않았습니다.");
-            return; // recipeId가 없으면 fetch를 하지 않음
-        }
-
-        setRecipeId(currentRecipeId);
-
-        console.log("레시피 있어?" + isRecipeId);
-        
-
         try{
             await tokenHandler();
-            const res = await axiosInstance.get(`recipe/${isRecipeId}`);
+            const res = await axiosInstance.get(`recipe/${recipeId}`);
             const storedRecipe = res.data;
 
             if(storedRecipe && storedRecipe.length > 0) {
@@ -216,7 +86,7 @@ const HistoryDetail = () => {
     }
     
         fetchData();
-    }, [recipe, isRecipeId]);
+    }, [recipeId]);
 
     async function tokenHandler() {
 
@@ -351,7 +221,7 @@ const HistoryDetail = () => {
                                                     <Button  className={styles.iconButton} variant="outline-secondary" onClick={userAll}>
                                                         <FontAwesomeIcon className={styles.icon} icon={faHeart} />
                                                     </Button>{' '}
-                                                    <Button  className={styles.iconButton}  variant="outline-secondary" onClick={kakaoShare}>
+                                                    <Button  className={styles.iconButton}  variant="outline-secondary" >
                                                         <FontAwesomeIcon className={styles.icon} icon={faMobile} />
                                                     </Button>{' '}
                                                     <Button  className={styles.iconButton}  variant="outline-secondary">
@@ -450,4 +320,4 @@ const HistoryDetail = () => {
     );
 }
 
-export default HistoryDetail;
+export default RecipeShareDetail;

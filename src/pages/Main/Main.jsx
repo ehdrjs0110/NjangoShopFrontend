@@ -34,6 +34,10 @@ function Main() {
   const inven = () => {
     navigate('/Inven');
   };
+
+  const recipeshare = () => {
+    navigate('/RecipeShareList')
+  }
   
   return (
     <>
@@ -61,7 +65,7 @@ function Main() {
             <img src={comuImg} className={styles.img} alt='' />
               <div className={styles.panel}>
                 <h2 className={styles.text}>커뮤니티</h2>
-                <a onClick={signin}>바로가기</a>
+                <a onClick={recipeshare}>바로가기</a>
               </div>
             </Col>
             <Col md={{span: 3, offset: 2}} className={styles.linkbox}>
