@@ -29,10 +29,12 @@ import ManagementDashboard from "./pages/Management/ManagementDashboard";
 import ManagementUser from "./pages/Management/ManagementUser";
 import ManagementInquiry from "./pages/Management/ManagementInquiry";
 import ManagementComunity from "./pages/Management/ManagementComunity";
+import ManagementSearch from "./pages/Management/ManagementSearch";
 import ManagementReport from "./pages/Management/ManagementReport";
 import ManagementLayout from "./pages/Management/ManagementLayout";
 import PrivateRouteAdmin from "./services/Management/PrivateRouteAdmin"
 import PrivateRoute  from "./services/PrivateRoute";
+
 // import index from '../src/styles/index.css'
 
 
@@ -89,6 +91,10 @@ function App() {
           />
           <Route path="/Management/Report" element={<PrivateRouteAdmin
             component={<ManagementLayout><ManagementReport /></ManagementLayout>} />}
+          />
+
+          <Route path="/Management/Search" element={<PrivateRouteAdmin
+              component={<ManagementLayout><ManagementSearch /></ManagementLayout>} />}
           />
 
           <Route path="/Demo" element={<Demo/>}/>
