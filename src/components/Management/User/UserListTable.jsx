@@ -25,8 +25,8 @@ const UserListTable = () => {
         const rowClass = user.role === 'ADMIN' ? 'table-danger' : '';
         return (
             <tr key={index} className={rowClass}>
-                <td>{user.username}</td>
-                <td>{user.nickName}</td>
+                <td>{user.id}</td>
+                <td>{user.nickname}</td>
                 <td>{user.phoneNumber || "N/A"}</td>
                 <td>{user.role}</td>
                 <td>{user.kakao ? "Yes" : "No"}</td>
