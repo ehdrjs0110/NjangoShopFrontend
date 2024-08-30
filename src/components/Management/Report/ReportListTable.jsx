@@ -9,7 +9,8 @@ const UserListTable = () => {
 
     const columns = [
         { header: 'report_id' },
-        { header: 'post_id' },
+        { header: 'gallery_report_id ' },
+        { header: 'recipe_share_report_id ' },
         { header: 'create_at' },
         { header: 'user_id' },
         { header: 'report_type' },
@@ -22,7 +23,8 @@ const UserListTable = () => {
         return (
             <tr key={index} className={rowClass}>
                 <td>{report.report_id}</td>
-                <td>{report.post_id}</td>
+                <td>{report.gallery_report_id }</td>
+                <td>{report.recipe_share_report_id }</td>
                 <td>{new Date(report.create_at).toLocaleString()}</td>
                 <td>{report.user_id}</td>
                 <td>{report.report_type}</td>
@@ -38,13 +40,12 @@ const UserListTable = () => {
     };
 
     return (
-        <></>
-        // <TableWithPagination
-        //     apiEndpoint="management/report/getUserListbyIndex"
-        //     columns={columns}
-        //     renderRow={renderUserRow}
-        //     pageSize={5}
-        // />
+        <TableWithPagination
+            apiEndpoint="management/report/getReportListbyIndex"
+            columns={columns}
+            renderRow={renderReportRow}
+            pageSize={5}
+        />
     );
 };
 
