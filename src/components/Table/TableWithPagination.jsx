@@ -4,7 +4,7 @@ import styles from "../../styles/Management/ManagementSearch.module.scss";
 import Table from "react-bootstrap/Table";
 import CustomPagination from "../Pagination/CustomPagination";
 
-const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5 }) => {
+const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5, reloadTrigger  }) => {
     const [pageCount, setPageCount] = useState(0);
     const [data, setData] = useState(null);
 
@@ -15,7 +15,7 @@ const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5 }) 
                 console.log(apiEndpoint)
                 console.log(response.data);
             });
-    }, [pageCount, apiEndpoint, pageSize]);
+    }, [pageCount, apiEndpoint, pageSize, reloadTrigger ]);
 
     return (
         <>
