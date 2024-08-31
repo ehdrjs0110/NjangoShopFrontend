@@ -1,20 +1,32 @@
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import TableWithPagination from "../../Table/TableWithPagination";
+import { axiosInstance } from "../../../middleware/customAxios";
 
 const GalleryListTable = () => {
+    const [reloadTrigger, setReloadTrigger] = useState(false); // 데이터를 다시 로드하기 위한 트리거 상태
 
-    const handleAction = (galleryID) => {
-        console.log(`Edit gallery with ID: ${galleryID}`);
+    const handleDelete = (galleryId) => {
+        console.log(`Delete gallery with ID: ${galleryId}`);
+        axiosInstance.delete(`management/gallery/deleteGalleryByGalleryId/${galleryId}`)
+            .then(response => {
+                console.log(response.data);
+                setReloadTrigger(!reloadTrigger); // 삭제 후 reloadTrigger를 변경하여 데이터를 다시 로드
+            })
+            .catch(error => {
+                console.error("There was an error deleting the report!", error);
+            });
     };
 
     const columns = [
-        { header: 'gallery_id' },
-        { header: 'recipe_share_id' },
-        { header: 'user_id' },
-        { header: 'photo_id' },
-        { header: 'like_count' },
+        { header: 'galleryId' },
+        { header: 'recipeShareId' },
+        { header: 'userId' },
+        { header: 'photoId' },
+        { header: 'likeCount' },
         { header: 'update' },
-        { header: 'create_at' },
+        { header: 'createAt' },
+        { header: 'actions' },
     ];
 
     const renderGalleryRow = (gallery, index) => {
@@ -23,16 +35,16 @@ const GalleryListTable = () => {
 
         return (
             <tr key={index} className={rowClass}>
-                <td>{gallery.gallery_id}</td>
-                <td>{gallery.recipe_share_id}</td>
-                <td>{gallery.recipe_id}</td>
-                <td>{gallery.user_id}</td>
-                <td>{gallery.like_count}</td>
+                <td>{gallery.galleryId}</td>
+                <td>{gallery.recipeShareId}</td>
+                <td>{gallery.recipeId}</td>
+                <td>{gallery.userId}</td>
+                <td>{gallery.likeCount}</td>
                 <td>{new Date(gallery.update).toLocaleString()}</td>
-                <td>{new Date(gallery.create_at).toLocaleString()}</td>
+                <td>{new Date(gallery.createAt).toLocaleString()}</td>
                 <td>
-                    <Button variant="danger" size="sm" onClick={() => handleAction(gallery.id)}>
-                        handle
+                    <Button variant="danger" size="sm" onClick={() => handleDelete(gallery.galleryId)}>
+                        delete
                     </Button>
                 </td>
             </tr>
@@ -40,13 +52,13 @@ const GalleryListTable = () => {
     };
 
     return (
-        <></>
-        // <TableWithPagination
-        //     apiEndpoint="management/user/getUserListbyIndex"
-        //     columns={columns}
-        //     renderRow={renderGalleryRow}
-        //     pageSize={5}
-        // />
+        <TableWithPagination
+            apiEndpoint="management/gallery/getGalleryListByIndex"
+            columns={columns}
+            renderRow={renderGalleryRow}
+            pageSize={5}
+            reloadTrigger={reloadTrigger} // 트리거 상태 전달
+        />
     );
 };
 
