@@ -8,13 +8,13 @@ const UserListTable = () => {
     };
 
     const columns = [
-        { header: 'report_id' },
-        { header: 'gallery_report_id ' },
-        { header: 'recipe_share_report_id ' },
-        { header: 'create_at' },
-        { header: 'user_id' },
-        { header: 'report_type' },
-        { header: 'report_content' },
+        { header: 'reportId' },
+        { header: 'galleryReportId ' },
+        { header: 'recipeShareReportId ' },
+        { header: 'createAt' },
+        { header: 'userId' },
+        { header: 'reportType' },
+        { header: 'reportContent' },
         { header: 'complete' }
     ];
 
@@ -22,13 +22,13 @@ const UserListTable = () => {
         const rowClass = report.role === 'ADMIN' ? 'table-danger' : '';
         return (
             <tr key={index} className={rowClass}>
-                <td>{report.report_id}</td>
-                <td>{report.gallery_report_id }</td>
-                <td>{report.recipe_share_report_id }</td>
-                <td>{new Date(report.create_at).toLocaleString()}</td>
-                <td>{report.user_id}</td>
-                <td>{report.report_type}</td>
-                <td>{report.report_content}</td>
+                <td>{report.reportId}</td>
+                <td>{report.galleryReportId }</td>
+                <td>{report.recipeShareReportId }</td>
+                <td>{new Date(report.createAt).toLocaleString()}</td>
+                <td>{report.userId}</td>
+                <td>{report.reportType}</td>
+                <td>{report.reportContent}</td>
                 <td>{report.complete ? "Yes" : "No"}</td>
                 <td>
                     <Button variant="warning" size="sm" onClick={() => handleReport(report.id)}>

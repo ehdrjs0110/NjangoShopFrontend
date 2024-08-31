@@ -12,8 +12,8 @@ const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5 }) 
         axiosInstance.get(`${apiEndpoint}/${pageCount}/${pageSize}`)
             .then(response => {
                 setData(response.data);
+                console.log(apiEndpoint)
                 console.log(response.data);
-                console.log()
             });
     }, [pageCount, apiEndpoint, pageSize]);
 
