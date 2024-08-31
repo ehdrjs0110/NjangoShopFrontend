@@ -2,32 +2,25 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import TableWithPagination from "../../Table/TableWithPagination";
 import { axiosInstance } from "../../../middleware/customAxios";
+import UserEditModal from "./UserEditModal";
 
 const UserListTable = () => {
     const [reloadTrigger, setReloadTrigger] = useState(false); // 데이터를 다시 로드하기 위한 트리거 상태
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     const handleEditUser = (userId) => {
         console.log(`Edit user with ID: ${userId}`);
         
-        let user = getUser(userId);
-        if(user === null) return;
-    };
-
-    const getUser = (userId) => {
-        console.log(`Get user with ID: ${userId}`);
-
-        let user = null;
-
         axiosInstance.get(`management/user/getUserByUserId/${userId}`)
             .then(response => {
                 console.log(response.data);
-                user = response.data;
+                setSelectedUser(response.data);
+                setShowModal(true); // 모달 창을 표시
             })
             .catch(error => {
                 console.error("There was an error getting the user!", error);
             });
-
-        return user;
     };
 
     const handleDelete = (userId) => {
@@ -40,6 +33,15 @@ const UserListTable = () => {
             .catch(error => {
                 console.error("There was an error deleting the user!", error);
             });
+    };
+
+    const handleModalClose = () => {
+        setShowModal(false);
+        setSelectedUser(null);
+    };
+
+    const handleSave = () => {
+        setReloadTrigger(!reloadTrigger); // Save callback to reload user data
     };
 
     const columns = [
@@ -77,13 +79,23 @@ const UserListTable = () => {
     };
 
     return (
-        <TableWithPagination
-            apiEndpoint="management/user/getUserListbyIndex"
-            columns={columns}
-            renderRow={renderUserRow}
-            pageSize={5}
-            reloadTrigger={reloadTrigger} // 트리거 상태 전달
-        />
+        <>
+            <TableWithPagination
+                apiEndpoint="management/user/getUserListbyIndex"
+                columns={columns}
+                renderRow={renderUserRow}
+                pageSize={5}
+                reloadTrigger={reloadTrigger} // 트리거 상태 전달
+            />
+            {selectedUser && (
+                <UserEditModal
+                    show={showModal}
+                    handleClose={handleModalClose}
+                    user={selectedUser}
+                    onSave={handleSave}
+                />
+            )}
+        </>
     );
 };
 
