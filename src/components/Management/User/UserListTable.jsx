@@ -8,6 +8,26 @@ const UserListTable = () => {
 
     const handleEditUser = (userId) => {
         console.log(`Edit user with ID: ${userId}`);
+        
+        let user = getUser(userId);
+        if(user === null) return;
+    };
+
+    const getUser = (userId) => {
+        console.log(`Get user with ID: ${userId}`);
+
+        let user = null;
+
+        axiosInstance.get(`management/user/getUserByUserId/${userId}`)
+            .then(response => {
+                console.log(response.data);
+                user = response.data;
+            })
+            .catch(error => {
+                console.error("There was an error getting the user!", error);
+            });
+
+        return user;
     };
 
     const handleDelete = (userId) => {
@@ -50,7 +70,7 @@ const UserListTable = () => {
                     </Button>{' '}
                     <Button variant="danger" size="sm" onClick={() => handleDelete(user.id)}>
                         삭제
-                    </Button>
+                    </Button>{' '}
                 </td>
             </tr>
         );
