@@ -94,7 +94,7 @@ const ManagementComunity = () => {
                             <Card.Title>
                                 {cards[current].title}
                             </Card.Title>
-                            <Card.Body className={style.cardBodyContainer}>
+                            <Card.Body className={style.cardBodyContainerForTable}>
                                 <FaArrowLeft
                                     className={style.arrow}
                                     onClick={handlePrevClick}
