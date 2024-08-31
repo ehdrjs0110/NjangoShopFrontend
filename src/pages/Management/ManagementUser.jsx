@@ -1,19 +1,39 @@
+import { useState } from "react";
 import style from "../../styles/Management/ManagementDashboard.module.scss";
-import { Stack } from "react-bootstrap";
+import { Stack, ButtonGroup, Button } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import UserListTable from "../../components/Management/User/UserListTable";
 
 const ManagementUser = () => {
+    const [currentType, setCurrentType] = useState("all");
+
     return (
         <div className={style.managementDashboardContainer}>
             <Stack>
-                <Row className={style.downPartRow} xs={2} md={2}>
+                <ButtonGroup className="mb-3">
+                    <Button 
+                        variant={currentType === "all" ? "primary" : "secondary"} 
+                        onClick={() => setCurrentType("all")}
+                    >
+                        ALL
+                    </Button>
+                    <Button 
+                        variant={currentType === "user" ? "primary" : "secondary"} 
+                        onClick={() => setCurrentType("user")}
+                    >
+                        USER
+                    </Button>
+                    <Button 
+                        variant={currentType === "admin" ? "primary" : "secondary"} 
+                        onClick={() => setCurrentType("admin")}
+                    >
+                        ADMIN
+                    </Button>
+                </ButtonGroup>
+                <Row className={style.downPartRow}>
                     <Col>
-                        <UserListTable type="user" />
-                    </Col>
-                    <Col>
-                        <UserListTable type="admin" />
+                        <UserListTable type={currentType} />
                     </Col>
                 </Row>
             </Stack>

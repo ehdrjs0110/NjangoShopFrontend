@@ -80,11 +80,17 @@ const UserListTable = ({ type }) => {
         <Col className={style.downPartCol}>
             <Card border="light">
                 <Card.Title>
-                    {type === "user" ? "사용자 목록" : "관리자 목록"}
+                    {type === "user" ? "사용자 목록" : type === "admin" ? "관리자 목록" : "ALL"}
                 </Card.Title>
                 <Card.Body>
                     <TableWithPagination
-                        apiEndpoint={type === "user" ? "management/user/getUserListbyIndex" : "management/user/getAdminListbyIndex"}
+                        apiEndpoint={
+                            type === "user" 
+                                ? "management/user/getUserListbyIndex" 
+                                : type === "admin"
+                                    ? "management/user/getAdminListbyIndex"
+                                    : "management/user/getAllUserListbyIndex"
+                        }                        
                         columns={columns}
                         renderRow={renderUserRow}
                         pageSize={5}
