@@ -91,3 +91,20 @@
     transform: translateX(0);
   }
 }
+
+.cardBodyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 양쪽 끝에 화살표를 배치 */
+
+  .arrow {
+    cursor: pointer;
+    font-size: 2rem;
+    color: #007bff; /* 화살표 색상 */
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #0056b3; /* 호버 시 색상 */
+    }
+  }
+}

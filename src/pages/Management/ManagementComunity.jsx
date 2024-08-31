@@ -6,6 +6,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import RecipeShareListTable from "../../components/Management/Comunity/RecipeShareListTable";
 import GalleryListTable from "../../components/Management/Comunity/GalleryListTable";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 const ManagementComunity = () => {
     const [current, setCurrent] = useState(0);
@@ -26,7 +27,7 @@ const ManagementComunity = () => {
         if (isAnimating) {
             animationTimeoutRef.current = setTimeout(() => {
                 setIsAnimating(false);
-            }, 500); // 애니메이션 지속 시간과 일치시킴
+            }, 500);
         }
 
         return () => {
@@ -37,17 +38,17 @@ const ManagementComunity = () => {
     }, [isAnimating]);
 
     const handleMouseDown = (e) => {
-        if (isAnimating) return; // 애니메이션 중에는 드래그를 무시
+        if (isAnimating) return;
         startX.current = e.clientX;
     };
 
     const handleMouseMove = (e) => {
-        if (isAnimating || startX.current === 0) return; // 애니메이션 중이거나 드래그 시작하지 않았을 때 무시
+        if (isAnimating || startX.current === 0) return;
         diff.current = e.clientX - startX.current;
     };
 
     const handleMouseUp = () => {
-        if (isAnimating || Math.abs(diff.current) <= 50) { // 애니메이션 중이거나 드래그 거리가 짧을 때 무시
+        if (isAnimating || Math.abs(diff.current) <= 50) {
             startX.current = 0;
             diff.current = 0;
             return;
@@ -62,6 +63,18 @@ const ManagementComunity = () => {
         setIsAnimating(true);
         startX.current = 0;
         diff.current = 0;
+    };
+
+    const handlePrevClick = () => {
+        if (isAnimating) return;
+        setCurrent((prev) => (prev === 0 ? cards.length - 1 : prev - 1));
+        setIsAnimating(true);
+    };
+
+    const handleNextClick = () => {
+        if (isAnimating) return;
+        setCurrent((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
+        setIsAnimating(true);
     };
 
     return (
@@ -81,8 +94,18 @@ const ManagementComunity = () => {
                             <Card.Title>
                                 {cards[current].title}
                             </Card.Title>
-                            <Card.Body>
-                                {cards[current].component}
+                            <Card.Body className={style.cardBodyContainer}>
+                                <FaArrowLeft
+                                    className={style.arrow}
+                                    onClick={handlePrevClick}
+                                />
+                                <div className={style.cardContent}>
+                                    {cards[current].component}
+                                </div>
+                                <FaArrowRight
+                                    className={style.arrow}
+                                    onClick={handleNextClick}
+                                />
                             </Card.Body>
                         </Card>
                     </Col>
