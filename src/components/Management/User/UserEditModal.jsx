@@ -2,8 +2,23 @@ import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { axiosInstance } from "../../../middleware/customAxios";
 import PropTypes from "prop-types";
+import {expired, getNewToken} from "../../../services/auth2";
+import {containToken} from "../../../Store/tokenSlice";
+import {containIsAdmin} from "../../../Store/isAdminSlice";
+import {useCookies} from "react-cookie";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 const UserEditModal = ({ show, handleClose, user, onSave }) => {
+
+
+    // refresh token 가져오기
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+    // redux에서 가져오기
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         id: user.id,
         nickname: user.nickname,
@@ -17,8 +32,47 @@ const UserEditModal = ({ show, handleClose, user, onSave }) => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSave = () => {
-        axiosInstance.put(`management/user/updateUser`, formData)
+    async function tokenHandler() {
+
+
+        const isExpired = expired();
+        if(isExpired){
+
+            let refreshToken = cookies.refreshToken;
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+                dispatch(containIsAdmin(true));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Management');
+            }
+        }
+
+    }
+
+
+
+    const handleSave = async () => {
+        await tokenHandler();
+        await axiosInstance.put(`management/user/updateUser`, formData)
             .then(response => {
                 console.log("User updated successfully:", response.data);
                 onSave(); // Save callback to reload user data

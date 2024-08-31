@@ -4,6 +4,9 @@ import { Stack } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ReportListTalbe from '../../components/Management/Report/ReportListTable'
+import {useCookies} from "react-cookie";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 const ManagementReport = () => {
     return (

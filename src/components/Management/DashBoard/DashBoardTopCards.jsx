@@ -4,26 +4,78 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faUserPlus, faChartLine, faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import styles from '../../../styles/Management/ManagementDashboard.module.scss';
 import axios from "axios";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {useCookies} from "react-cookie";
+import {useNavigate} from "react-router-dom";
+import {expired, getNewToken} from "../../../services/auth2";
+import {containToken} from "../../../Store/tokenSlice";
+import {containIsAdmin} from "../../../Store/isAdminSlice";
+import {axiosInstance} from "../../../middleware/customAxios";
 
 
 
 const NewMembersCard = () => {
     const [newUserCount,setNewUserConut] = useState(0);
     let accessToken = useSelector(state => state.token.value);
+
+    // refresh token 가져오기
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
+
+    // redux에서 가져오기
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    async function tokenHandler() {
+
+
+        const isExpired = expired();
+        if(isExpired){
+
+            let refreshToken = cookies.refreshToken;
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+                dispatch(containIsAdmin(true));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Management');
+            }
+        }
+
+    }
+
     useEffect(() => {
-        axios.get(
-                "http://localhost:8080/management/user/todayNewUser", {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${accessToken}` // auth 설정
-                    },
-                }
-            ).then(res => setNewUserConut(res.data))
-            .catch(console.error)
 
+        const fetchData = async () => {
+            try {
+                // 토큰 핸들러 호출
+                await tokenHandler();
+                // 데이터 가져오기
+                const res = await axiosInstance.get(`management/user/todayNewUser`).then(res => setNewUserConut(res.data))
+                    .catch(console.error)
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
-
+        fetchData(); // 비동기 함수 호출
     }, []);
 
     return(
@@ -40,17 +92,65 @@ const NewMembersCard = () => {
 const TotalMembersCard = () => {
     const [totalUserCount,setTotalUserCount] = useState(0);
     let accessToken = useSelector(state => state.token.value);
-    useEffect(() => {
-        axios.get(
-            "http://localhost:8080/management/user/totalUser", {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${accessToken}` // auth 설정
-                },
-            }
-        ).then(res => setTotalUserCount(res.data))
-            .catch(console.error)
+    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken']);
 
+    // redux에서 가져오기
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    async function tokenHandler() {
+
+
+        const isExpired = expired();
+        if(isExpired){
+
+            let refreshToken = cookies.refreshToken;
+            try {
+
+                // getNewToken 함수 호출 (비동기 함수이므로 await 사용)
+                const result = await getNewToken(refreshToken);
+                refreshToken = result.newRefreshToken;
+
+                // refresh token cookie에 재설정
+                setCookie(
+                    'refreshToken',
+                    refreshToken,
+                    {
+                        path:'/',
+                        maxAge: 7 * 24 * 60 * 60, // 7일
+                        // expires:new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
+                    }
+                )
+
+                // Redux access token 재설정
+                dispatch(containToken(result.newToken));
+                dispatch(containIsAdmin(true));
+
+            } catch (error) {
+                console.log(error);
+                navigate('/Management');
+            }
+        }
+
+    }
+
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    // 토큰 핸들러 호출
+                    await tokenHandler();
+
+                    // 데이터 가져오기
+                    const res = await axiosInstance.get(`management/user/totalUser`)
+                        .then(res => setTotalUserCount(res.data))
+                        .catch(console.error)
+
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+
+            fetchData(); // 비동기 함수 호출
 
 
     }, []);
