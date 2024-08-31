@@ -8,6 +8,7 @@ import RecipeShareListTable from "../../components/Management/Comunity/RecipeSha
 import GalleryListTable from "../../components/Management/Comunity/GalleryListTable";
 import TodaySearchListTable from "../../components/Management/Search/TodaySearchListTable";
 import WordSearchListTable from "../../components/Management/Search/WordSearchListTable";
+import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
 const ManagementSearch = () => {
     const [current, setCurrent] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -65,6 +66,18 @@ const ManagementSearch = () => {
         diff.current = 0;
     };
 
+    const handlePrevClick = () => {
+        if (isAnimating) return;
+        setCurrent((prev) => (prev === 0 ? cards.length - 1 : prev - 1));
+        setIsAnimating(true);
+    };
+
+    const handleNextClick = () => {
+        if (isAnimating) return;
+        setCurrent((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
+        setIsAnimating(true);
+    };
+
     return (
         <div
             className={style.managementDashboardContainer}
@@ -82,8 +95,18 @@ const ManagementSearch = () => {
                             <Card.Title>
                                 {cards[current].title}
                             </Card.Title>
-                            <Card.Body>
-                                {cards[current].component}
+                            <Card.Body className={style.cardBodyContainerForTable}>
+                                <FaArrowLeft
+                                    className={style.arrow}
+                                    onClick={handlePrevClick}
+                                />
+                                <div className={style.cardContent}>
+                                    {cards[current].component}
+                                </div>
+                                <FaArrowRight
+                                    className={style.arrow}
+                                    onClick={handleNextClick}
+                                />
                             </Card.Body>
                         </Card>
                     </Col>
