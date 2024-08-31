@@ -9,12 +9,16 @@ import GalleryListTable from "../../components/Management/Comunity/GalleryListTa
 import TodaySearchListTable from "../../components/Management/Search/TodaySearchListTable";
 import WordSearchListTable from "../../components/Management/Search/WordSearchListTable";
 import {FaArrowLeft, FaArrowRight} from "react-icons/fa";
+import {useCookies} from "react-cookie";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 const ManagementSearch = () => {
     const [current, setCurrent] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const startX = useRef(0);
     const diff = useRef(0);
     const animationTimeoutRef = useRef(null);
+
 
     const cards = [{
         title: 'Today Search',

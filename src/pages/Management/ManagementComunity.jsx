@@ -7,6 +7,9 @@ import Col from "react-bootstrap/Col";
 import RecipeShareListTable from "../../components/Management/Comunity/RecipeShareListTable";
 import GalleryListTable from "../../components/Management/Comunity/GalleryListTable";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import {useCookies} from "react-cookie";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 const ManagementComunity = () => {
     const [current, setCurrent] = useState(0);

@@ -18,6 +18,9 @@ import {Stack} from "react-bootstrap";
 import { NewMembersCard, TotalMembersCard, RecipeSearchCard, MonthlyRevenueCard } from "../../components/Management/DashBoard/DashBoardTopCards";
 import Visit from "../../components/Management/DashBoard/DashBoardVisit";
 import DaySearch from "../../components/Management/DashBoard/DashBoardDaySearch";
+import {useCookies} from "react-cookie";
+import {useDispatch} from "react-redux";
+import {useNavigate} from "react-router-dom";
 const ManagementDashboard = () => {
 
     return(
