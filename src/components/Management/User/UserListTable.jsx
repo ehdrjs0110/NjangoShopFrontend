@@ -12,6 +12,12 @@ const UserListTable = ({ type }) => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
+    const [pageCounts, setPageCounts] = useState({
+        all: 0,
+        user: 0,
+        admin: 0
+    });
+
     const handleEditUser = (userId) => {
         axiosInstance.get(`management/user/getUserByUserId/${userId}`)
             .then(response => {
@@ -76,6 +82,14 @@ const UserListTable = ({ type }) => {
         );
     };
 
+    // 현재 type에 따른 pageCount를 업데이트하는 함수를 반환하는 함수
+    const setPageCountForType = (type) => (newPageCount) => {
+        setPageCounts(prevCounts => ({
+            ...prevCounts,
+            [type]: newPageCount
+        }));
+    };
+
     return (
         <Col className={style.downPartCol}>
             <Card border="light">
@@ -95,6 +109,8 @@ const UserListTable = ({ type }) => {
                         renderRow={renderUserRow}
                         pageSize={5}
                         reloadTrigger={reloadTrigger}
+                        pageCount={pageCounts[type]}  // 현재 type에 따른 pageCount
+                        setPageCount={setPageCountForType(type)}  // 현재 type에 따른 setPageCount 함수
                     />
                     {selectedUser && (
                         <UserEditModal
