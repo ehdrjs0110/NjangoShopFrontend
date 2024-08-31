@@ -18,7 +18,8 @@ const UserListTable = () => {
         { header: 'Role' },
         { header: 'Kakao Linked' },
         { header: 'Creation Date' },
-        { header: 'Status' }
+        { header: 'Status' },
+        { header: 'actions' }
     ];
 
     const renderUserRow = (user, index) => {

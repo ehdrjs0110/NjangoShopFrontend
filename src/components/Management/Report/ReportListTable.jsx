@@ -26,7 +26,8 @@ const UserListTable = () => {
         { header: 'userId' },
         { header: 'reportType' },
         { header: 'reportContent' },
-        { header: 'complete' }
+        { header: 'complete' },
+        { header: 'actions' }
     ];
 
     const renderReportRow = (report, index) => {

@@ -25,7 +25,6 @@ const TableWithPagination = ({ apiEndpoint, columns, renderRow, pageSize = 5, re
                         {columns.map((col, index) => (
                             <th key={index}>{col.header}</th>
                         ))}
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
