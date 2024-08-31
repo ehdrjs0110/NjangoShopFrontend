@@ -1,14 +1,25 @@
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import TableWithPagination from "../../Table/TableWithPagination";
+import { axiosInstance } from "../../../middleware/customAxios";
 
 const UserListTable = () => {
+    const [reloadTrigger, setReloadTrigger] = useState(false); // 데이터를 다시 로드하기 위한 트리거 상태
 
     const handleEditUser = (userId) => {
         console.log(`Edit user with ID: ${userId}`);
     };
 
-    const handleDeleteUser = (userId) => {
+    const handleDelete = (userId) => {
         console.log(`Delete user with ID: ${userId}`);
+        axiosInstance.delete(`management/user/deleteUserByUserId/${userId}`)
+            .then(response => {
+                console.log(response.data);
+                setReloadTrigger(!reloadTrigger);
+            })
+            .catch(error => {
+                console.error("There was an error deleting the user!", error);
+            });
     };
 
     const columns = [
@@ -37,7 +48,7 @@ const UserListTable = () => {
                     <Button variant="warning" size="sm" onClick={() => handleEditUser(user.id)}>
                         수정
                     </Button>{' '}
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteUser(user.id)}>
+                    <Button variant="danger" size="sm" onClick={() => handleDelete(user.id)}>
                         삭제
                     </Button>
                 </td>
@@ -51,6 +62,7 @@ const UserListTable = () => {
             columns={columns}
             renderRow={renderUserRow}
             pageSize={5}
+            reloadTrigger={reloadTrigger} // 트리거 상태 전달
         />
     );
 };
