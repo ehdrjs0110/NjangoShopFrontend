@@ -120,7 +120,7 @@ const UserListTable = ({ type }) => {
                 <td>{user.nickname}</td>
                 <td>{user.phoneNumber || "N/A"}</td>
                 <td>{user.role}</td>
-                <td>{user.kakao ? "Yes" : "No"}</td>
+                <td>{user.kakao ? "TRUE" : "FALSE"}</td>
                 <td>{new Date(user.createAt).toLocaleString()}</td>
                 <td>{user.enabled ? "Active" : "Inactive"}</td>
                 <td>
@@ -158,6 +158,12 @@ const UserListTable = ({ type }) => {
                                     ? "management/user/getAdminListbyIndex"
                                     : "management/user/getAllUserListbyIndex"
                         }                        
+                        searchApiEndpoint={
+                            type === "user" 
+                                ? "management/user/getUserListbyIndexSearch" 
+                                : type === "admin"
+                                    ? "management/user/getAdminListbyIndexSearch"
+                                    : "management/user/getAllUserListbyIndexSearch"}
                         columns={columns}
                         renderRow={renderUserRow}
                         pageSize={5}
