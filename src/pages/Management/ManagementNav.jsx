@@ -13,6 +13,10 @@ const ManagementNav = () => {
 
     const navigate = useNavigate();
 
+
+    const Njaongo = () => {
+        navigate('/main');
+    };
     const Dashboard = () => {
         navigate('/Management/Dashboard');
     };
@@ -39,13 +43,13 @@ const ManagementNav = () => {
     return (
         <div>
             <div className={managementCss.sideMenu}>
+                <button onClick={Njaongo}>Njango 바로가기</button>
                 <button onClick={Dashboard}>Dashboard</button>
                 <button onClick={User}>유저관리</button>
                 <button onClick={Inquiry}>문의사항</button>
                 <button onClick={Comunity}>커뮤니티 관리</button>
                 <button onClick={Report}>신고 관리</button>
                 <button onClick={Search}>prompt 검색 관리</button>
-                {/*<a onClick={dashboard}>바로가기</a>*/}
             </div>
         </div>
     );
