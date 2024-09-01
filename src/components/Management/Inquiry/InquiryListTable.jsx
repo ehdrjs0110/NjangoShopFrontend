@@ -71,8 +71,8 @@ const InquiryListTable = () => {
 
     const columns = [
         { header: 'inquiryId' },
-        { header: 'questionerName' },
-        { header: 'responderName' },
+        { header: 'questioner' },
+        { header: 'responder' },
         { header: 'questionType' },
         { header: 'question' },
         { header: 'answer' },
@@ -87,8 +87,8 @@ const InquiryListTable = () => {
         return (
             <tr key={index} className={rowClass}>
                 <td>{inquiry.inquiryId}</td>
-                <td>{inquiry.questionerName}</td>
-                <td>{inquiry.responderName}</td>
+                <td>{inquiry.questioner}</td>
+                <td>{inquiry.responder}</td>
                 <td>{inquiry.questionType}</td>
                 <td>{inquiry.question}</td>
                 <td>{inquiry.answer}</td>
@@ -105,6 +105,7 @@ const InquiryListTable = () => {
     return (
         <TableWithPagination
             apiEndpoint="management/inquiry/getInquiryListbyIndex"
+            searchApiEndpoint="management/inquiry/getInquiryListbyIndexSearch"
             columns={columns}
             renderRow={renderInquiryRow}
             pageSize={5}
