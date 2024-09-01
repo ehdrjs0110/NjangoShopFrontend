@@ -102,13 +102,13 @@ const UserListTable = ({ type }) => {
     };
 
     const columns = [
-        { header: 'Email' },
-        { header: 'Nickname' },
-        { header: 'Phone Number' },
-        { header: 'Role' },
-        { header: 'Kakao Linked' },
-        { header: 'Creation Date' },
-        { header: 'Status' },
+        { header: 'id' },
+        { header: 'nickname' },
+        { header: 'phoneNumber' },
+        { header: 'role' },
+        { header: 'kakao' },
+        { header: 'createAt' },
+        { header: 'enabled' },
         { header: 'actions' }
     ];
 
