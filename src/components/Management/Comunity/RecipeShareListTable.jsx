@@ -92,7 +92,7 @@ const RecipeShareListTable = () => {
                 <td>{new Date(recipeShare.createAt).toLocaleString()}</td>
                 <td>
                     <Button variant="danger" size="sm" onClick={() => handleDelete(recipeShare.recipeShareId)}>
-                        handle
+                        delete
                     </Button>
                 </td>
             </tr>
@@ -102,6 +102,7 @@ const RecipeShareListTable = () => {
     return (
         <TableWithPagination
             apiEndpoint="management/recipeShare/getRecipeShareListByIndex"
+            searchApiEndpoint="management/recipeShare/getRecipeShareListByIndexSearch"
             columns={columns}
             renderRow={renderRecipeShareRow}
             pageSize={5}

@@ -87,8 +87,8 @@ const GalleryListTable = () => {
             <tr key={index} className={rowClass}>
                 <td>{gallery.galleryId}</td>
                 <td>{gallery.recipeShareId}</td>
-                <td>{gallery.recipeId}</td>
                 <td>{gallery.userId}</td>
+                <td>{gallery.photoId}</td>
                 <td>{gallery.likeCount}</td>
                 <td>{new Date(gallery.update).toLocaleString()}</td>
                 <td>{new Date(gallery.createAt).toLocaleString()}</td>
@@ -104,6 +104,7 @@ const GalleryListTable = () => {
     return (
         <TableWithPagination
             apiEndpoint="management/gallery/getGalleryListByIndex"
+            searchApiEndpoint="management/gallery/getGalleryListByIndexSearch"
             columns={columns}
             renderRow={renderGalleryRow}
             pageSize={5}
