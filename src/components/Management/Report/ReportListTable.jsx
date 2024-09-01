@@ -70,8 +70,8 @@ const UserListTable = () => {
 
     const columns = [
         { header: 'reportId' },
-        { header: 'galleryReportId ' },
-        { header: 'recipeShareReportId ' },
+        { header: 'galleryReportId' },
+        { header: 'recipeShareReportId' },
         { header: 'createAt' },
         { header: 'userId' },
         { header: 'reportType' },
@@ -91,7 +91,7 @@ const UserListTable = () => {
                 <td>{report.userId}</td>
                 <td>{report.reportType}</td>
                 <td>{report.reportContent}</td>
-                <td>{report.complete ? "Yes" : "No"}</td>
+                <td>{report.complete ? "TRUE" : "FALSE"}</td>
                 <td>
                     <Button variant="danger" size="sm" onClick={() => handleDelete(report.reportId)}>
                         delete
@@ -104,6 +104,7 @@ const UserListTable = () => {
     return (
         <TableWithPagination
             apiEndpoint="management/report/getReportListbyIndex"
+            searchApiEndpoint="management/report/getReportListbyIndexSearch"
             columns={columns}
             renderRow={renderReportRow}
             pageSize={5}
