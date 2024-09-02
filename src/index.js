@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-// import '../src/styles/index.css';
 import { CookiesProvider } from 'react-cookie';
 import store from './Store/store'
 import { Provider } from 'react-redux'
