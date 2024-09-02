@@ -25,8 +25,8 @@ const TodaySearchListTable = () => {
 
     const columns = [
         { header: 'daySearchId' },
-        { header: 'Nickname ' },
-        { header: 'User ID ' },
+        { header: 'userId' },
+        { header: 'Nickname' },
         { header: 'count' },
         { header: 'actions' },
     ];
@@ -83,8 +83,9 @@ const TodaySearchListTable = () => {
     };
     const renderTodaySearchRow = (todaySearch, index) => {
         // const rowClass = todaySearch.role === 'ADMIN' ? 'table-danger' : '';
+        const rowClass = "";
         return (
-            <tr key={index}>
+            <tr key={index} className={rowClass}>
                 <td>{todaySearch.daySearchId}</td>
                 <td>{todaySearch.userId }</td>
                 <td>{todaySearch.nickName }</td>
@@ -101,6 +102,7 @@ const TodaySearchListTable = () => {
     return (
         <TableWithPagination
             apiEndpoint="management/search/getTodaySearchListbyIndex"
+            searchApiEndpoint="management/search/getTodaySearchListbyIndex"
             columns={columns}
             renderRow={renderTodaySearchRow}
             pageSize={5}
